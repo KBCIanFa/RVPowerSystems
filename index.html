@@ -4,183 +4,261 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>RV Power System Designer</title>
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
+  /* ===== LIGHT ACCESSIBLE THEME ===== */
   :root {
-    --bg:#0d1117;--surface:#161b22;--surface2:#1f2937;--border:#2d3748;
-    --accent:#f59e0b;--accent2:#10b981;--accent3:#3b82f6;--danger:#ef4444;
-    --text:#e2e8f0;--muted:#6b7280;
-    --hf:'Bebas Neue',sans-serif;--bf:'DM Sans',sans-serif;--mf:'DM Mono',monospace;
+    --bg: #f4f6f9;
+    --surface: #ffffff;
+    --surface2: #eef1f6;
+    --border: #d0d7e2;
+    --border-strong: #b0bcd0;
+    --accent: #c47f00;        /* amber darkened for AA contrast on white */
+    --accent-bg: #fff8e6;
+    --accent-hover: #a36800;
+    --accent2: #0a7c54;       /* green darkened for AA */
+    --accent2-bg: #e6f7f1;
+    --accent3: #1a5fbf;       /* blue darkened for AA */
+    --accent3-bg: #e8f0fc;
+    --danger: #c0392b;
+    --danger-bg: #fdecea;
+    --purple: #6b3fa0;
+    --purple-bg: #f3eeff;
+    --text: #1a2233;
+    --text-secondary: #3d4f6a;
+    --muted: #5a6a82;
+    --hf: 'Bebas Neue', sans-serif;
+    --bf: 'DM Sans', sans-serif;
+    --mf: 'DM Mono', monospace;
+    --radius: 10px;
+    --shadow: 0 1px 3px rgba(0,0,0,.08), 0 1px 2px rgba(0,0,0,.05);
+    --shadow-md: 0 4px 12px rgba(0,0,0,.10);
   }
-  *{box-sizing:border-box;margin:0;padding:0;}
-  body{background:var(--bg);color:var(--text);font-family:var(--bf);min-height:100vh;overflow-x:hidden;}
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: var(--bf); min-height: 100vh; overflow-x: hidden; line-height: 1.5; }
 
-  header{background:linear-gradient(135deg,#0d1117 0%,#1a1f2e 100%);border-bottom:2px solid var(--accent);padding:14px 24px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;}
-  .logo{display:flex;align-items:center;gap:10px;}
-  .logo-icon{width:38px;height:38px;background:var(--accent);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:18px;}
-  .logo h1{font-family:var(--hf);font-size:22px;letter-spacing:2px;color:#fff;line-height:1;}
-  .logo p{font-size:9px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;}
-  .header-right{display:flex;align-items:center;gap:14px;}
-  .header-stats{display:flex;gap:18px;}
-  .hstat{text-align:center;}
-  .hstat-val{font-family:var(--mf);font-size:15px;color:var(--accent);}
-  .hstat-label{font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;}
+  /* Skip nav for screen readers */
+  .skip-link { position: absolute; top: -40px; left: 0; background: var(--accent3); color: #fff; padding: 8px 14px; border-radius: 0 0 6px 0; font-size: 13px; font-weight: 600; z-index: 9999; text-decoration: none; }
+  .skip-link:focus { top: 0; }
 
-  .tabs{display:flex;gap:1px;padding:12px 24px 0;background:var(--bg);border-bottom:1px solid var(--border);flex-wrap:wrap;}
-  .tab{padding:8px 14px;font-family:var(--bf);font-size:11px;font-weight:500;letter-spacing:.5px;text-transform:uppercase;cursor:pointer;border:none;background:transparent;color:var(--muted);border-bottom:2px solid transparent;transition:all .2s;}
-  .tab:hover{color:var(--text);}
-  .tab.active{color:var(--accent);border-bottom-color:var(--accent);}
+  /* ===== HEADER ===== */
+  header { background: linear-gradient(135deg, #1a2a4a 0%, #1e3a6a 100%); border-bottom: 3px solid var(--accent); padding: 14px 24px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; box-shadow: var(--shadow-md); }
+  .logo { display: flex; align-items: center; gap: 12px; }
+  .logo-icon { width: 40px; height: 40px; background: var(--accent); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0; }
+  .logo h1 { font-family: var(--hf); font-size: 22px; letter-spacing: 2px; color: #fff; line-height: 1; }
+  .logo p { font-size: 10px; color: #93afd4; letter-spacing: 1px; text-transform: uppercase; }
+  .header-right { display: flex; align-items: center; gap: 14px; }
+  .header-stats { display: flex; gap: 20px; }
+  .hstat { text-align: center; }
+  .hstat-val { font-family: var(--mf); font-size: 15px; color: #fcd34d; font-weight: 500; }
+  .hstat-label { font-size: 9px; color: #93afd4; text-transform: uppercase; letter-spacing: .5px; }
+  .header-links { display: flex; gap: 8px; align-items: center; }
+  .help-link { color: #93afd4; font-size: 11px; text-decoration: none; padding: 5px 10px; border: 1px solid rgba(147,175,212,.4); border-radius: 5px; transition: all .2s; }
+  .help-link:hover, .help-link:focus { color: #fff; border-color: #fff; outline: 2px solid #fff; outline-offset: 2px; }
 
-  .main{display:grid;grid-template-columns:1fr 300px;min-height:calc(100vh - 115px);}
-  .content{padding:22px 24px;overflow-y:auto;}
-  .sidebar{background:var(--surface);border-left:1px solid var(--border);padding:18px;overflow-y:auto;}
-  .section{display:none;}
-  .section.active{display:block;}
+  /* ===== TABS ===== */
+  .tabs { display: flex; gap: 2px; padding: 0 24px; background: #fff; border-bottom: 2px solid var(--border); flex-wrap: wrap; box-shadow: 0 1px 3px rgba(0,0,0,.06); }
+  .tab { padding: 11px 15px; font-family: var(--bf); font-size: 12px; font-weight: 600; letter-spacing: .3px; cursor: pointer; border: none; background: transparent; color: var(--muted); border-bottom: 3px solid transparent; margin-bottom: -2px; transition: all .2s; }
+  .tab:hover { color: var(--text); background: var(--bg); }
+  .tab:focus { outline: 2px solid var(--accent3); outline-offset: -2px; }
+  .tab.active { color: var(--accent3); border-bottom-color: var(--accent3); background: var(--accent3-bg); }
 
-  .card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:16px;margin-bottom:12px;}
-  .card-title{font-family:var(--hf);font-size:16px;letter-spacing:1px;color:#fff;margin-bottom:12px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
-  .badge{font-family:var(--mf);font-size:10px;padding:2px 7px;border-radius:4px;font-weight:500;}
-  .badge-amber{background:rgba(245,158,11,.15);color:var(--accent);border:1px solid rgba(245,158,11,.3);}
-  .badge-green{background:rgba(16,185,129,.15);color:var(--accent2);border:1px solid rgba(16,185,129,.3);}
-  .badge-blue{background:rgba(59,130,246,.15);color:var(--accent3);border:1px solid rgba(59,130,246,.3);}
-  .badge-red{background:rgba(239,68,68,.15);color:var(--danger);border:1px solid rgba(239,68,68,.3);}
-  .badge-demo{background:rgba(167,139,250,.15);color:#a78bfa;border:1px solid rgba(167,139,250,.3);}
+  /* ===== LAYOUT ===== */
+  .main { display: grid; grid-template-columns: 1fr 300px; min-height: calc(100vh - 120px); }
+  .content { padding: 22px 24px; overflow-y: auto; }
+  .sidebar { background: #fff; border-left: 2px solid var(--border); padding: 18px; overflow-y: auto; box-shadow: -2px 0 8px rgba(0,0,0,.04); }
+  .section { display: none; }
+  .section.active { display: block; }
 
-  label{display:block;font-size:10px;font-weight:500;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;}
-  input[type="number"],input[type="text"],input[type="url"],select,textarea{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:6px;color:var(--text);font-family:var(--mf);font-size:12px;padding:7px 10px;outline:none;transition:border .2s;}
-  textarea{resize:vertical;min-height:56px;}
-  input:focus,select:focus,textarea:focus{border-color:var(--accent);}
-  .form-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;}
-  .form-group{margin-bottom:10px;}
+  /* ===== CARDS ===== */
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 18px; margin-bottom: 14px; box-shadow: var(--shadow); }
+  .card-title { font-family: var(--hf); font-size: 17px; letter-spacing: 1px; color: var(--text); margin-bottom: 14px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .section-title { font-family: var(--hf); font-size: 22px; letter-spacing: 1.5px; color: var(--text); margin-bottom: 4px; }
+  .section-sub { font-size: 13px; color: var(--muted); margin-bottom: 18px; line-height: 1.6; }
 
-  .app-table{width:100%;border-collapse:collapse;}
-  .app-table th{text-align:left;font-size:10px;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);padding:6px 8px;border-bottom:1px solid var(--border);}
-  .app-table td{padding:7px 8px;border-bottom:1px solid rgba(45,55,72,.5);font-size:12px;vertical-align:middle;}
-  .app-table td input{width:68px;padding:4px 6px;font-size:11px;}
-  .app-table td select{width:84px;padding:4px 6px;font-size:11px;}
-  .app-table tr:hover td{background:rgba(255,255,255,.02);}
-  .wh-cell{font-family:var(--mf);font-size:12px;color:var(--accent);font-weight:500;}
+  /* ===== BADGES ===== */
+  .badge { font-family: var(--mf); font-size: 10px; padding: 2px 7px; border-radius: 4px; font-weight: 600; }
+  .badge-amber { background: var(--accent-bg); color: var(--accent); border: 1px solid #e8b84b; }
+  .badge-green { background: var(--accent2-bg); color: var(--accent2); border: 1px solid #3bb389; }
+  .badge-blue  { background: var(--accent3-bg); color: var(--accent3); border: 1px solid #5b8fd9; }
+  .badge-red   { background: var(--danger-bg); color: var(--danger); border: 1px solid #e07060; }
+  .badge-demo  { background: var(--purple-bg); color: var(--purple); border: 1px solid #a078d0; }
 
-  .btn{padding:7px 14px;border-radius:6px;font-family:var(--bf);font-size:11px;font-weight:600;cursor:pointer;border:none;transition:all .2s;letter-spacing:.3px;}
-  .btn-primary{background:var(--accent);color:#000;}
-  .btn-primary:hover{background:#fbbf24;}
-  .btn-secondary{background:var(--surface2);color:var(--text);border:1px solid var(--border);}
-  .btn-secondary:hover{border-color:var(--accent);color:var(--accent);}
-  .btn-danger{background:rgba(239,68,68,.1);color:var(--danger);border:1px solid rgba(239,68,68,.3);}
-  .btn-danger:hover{background:rgba(239,68,68,.2);}
-  .btn-success{background:rgba(16,185,129,.15);color:var(--accent2);border:1px solid rgba(16,185,129,.3);}
-  .btn-success:hover{background:rgba(16,185,129,.25);}
-  .btn-purple{background:rgba(167,139,250,.15);color:#a78bfa;border:1px solid rgba(167,139,250,.3);}
-  .btn-purple:hover{background:rgba(167,139,250,.25);}
-  .btn-sm{padding:4px 9px;font-size:10px;}
+  /* ===== FORMS ===== */
+  label { display: block; font-size: 11px; font-weight: 600; color: var(--text-secondary); text-transform: uppercase; letter-spacing: .5px; margin-bottom: 5px; }
+  input[type="number"], input[type="text"], input[type="url"], select, textarea {
+    width: 100%; background: #fff; border: 1.5px solid var(--border); border-radius: 6px;
+    color: var(--text); font-family: var(--mf); font-size: 12px; padding: 8px 10px;
+    outline: none; transition: border .2s, box-shadow .2s;
+  }
+  textarea { resize: vertical; min-height: 56px; font-family: var(--bf); }
+  input:focus, select:focus, textarea:focus { border-color: var(--accent3); box-shadow: 0 0 0 3px rgba(26,95,191,.15); }
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
+  .form-group { margin-bottom: 12px; }
 
-  .result-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px;}
-  .result-box{background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:12px;text-align:center;}
-  .result-val{font-family:var(--mf);font-size:19px;font-weight:500;margin-bottom:3px;}
-  .result-label{font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;}
+  /* ===== APPLIANCE TABLE ===== */
+  .app-table { width: 100%; border-collapse: collapse; }
+  .app-table th { text-align: left; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .5px; color: var(--muted); padding: 8px 10px; border-bottom: 2px solid var(--border); background: var(--surface2); }
+  .app-table td { padding: 8px 10px; border-bottom: 1px solid var(--border); font-size: 13px; vertical-align: middle; }
+  .app-table td input { width: 72px; padding: 5px 7px; font-size: 12px; }
+  .app-table td select { width: 90px; padding: 5px 7px; font-size: 12px; }
+  .app-table tr:hover td { background: var(--surface2); }
+  .wh-cell { font-family: var(--mf); font-size: 13px; color: var(--accent); font-weight: 600; }
 
-  canvas{max-width:100%;}
-  .progress-bar{background:var(--bg);border-radius:4px;height:7px;overflow:hidden;margin-top:5px;}
-  .progress-fill{height:100%;border-radius:4px;transition:width .5s ease;}
+  /* ===== BUTTONS ===== */
+  .btn { padding: 8px 16px; border-radius: 6px; font-family: var(--bf); font-size: 12px; font-weight: 600; cursor: pointer; border: none; transition: all .2s; letter-spacing: .2px; }
+  .btn:focus { outline: 3px solid var(--accent3); outline-offset: 2px; }
+  .btn-primary { background: var(--accent3); color: #fff; }
+  .btn-primary:hover { background: #1449a0; }
+  .btn-secondary { background: var(--surface2); color: var(--text); border: 1.5px solid var(--border); }
+  .btn-secondary:hover { border-color: var(--accent3); color: var(--accent3); background: var(--accent3-bg); }
+  .btn-danger { background: var(--danger-bg); color: var(--danger); border: 1.5px solid #e07060; }
+  .btn-danger:hover { background: #fbd5d0; }
+  .btn-success { background: var(--accent2-bg); color: var(--accent2); border: 1.5px solid #3bb389; }
+  .btn-success:hover { background: #c8eed9; }
+  .btn-amber { background: var(--accent-bg); color: var(--accent); border: 1.5px solid #e8b84b; }
+  .btn-amber:hover { background: #fce9aa; }
+  .btn-purple { background: var(--purple-bg); color: var(--purple); border: 1.5px solid #a078d0; }
+  .btn-purple:hover { background: #e4d5f8; }
+  .btn-sm { padding: 5px 10px; font-size: 11px; }
 
-  .diagram-container{background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:14px;overflow-x:auto;}
-  svg text{font-family:var(--bf);}
+  /* ===== RESULTS GRID ===== */
+  .result-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 18px; }
+  .result-box { background: var(--surface2); border: 1.5px solid var(--border); border-radius: 8px; padding: 14px; text-align: center; }
+  .result-val { font-family: var(--mf); font-size: 20px; font-weight: 600; margin-bottom: 4px; }
+  .result-label { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: .5px; font-weight: 600; }
 
-  .alert{padding:9px 12px;border-radius:6px;font-size:12px;margin-bottom:9px;display:flex;align-items:flex-start;gap:8px;line-height:1.5;}
-  .alert-warn{background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.3);color:#fcd34d;}
-  .alert-ok{background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.3);color:#6ee7b7;}
-  .alert-info{background:rgba(59,130,246,.1);border:1px solid rgba(59,130,246,.3);color:#93c5fd;}
-  .alert-err{background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.3);color:#fca5a5;}
+  /* ===== CANVAS ===== */
+  canvas { max-width: 100%; }
+  .progress-bar { background: var(--surface2); border: 1px solid var(--border); border-radius: 4px; height: 9px; overflow: hidden; margin-top: 5px; }
+  .progress-fill { height: 100%; border-radius: 4px; transition: width .5s ease; }
 
-  .comp-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:9px;margin-bottom:10px;}
-  .comp-card{background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:11px;cursor:pointer;transition:all .2s;display:flex;flex-direction:column;gap:3px;}
-  .comp-card:hover{border-color:var(--accent);}
-  .comp-card.selected{border-color:var(--accent);background:rgba(245,158,11,.05);}
-  .comp-card.user-card{border-color:rgba(167,139,250,.35);}
-  .comp-card.user-card:hover{border-color:#a78bfa;}
-  .comp-card.user-card.selected{border-color:#a78bfa;background:rgba(167,139,250,.05);}
-  .comp-card-header{display:flex;justify-content:space-between;align-items:flex-start;gap:6px;}
-  .comp-name{font-size:12px;font-weight:600;line-height:1.3;flex:1;}
-  .comp-spec{font-family:var(--mf);font-size:10px;color:var(--muted);line-height:1.4;}
-  .comp-price{font-family:var(--mf);font-size:11px;color:var(--accent2);white-space:nowrap;flex-shrink:0;}
-  .comp-footer{margin-top:5px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:4px;}
-  .comp-link{font-size:10px;color:var(--accent3);text-decoration:none;display:inline-flex;align-items:center;gap:2px;}
-  .comp-link:hover{color:#60a5fa;}
+  /* ===== DIAGRAM ===== */
+  .diagram-container { background: var(--surface2); border: 1.5px solid var(--border); border-radius: var(--radius); padding: 14px; overflow-x: auto; }
+  svg text { font-family: var(--bf); }
 
-  .add-product-form{background:rgba(167,139,250,.05);border:1px dashed rgba(167,139,250,.3);border-radius:8px;padding:14px;margin:10px 0;}
-  .add-product-form .form-title{font-size:11px;font-weight:600;color:#a78bfa;text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px;}
+  /* ===== ALERTS ===== */
+  .alert { padding: 10px 14px; border-radius: 7px; font-size: 13px; margin-bottom: 10px; display: flex; align-items: flex-start; gap: 9px; line-height: 1.5; border-left: 4px solid; }
+  .alert-warn { background: var(--accent-bg); border-color: var(--accent); color: #7a4f00; }
+  .alert-ok   { background: var(--accent2-bg); border-color: var(--accent2); color: #064d34; }
+  .alert-info { background: var(--accent3-bg); border-color: var(--accent3); color: #0f3672; }
+  .alert-err  { background: var(--danger-bg); border-color: var(--danger); color: #7a1c12; }
 
-  .wire-step{display:flex;gap:12px;margin-bottom:12px;align-items:flex-start;}
-  .wire-num{width:24px;height:24px;background:var(--accent);color:#000;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:11px;flex-shrink:0;}
-  .wire-content h4{font-size:12px;font-weight:600;margin-bottom:2px;color:#fff;}
-  .wire-content p{font-size:11px;color:var(--muted);line-height:1.5;}
+  /* ===== COMPONENT CARDS ===== */
+  .comp-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 10px; }
+  .comp-card { background: #fff; border: 1.5px solid var(--border); border-radius: 8px; padding: 12px; cursor: pointer; transition: all .2s; display: flex; flex-direction: column; gap: 4px; box-shadow: var(--shadow); }
+  .comp-card:hover { border-color: var(--accent3); box-shadow: 0 2px 8px rgba(26,95,191,.12); }
+  .comp-card:focus { outline: 3px solid var(--accent3); outline-offset: 2px; }
+  .comp-card.selected { border-color: var(--accent3); background: var(--accent3-bg); box-shadow: 0 0 0 3px rgba(26,95,191,.15); }
+  .comp-card.user-card { border-color: #b090d8; }
+  .comp-card.user-card:hover { border-color: var(--purple); }
+  .comp-card.user-card.selected { border-color: var(--purple); background: var(--purple-bg); box-shadow: 0 0 0 3px rgba(107,63,160,.15); }
+  .comp-card-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 6px; }
+  .comp-name { font-size: 12px; font-weight: 700; line-height: 1.3; flex: 1; color: var(--text); }
+  .comp-spec { font-family: var(--mf); font-size: 10px; color: var(--muted); line-height: 1.5; }
+  .comp-price { font-family: var(--mf); font-size: 12px; color: var(--accent2); white-space: nowrap; flex-shrink: 0; font-weight: 600; }
+  .comp-footer { margin-top: 6px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 4px; }
+  .comp-link { font-size: 11px; color: var(--accent3); text-decoration: none; font-weight: 600; }
+  .comp-link:hover, .comp-link:focus { text-decoration: underline; }
 
-  .spec-table{width:100%;border-collapse:collapse;font-size:12px;}
-  .spec-table tr{border-bottom:1px solid var(--border);}
-  .spec-table td{padding:6px 10px;}
-  .spec-table td:first-child{color:var(--muted);width:55%;}
-  .spec-table td:last-child{font-family:var(--mf);color:var(--text);}
+  /* ===== CUSTOM PRODUCT FORM ===== */
+  .add-product-form { background: var(--purple-bg); border: 1.5px dashed #b090d8; border-radius: 8px; padding: 16px; margin: 10px 0; }
+  .add-product-form .form-title { font-size: 12px; font-weight: 700; color: var(--purple); text-transform: uppercase; letter-spacing: .5px; margin-bottom: 12px; }
 
-  .fix-note{font-size:10px;color:var(--muted);font-style:italic;margin-top:2px;}
+  /* ===== WIRING ===== */
+  .wire-step { display: flex; gap: 13px; margin-bottom: 14px; align-items: flex-start; }
+  .wire-num { width: 28px; height: 28px; background: var(--accent3); color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 12px; flex-shrink: 0; }
+  .wire-content h4 { font-size: 13px; font-weight: 700; margin-bottom: 3px; color: var(--text); }
+  .wire-content p { font-size: 12px; color: var(--text-secondary); line-height: 1.6; }
 
-  .divider{height:1px;background:var(--border);margin:14px 0;}
-  .section-title{font-family:var(--hf);font-size:19px;letter-spacing:1.5px;color:#fff;margin-bottom:4px;}
-  .section-sub{font-size:11px;color:var(--muted);margin-bottom:18px;line-height:1.5;}
+  /* ===== SPEC TABLE ===== */
+  .spec-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .spec-table tr { border-bottom: 1px solid var(--border); }
+  .spec-table tr:last-child { border-bottom: none; }
+  .spec-table td { padding: 8px 10px; }
+  .spec-table td:first-child { color: var(--muted); width: 55%; font-weight: 500; }
+  .spec-table td:last-child { font-family: var(--mf); color: var(--text); font-weight: 500; }
+  .fix-note { font-size: 11px; color: var(--muted); font-style: italic; margin-top: 8px; line-height: 1.5; }
 
-  .saved-row{display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--bg);border:1px solid var(--border);border-radius:8px;margin-bottom:8px;transition:border .2s;}
-  .saved-row:hover{border-color:rgba(245,158,11,.4);}
-  .saved-row.is-demo{border-color:rgba(167,139,250,.35);}
-  .ss-info{flex:1;min-width:0;}
-  .ss-name{font-size:13px;font-weight:600;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-  .ss-meta{font-family:var(--mf);font-size:10px;color:var(--muted);margin-top:2px;}
-  .ss-actions{display:flex;gap:6px;flex-shrink:0;}
-  .cmp-chk{width:15px;height:15px;accent-color:var(--accent);cursor:pointer;flex-shrink:0;}
+  .divider { height: 1px; background: var(--border); margin: 16px 0; }
 
-  .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.78);z-index:1000;display:flex;align-items:flex-start;justify-content:center;padding:20px;overflow-y:auto;}
-  .modal-overlay.hidden{display:none;}
-  .modal{background:var(--surface);border:1px solid var(--border);border-radius:12px;width:100%;margin:auto;overflow:hidden;}
-  .modal-header{padding:18px 22px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
-  .modal-header h2{font-family:var(--hf);font-size:22px;letter-spacing:1.5px;color:#fff;}
-  .modal-body{padding:22px;overflow-x:auto;}
-  .modal-close{background:none;border:none;color:var(--muted);font-size:18px;cursor:pointer;}
-  .modal-close:hover{color:#fff;}
-  .save-modal{max-width:400px;}
-  .save-modal .save-modal-body{padding:22px;}
-  .save-modal h3{font-family:var(--hf);font-size:20px;letter-spacing:1px;color:#fff;margin-bottom:14px;}
-  .compare-modal{max-width:1100px;}
+  /* ===== SAVED SYSTEMS ===== */
+  .saved-row { display: flex; align-items: center; gap: 10px; padding: 12px 14px; background: #fff; border: 1.5px solid var(--border); border-radius: 8px; margin-bottom: 9px; transition: border .2s; box-shadow: var(--shadow); }
+  .saved-row:hover { border-color: var(--accent3); }
+  .saved-row.is-demo { border-color: #b090d8; background: var(--purple-bg); }
+  .ss-info { flex: 1; min-width: 0; }
+  .ss-name { font-size: 14px; font-weight: 700; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .ss-meta { font-family: var(--mf); font-size: 11px; color: var(--muted); margin-top: 3px; }
+  .ss-actions { display: flex; gap: 6px; flex-shrink: 0; }
+  .cmp-chk { width: 16px; height: 16px; accent-color: var(--accent3); cursor: pointer; flex-shrink: 0; }
 
-  .cmp-table{width:100%;border-collapse:collapse;font-size:12px;min-width:480px;}
-  .cmp-table th{padding:10px 12px;text-align:left;background:var(--bg);font-family:var(--mf);font-size:10px;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);border-bottom:2px solid var(--border);}
-  .cmp-table th.scol{color:var(--accent);}
-  .cmp-table td{padding:9px 12px;border-bottom:1px solid var(--border);vertical-align:middle;}
-  .cmp-table td:first-child{color:var(--muted);font-size:11px;font-weight:500;white-space:nowrap;}
-  .cmp-table .val{font-family:var(--mf);font-weight:500;}
-  .cmp-table .winner{background:rgba(16,185,129,.07);}
-  .cmp-table tr:hover td{background:rgba(255,255,255,.015);}
-  .cmp-table .sec-row td{background:var(--bg);color:var(--accent);font-size:10px;text-transform:uppercase;letter-spacing:.5px;padding:5px 12px;font-weight:700;border-bottom:1px solid var(--border);}
+  /* ===== MODALS ===== */
+  .modal-overlay { position: fixed; inset: 0; background: rgba(10,20,40,.65); z-index: 1000; display: flex; align-items: flex-start; justify-content: center; padding: 24px; overflow-y: auto; }
+  .modal-overlay.hidden { display: none; }
+  .modal { background: #fff; border: 1.5px solid var(--border); border-radius: 14px; width: 100%; margin: auto; overflow: hidden; box-shadow: 0 20px 60px rgba(0,0,0,.2); }
+  .modal-header { padding: 18px 22px; border-bottom: 1.5px solid var(--border); display: flex; align-items: center; justify-content: space-between; background: var(--surface2); }
+  .modal-header h2 { font-family: var(--hf); font-size: 22px; letter-spacing: 1.5px; color: var(--text); }
+  .modal-body { padding: 22px; overflow-x: auto; }
+  .modal-close { background: none; border: 1.5px solid var(--border); color: var(--muted); font-size: 16px; cursor: pointer; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+  .modal-close:hover { background: var(--danger-bg); color: var(--danger); border-color: var(--danger); }
+  .modal-close:focus { outline: 3px solid var(--accent3); }
+  .save-modal { max-width: 420px; }
+  .save-modal .save-modal-body { padding: 22px; }
+  .save-modal h3 { font-family: var(--hf); font-size: 20px; letter-spacing: 1px; color: var(--text); margin-bottom: 16px; }
+  .compare-modal { max-width: 1100px; }
 
-  ::-webkit-scrollbar{width:5px;}
-  ::-webkit-scrollbar-track{background:var(--bg);}
-  ::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px;}
+  /* ===== COMPARE TABLE ===== */
+  .cmp-table { width: 100%; border-collapse: collapse; font-size: 13px; min-width: 480px; }
+  .cmp-table th { padding: 10px 12px; text-align: left; background: var(--surface2); font-family: var(--mf); font-size: 10px; text-transform: uppercase; letter-spacing: .5px; color: var(--muted); border-bottom: 2px solid var(--border); font-weight: 700; }
+  .cmp-table th.scol { color: var(--accent3); }
+  .cmp-table td { padding: 9px 12px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+  .cmp-table td:first-child { color: var(--muted); font-size: 12px; font-weight: 600; white-space: nowrap; }
+  .cmp-table .val { font-family: var(--mf); font-weight: 600; }
+  .cmp-table .winner { background: var(--accent2-bg); }
+  .cmp-table tr:hover td { background: var(--surface2); }
+  .cmp-table .sec-row td { background: var(--accent3-bg); color: var(--accent3); font-size: 10px; text-transform: uppercase; letter-spacing: .5px; padding: 5px 12px; font-weight: 700; border-bottom: 1.5px solid var(--border); }
 
-  @media(max-width:900px){
-    .main{grid-template-columns:1fr;}
-    .sidebar{border-left:none;border-top:1px solid var(--border);}
-    .result-grid{grid-template-columns:repeat(2,1fr);}
-    .header-stats{display:none;}
-    .comp-grid{grid-template-columns:1fr;}
+  /* ===== SIDEBAR ===== */
+  .sb-title { font-family: var(--hf); font-size: 16px; letter-spacing: 1px; color: var(--text); margin-bottom: 2px; }
+  .sb-sub { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: .5px; }
+  .sb-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+  .sb-key { font-size: 11px; color: var(--muted); font-weight: 600; }
+  .sb-val { font-family: var(--mf); font-size: 12px; font-weight: 600; }
+
+  /* ===== SCROLLBAR ===== */
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: var(--surface2); }
+  ::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--muted); }
+
+  /* ===== RESPONSIVE ===== */
+  @media (max-width: 900px) {
+    .main { grid-template-columns: 1fr; }
+    .sidebar { border-left: none; border-top: 2px solid var(--border); }
+    .result-grid { grid-template-columns: repeat(2, 1fr); }
+    .header-stats { display: none; }
+    .comp-grid { grid-template-columns: 1fr; }
+    .form-row { grid-template-columns: 1fr; }
+  }
+
+  /* High contrast / focus ring enhancements */
+  @media (forced-colors: active) {
+    .btn, .tab, .comp-card { border: 2px solid ButtonText; }
+    .alert { border: 2px solid ButtonText; }
   }
 </style>
 </head>
 <body>
 
+<a href="#main-content" class="skip-link">Skip to main content</a>
+
 <!-- SAVE MODAL -->
-<div class="modal-overlay hidden" id="save-overlay">
+<div class="modal-overlay hidden" id="save-overlay" role="dialog" aria-modal="true" aria-labelledby="save-modal-title">
   <div class="modal save-modal">
     <div class="save-modal-body">
-      <h3>💾 SAVE SYSTEM</h3>
-      <div class="form-group"><label>System Name *</label><input type="text" id="save-name" placeholder="e.g. Weekend Camper Build"></div>
-      <div class="form-group"><label>Notes (optional)</label><textarea id="save-notes" placeholder="Any notes about this build..."></textarea></div>
+      <h3 id="save-modal-title">💾 Save System</h3>
+      <div class="form-group"><label for="save-name">System Name *</label><input type="text" id="save-name" placeholder="e.g. Weekend Camper Build" autocomplete="off"></div>
+      <div class="form-group"><label for="save-notes">Notes (optional)</label><textarea id="save-notes" placeholder="Any notes about this build..."></textarea></div>
       <div style="display:flex;gap:8px;margin-top:4px;">
         <button class="btn btn-primary" onclick="confirmSave()">Save System</button>
         <button class="btn btn-secondary" onclick="closeSaveModal()">Cancel</button>
@@ -190,367 +268,411 @@
 </div>
 
 <!-- COMPARE MODAL -->
-<div class="modal-overlay hidden" id="compare-overlay">
+<div class="modal-overlay hidden" id="compare-overlay" role="dialog" aria-modal="true" aria-labelledby="cmp-title">
   <div class="modal compare-modal">
     <div class="modal-header">
-      <h2>⚖️ SYSTEM COMPARISON</h2>
-      <button class="modal-close" onclick="closeCompareModal()">✕</button>
+      <h2 id="cmp-title">⚖️ System Comparison</h2>
+      <button class="modal-close" onclick="closeCompareModal()" aria-label="Close comparison">✕</button>
     </div>
     <div class="modal-body" id="compare-body"></div>
   </div>
 </div>
 
-<header>
+<!-- HEADER -->
+<header role="banner">
   <div class="logo">
-    <div class="logo-icon">⚡</div>
-    <div><h1>RV POWER DESIGNER</h1><p>System Sizing & Build Planner</p></div>
+    <div class="logo-icon" aria-hidden="true">⚡</div>
+    <div>
+      <h1>RV Power Designer</h1>
+      <p>System Sizing &amp; Build Planner</p>
+    </div>
   </div>
   <div class="header-right">
-    <div class="header-stats">
+    <div class="header-stats" aria-live="polite" aria-label="Live system summary">
       <div class="hstat"><div class="hstat-val" id="hdr-load">0 Wh</div><div class="hstat-label">Daily Load</div></div>
-      <div class="hstat"><div class="hstat-val" id="hdr-battery">0 Ah</div><div class="hstat-label">Battery Req.</div></div>
-      <div class="hstat"><div class="hstat-val" id="hdr-solar">0 W</div><div class="hstat-label">Solar Req.</div></div>
+      <div class="hstat"><div class="hstat-val" id="hdr-battery">0 Ah</div><div class="hstat-label">Battery</div></div>
+      <div class="hstat"><div class="hstat-val" id="hdr-solar">0 W</div><div class="hstat-label">Solar</div></div>
     </div>
-    <button class="btn btn-success btn-sm" onclick="openSaveModal()">💾 Save System</button>
+    <div class="header-links">
+      <a href="rv-power-designer-help.html" target="_blank" class="help-link" aria-label="Open help guide in new tab">❓ Help</a>
+      <button class="btn btn-success btn-sm" onclick="openSaveModal()">💾 Save</button>
+    </div>
   </div>
 </header>
 
-<div class="tabs">
-  <button class="tab active" onclick="showTab('loads',event)">⚡ Loads</button>
-  <button class="tab" onclick="showTab('sizing',event)">📐 Sizing</button>
-  <button class="tab" onclick="showTab('components',event)">🔧 Components</button>
-  <button class="tab" onclick="showTab('wiring',event)">🔌 Wiring</button>
-  <button class="tab" onclick="showTab('diagram',event)">📊 Diagram</button>
-  <button class="tab" onclick="showTab('saved',event)">📁 Saved Systems</button>
-  <button class="tab" onclick="showTab('education',event)">📚 Learn</button>
-</div>
+<!-- TABS -->
+<nav class="tabs" role="tablist" aria-label="Application sections">
+  <button class="tab active" role="tab" aria-selected="true"  aria-controls="tab-loads"     onclick="showTab('loads',event)">⚡ Loads</button>
+  <button class="tab"        role="tab" aria-selected="false" aria-controls="tab-sizing"    onclick="showTab('sizing',event)">📐 Sizing</button>
+  <button class="tab"        role="tab" aria-selected="false" aria-controls="tab-components" onclick="showTab('components',event)">🔧 Components</button>
+  <button class="tab"        role="tab" aria-selected="false" aria-controls="tab-wiring"    onclick="showTab('wiring',event)">🔌 Wiring</button>
+  <button class="tab"        role="tab" aria-selected="false" aria-controls="tab-diagram"   onclick="showTab('diagram',event)">📊 Diagram</button>
+  <button class="tab"        role="tab" aria-selected="false" aria-controls="tab-saved"     onclick="showTab('saved',event)">📁 Saved</button>
+  <button class="tab"        role="tab" aria-selected="false" aria-controls="tab-education" onclick="showTab('education',event)">📚 Learn</button>
+</nav>
 
-<div class="main">
-  <div class="content">
+<div class="main" id="main-content">
+<div class="content">
 
-    <!-- LOADS -->
-    <div id="tab-loads" class="section active">
-      <div class="section-title">APPLIANCE LOAD CALCULATOR</div>
-      <div class="section-sub">Add every appliance to calculate daily power consumption. Be realistic — include everything you run.</div>
-      <div class="card">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:8px;">
-          <div class="card-title" style="margin:0">Your Appliances</div>
-          <div style="display:flex;gap:6px;flex-wrap:wrap;">
-            <button class="btn btn-secondary btn-sm" onclick="loadPreset('basic')">Basic Preset</button>
-            <button class="btn btn-secondary btn-sm" onclick="loadPreset('full')">Full RV Preset</button>
-          </div>
-        </div>
-        <div style="overflow-x:auto;">
-          <table class="app-table">
-            <thead><tr><th>Appliance</th><th>Watts</th><th>Hrs/Day</th><th>Type</th><th>Wh/Day</th><th></th></tr></thead>
-            <tbody id="appliance-tbody"></tbody>
-          </table>
-        </div>
-        <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap;">
-          <button class="btn btn-primary" onclick="addAppliance()">+ Add Appliance</button>
-          <button class="btn btn-secondary" onclick="clearAll()">Clear All</button>
+  <!-- ===== LOADS ===== -->
+  <div id="tab-loads" class="section active" role="tabpanel" aria-labelledby="tab-loads-btn">
+    <div class="section-title">Appliance Load Calculator</div>
+    <div class="section-sub">Add every appliance you plan to run to calculate daily power consumption. Include realistic daily usage hours.</div>
+    <div class="card">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:8px;">
+        <div class="card-title" style="margin:0">Your Appliances</div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap;">
+          <button class="btn btn-secondary btn-sm" onclick="loadPreset('basic')">Basic Preset</button>
+          <button class="btn btn-secondary btn-sm" onclick="loadPreset('full')">Full RV Preset</button>
         </div>
       </div>
-      <div class="card">
-        <div class="card-title">System Preferences</div>
-        <div class="form-row">
-          <div class="form-group"><label>System Voltage</label><select id="sys-voltage" onchange="recalc()"><option value="12">12V (Most RVs)</option><option value="24">24V (Larger)</option><option value="48">48V (High Power)</option></select></div>
-          <div class="form-group"><label>Days of Autonomy (no sun)</label><input type="number" id="autonomy" value="2" min="1" max="10" onchange="recalc()"></div>
-          <div class="form-group"><label>Battery Type</label><select id="battery-type" onchange="recalc()"><option value="0.5">Lead-Acid / AGM (50% DoD)</option><option value="0.8" selected>LiFePO4 (80% DoD)</option><option value="0.9">Premium LiFePO4 (90% DoD)</option></select></div>
-          <div class="form-group"><label>Peak Sun Hours / Day</label><input type="number" id="peak-sun" value="5" min="1" max="10" step="0.5" onchange="recalc()"></div>
-          <div class="form-group">
-            <label>System Derate Factor</label>
-            <select id="sol-eff" onchange="recalc()">
-              <option value="0.75">Conservative (75%) — shading, heat, old wiring</option>
-              <option value="0.80" selected>Standard (80%) — typical well-maintained system</option>
-              <option value="0.85">Optimistic (85%) — ideal conditions, new components</option>
-            </select>
-          </div>
-          <div class="form-group"><label>Inverter Efficiency</label><select id="inv-eff" onchange="recalc()"><option value="0.85">Budget (85%)</option><option value="0.90" selected>Standard (90%)</option><option value="0.95">Premium (95%)</option></select></div>
-        </div>
-      </div>
-    </div>
-
-    <!-- SIZING -->
-    <div id="tab-sizing" class="section">
-      <div class="section-title">SYSTEM SIZING RESULTS</div>
-      <div class="section-sub">Minimum system requirements based on your loads and preferences. These are starting points — always verify with a qualified installer.</div>
-      <div id="sizing-alerts"></div>
-      <div class="result-grid">
-        <div class="result-box"><div class="result-val" id="res-daily" style="color:var(--accent)">0</div><div class="result-label">Wh / Day</div></div>
-        <div class="result-box"><div class="result-val" id="res-peak" style="color:var(--danger)">0</div><div class="result-label">Peak Watts</div></div>
-        <div class="result-box"><div class="result-val" id="res-battery" style="color:var(--accent2)">0</div><div class="result-label">Ah Battery</div></div>
-        <div class="result-box"><div class="result-val" id="res-solar" style="color:var(--accent3)">0</div><div class="result-label">Watts Solar</div></div>
-        <div class="result-box"><div class="result-val" id="res-inverter" style="color:#a78bfa">0</div><div class="result-label">Inverter (cont.) VA</div></div>
-        <div class="result-box"><div class="result-val" id="res-charge" style="color:#fb923c">0</div><div class="result-label">Controller (out) A</div></div>
-      </div>
-
-      <div class="card">
-        <div class="card-title">Battery Bank</div>
-        <table class="spec-table">
-          <tr><td>Total Storage Required</td><td id="det-wh">—</td></tr>
-          <tr><td>System Voltage</td><td id="det-volt">—</td></tr>
-          <tr><td>Minimum Ah Capacity</td><td id="det-ah">—</td></tr>
-          <tr><td>Recommended Ah (with 20% buffer)</td><td id="det-ah-rec">—</td></tr>
-          <tr><td>Usable at Chosen DoD</td><td id="det-usable">—</td></tr>
-          <tr><td>Estimated Run Time</td><td id="det-runtime">—</td></tr>
-        </table>
-      </div>
-
-      <div class="card">
-        <div class="card-title">Solar Array</div>
-        <table class="spec-table">
-          <tr><td>Required Array Output</td><td id="sol-req">—</td></tr>
-          <tr><td>Panel Configuration</td><td id="sol-config">—</td></tr>
-          <tr><td>Panels @ 200W ea.</td><td id="sol-panels">—</td></tr>
-          <tr><td>Panels @ 400W ea.</td><td id="sol-panels2">—</td></tr>
-          <tr><td>Roof Area Needed (est.)</td><td id="sol-area">—</td></tr>
-        </table>
-        <div class="fix-note" style="margin-top:8px;">† Derate factor accounts for temperature loss, wiring resistance, soiling, and MPPT inefficiency — not panel nameplate efficiency.</div>
-      </div>
-
-      <div class="card">
-        <div class="card-title">Charge Controller</div>
-        <table class="spec-table">
-          <tr><td>Recommended Type</td><td>MPPT</td></tr>
-          <tr><td>Min. Output (Charge) Current</td><td id="cc-amps">—</td></tr>
-          <tr><td>Suggested Controller Size</td><td id="cc-size">—</td></tr>
-          <tr><td>Typical PV Input Voltage Rating</td><td id="cc-maxpv">—</td></tr>
-          <tr><td>Battery-Side Wire Gauge</td><td id="cc-wire">—</td></tr>
-        </table>
-        <div class="fix-note" style="margin-top:8px;">† Controller amps = battery charge output current (solar W ÷ system V). PV input voltage rating is a fixed controller spec — verify your panel string Voc does not exceed the controller's rated PV input.</div>
-      </div>
-
-      <div class="card">
-        <div class="card-title">Inverter</div>
-        <table class="spec-table">
-          <tr><td>Continuous Rating Needed</td><td id="inv-cont">—</td></tr>
-          <tr><td>Surge / Peak Rating Needed</td><td id="inv-surge">—</td></tr>
-          <tr><td>Recommended Inverter Size</td><td id="inv-rec">—</td></tr>
-        </table>
-        <div class="fix-note" style="margin-top:8px;">⚠️ Motors (AC, fridge compressor, pump) draw 2–3× their running watts at startup. Size inverter surge rating to handle the largest motor load's startup current, not just continuous watts.</div>
-      </div>
-
-      <div class="card">
-        <div class="card-title">Shore Power / Generator</div>
-        <table class="spec-table">
-          <tr><td>Min Generator Size</td><td id="gen-size">—</td></tr>
-          <tr><td>Shore Power (120V)</td><td id="shore-amps">—</td></tr>
-          <tr><td>Shore Power (240V)</td><td id="shore-amps2">—</td></tr>
-        </table>
-        <div class="fix-note" style="margin-top:8px;">† Shore/generator amps shown are based on peak load. Average draw will be lower. Run generators at 50–80% capacity for efficiency and longevity.</div>
-      </div>
-    </div>
-
-    <!-- COMPONENTS -->
-    <div id="tab-components" class="section">
-      <div class="section-title">COMPONENT SELECTOR</div>
-      <div class="section-sub">Select components for your shopping list. Hide options you don't want. Add custom products with a link from any retailer.</div>
-
-      <div class="card">
-        <div class="card-title">🔋 Battery Options <span class="badge badge-green">Select One</span></div>
-        <div class="comp-grid" id="battery-options"></div>
-        <div id="restore-battery"></div>
-        <div id="add-battery-form" style="display:none"></div>
-        <button class="btn btn-purple btn-sm" onclick="toggleAddForm('battery')">+ Add Custom Battery</button>
-      </div>
-
-      <div class="card">
-        <div class="card-title">☀️ Solar Panels <span class="badge badge-amber">Select One</span></div>
-        <div class="comp-grid" id="solar-options"></div>
-        <div id="restore-solar"></div>
-        <div id="add-solar-form" style="display:none"></div>
-        <button class="btn btn-purple btn-sm" onclick="toggleAddForm('solar')">+ Add Custom Panel</button>
-      </div>
-
-      <div class="card">
-        <div class="card-title">⚙️ Charge Controller <span class="badge badge-blue">Select One</span></div>
-        <div class="comp-grid" id="cc-options"></div>
-        <div id="restore-cc"></div>
-        <div id="add-cc-form" style="display:none"></div>
-        <button class="btn btn-purple btn-sm" onclick="toggleAddForm('cc')">+ Add Custom Controller</button>
-      </div>
-
-      <div class="card">
-        <div class="card-title">🔄 Inverter / Inverter-Charger <span class="badge badge-blue">Select One</span></div>
-        <div class="comp-grid" id="inv-options"></div>
-        <div id="restore-inv"></div>
-        <div id="add-inv-form" style="display:none"></div>
-        <button class="btn btn-purple btn-sm" onclick="toggleAddForm('inv')">+ Add Custom Inverter</button>
-      </div>
-
-      <div class="card">
-        <div class="card-title">📋 Shopping List</div>
-        <div id="shopping-list"><div class="alert alert-info">ℹ️ Select components above to generate your shopping list.</div></div>
-      </div>
-    </div>
-
-    <!-- WIRING -->
-    <div id="tab-wiring" class="section">
-      <div class="section-title">WIRING GUIDE</div>
-      <div class="section-sub">Step-by-step installation guidance. Consult a licensed electrician for all AC wiring.</div>
-
-      <div class="card">
-        <div class="card-title">Wire Sizing Reference</div>
-        <table class="spec-table">
+      <div style="overflow-x:auto;">
+        <table class="app-table" aria-label="Appliances list">
           <thead><tr>
-            <th style="color:var(--muted);padding:6px 10px;font-size:9px;text-transform:uppercase;letter-spacing:.5px">Amps</th>
-            <th style="color:var(--muted);padding:6px 10px;font-size:9px;text-transform:uppercase;letter-spacing:.5px">AWG</th>
-            <th style="color:var(--muted);padding:6px 10px;font-size:9px;text-transform:uppercase;letter-spacing:.5px">One-way Max (12V, 3% drop)</th>
-            <th style="color:var(--muted);padding:6px 10px;font-size:9px;text-transform:uppercase;letter-spacing:.5px">Use Case</th>
+            <th scope="col">Appliance</th>
+            <th scope="col">Watts</th>
+            <th scope="col">Hrs/Day</th>
+            <th scope="col">Type</th>
+            <th scope="col">Wh/Day</th>
+            <th scope="col"><span class="visually-hidden">Actions</span></th>
           </tr></thead>
-          <tbody>
-            <tr><td>Up to 10A</td><td>14 AWG</td><td>~7 ft</td><td>Lighting, small DC loads</td></tr>
-            <tr><td>Up to 15A</td><td>12 AWG</td><td>~8 ft</td><td>General DC circuits</td></tr>
-            <tr><td>Up to 20A</td><td>10 AWG</td><td>~8 ft</td><td>Moderate DC, AC branch circuits</td></tr>
-            <tr><td>Up to 40A</td><td>8 AWG</td><td>~5 ft</td><td>Charge controllers (small)</td></tr>
-            <tr><td>Up to 60A</td><td>6 AWG</td><td>~5 ft</td><td>MPPT controllers, small inverters</td></tr>
-            <tr><td>Up to 100A</td><td>4 AWG</td><td>~4 ft</td><td>Large inverters, battery mains</td></tr>
-            <tr><td>Up to 150A</td><td>2/0 AWG</td><td>~3 ft</td><td>High-current battery cables</td></tr>
-            <tr><td>200A+</td><td>4/0 AWG</td><td>~2 ft</td><td>Main battery bank cables</td></tr>
-          </tbody>
+          <tbody id="appliance-tbody"></tbody>
         </table>
-        <div class="fix-note" style="margin-top:8px;">⚠️ Distances above are one-way runs for 12V DC systems at 3% voltage drop. Round-trip = double the wire length. For 24V systems distances roughly double. Always use the next larger gauge if in doubt. These are guidance only — use a voltage drop calculator for your exact run.</div>
       </div>
-
-      <div class="card"><div class="card-title">Installation Sequence</div><div id="wiring-steps"></div></div>
-
-      <div class="card">
-        <div class="card-title">⚠️ Safety Rules</div>
-        <div class="alert alert-err">🚫 NEVER connect solar directly to batteries without a charge controller.</div>
-        <div class="alert alert-err">🚫 NEVER work on live circuits — disconnect battery negative first.</div>
-        <div class="alert alert-warn">⚡ Fuse every positive wire within 18" of the battery terminal.</div>
-        <div class="alert alert-warn">🔥 Use tinned marine-grade stranded copper wire throughout.</div>
-        <div class="alert alert-info">✅ Torque all battery terminals to manufacturer spec.</div>
-        <div class="alert alert-info">✅ Label wires: RED=+, BLACK=−, WHITE=AC neutral, GREEN=AC ground.</div>
+      <div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap;">
+        <button class="btn btn-primary" onclick="addAppliance()">+ Add Appliance</button>
+        <button class="btn btn-secondary" onclick="clearAll()">Clear All</button>
       </div>
     </div>
 
-    <!-- DIAGRAM -->
-    <div id="tab-diagram" class="section">
-      <div class="section-title">SYSTEM DIAGRAM</div>
-      <div class="section-sub">Visual overview of your RV power system. Values update live as you change your loads.</div>
-      <div class="diagram-container"><svg id="system-svg" width="660" height="450" style="display:block;margin:auto;"></svg></div>
-      <div class="card" style="margin-top:12px">
-        <div class="card-title">Power Flow Legend</div>
-        <div style="display:flex;gap:18px;flex-wrap:wrap;font-size:11px;color:var(--muted);">
-          <div><span style="color:var(--accent)">━━</span> DC Power</div>
-          <div><span style="color:var(--accent3)">━━</span> AC Power</div>
-          <div><span style="color:var(--accent2)">━━</span> Solar Input</div>
-          <div><span style="color:#a78bfa">━━</span> Shore/Gen</div>
+    <!-- SYSTEM PREFERENCES -->
+    <div class="card">
+      <div class="card-title">⚙️ System Preferences</div>
+      <div class="form-row">
+        <div class="form-group">
+          <label for="sys-voltage">System Voltage</label>
+          <select id="sys-voltage" onchange="onVoltageChange()">
+            <option value="12" selected>12V — Most RVs, vans, small campers</option>
+            <option value="24">24V — Larger RVs, sailboats, medium systems</option>
+            <option value="48">48V — Large systems, high-power, efficiency</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="ac-voltage">AC Mains Voltage</label>
+          <select id="ac-voltage" onchange="recalc()">
+            <option value="240" selected>240V — Australia / UK / Europe</option>
+            <option value="120">120V — North America / Japan</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="autonomy">Days of Autonomy (no sun)</label>
+          <input type="number" id="autonomy" value="2" min="1" max="10" onchange="recalc()" aria-describedby="autonomy-hint">
+          <div id="autonomy-hint" class="fix-note">Number of cloudy/rainy days battery bank must cover without solar charging.</div>
+        </div>
+        <div class="form-group">
+          <label for="battery-type">Battery Chemistry / DoD</label>
+          <select id="battery-type" onchange="recalc()">
+            <option value="0.5">Lead-Acid / AGM — 50% DoD</option>
+            <option value="0.8" selected>LiFePO4 — 80% DoD (recommended)</option>
+            <option value="0.9">Premium LiFePO4 — 90% DoD</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="peak-sun">Peak Sun Hours / Day</label>
+          <input type="number" id="peak-sun" value="5" min="1" max="10" step="0.5" onchange="recalc()" aria-describedby="sun-hint">
+          <div id="sun-hint" class="fix-note">Typical values: Desert SW 6–7 hrs, SE Australia 5–6 hrs, UK/NW Europe 2–4 hrs.</div>
+        </div>
+        <div class="form-group">
+          <label for="sol-eff">System Derate Factor</label>
+          <select id="sol-eff" onchange="recalc()">
+            <option value="0.75">Conservative 75% — shading, heat, older wiring</option>
+            <option value="0.80" selected>Standard 80% — typical well-maintained system</option>
+            <option value="0.85">Optimistic 85% — ideal conditions, new components</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="inv-eff">Inverter Efficiency</label>
+          <select id="inv-eff" onchange="recalc()">
+            <option value="0.85">Budget 85%</option>
+            <option value="0.90" selected>Standard 90%</option>
+            <option value="0.95">Premium 95%</option>
+          </select>
         </div>
       </div>
-    </div>
-
-    <!-- SAVED SYSTEMS -->
-    <div id="tab-saved" class="section">
-      <div class="section-title">SAVED SYSTEMS</div>
-      <div class="section-sub">Save your current build, load a previous design, or compare systems side-by-side.</div>
-      <div class="card">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:8px;">
-          <div class="card-title" style="margin:0">Your Saved Systems</div>
-          <div style="display:flex;gap:8px;align-items:center;">
-            <span id="cmp-label" style="font-size:11px;color:var(--muted)"></span>
-            <button class="btn btn-purple btn-sm" id="cmp-btn" onclick="openCompareModal()" style="display:none">⚖️ Compare</button>
-            <button class="btn btn-success btn-sm" onclick="openSaveModal()">💾 Save Current</button>
-          </div>
-        </div>
-        <div id="saved-list"></div>
-      </div>
-    </div>
-
-    <!-- EDUCATION -->
-    <div id="tab-education" class="section">
-      <div class="section-title">LEARN THE BASICS</div>
-      <div class="section-sub">RV electrical fundamentals from first principles.</div>
-      <div class="card">
-        <div class="card-title">🔑 Key Concepts</div>
-
-        <div style="margin-bottom:12px;">
-          <h4 style="color:var(--accent);margin-bottom:5px;font-size:12px;">Power Triangle — Ohm's Law</h4>
-          <p style="font-size:12px;color:var(--muted);line-height:1.7;">Power (Watts) = Voltage × Current. A 12V system drawing 10A = 120W. Batteries store energy as watt-hours (Wh) — a 100Ah 12V battery holds 1,200Wh total.</p>
-          <div style="background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:9px;margin-top:7px;font-family:var(--mf);font-size:11px;color:var(--accent2);">W = V × A &nbsp;|&nbsp; A = W ÷ V &nbsp;|&nbsp; Wh = W × hours</div>
-        </div>
-
-        <div class="divider"></div>
-
-        <div style="margin-bottom:12px;">
-          <h4 style="color:var(--accent);margin-bottom:5px;font-size:12px;">Battery Chemistry Comparison</h4>
-          <table class="spec-table" style="font-size:11px;">
-            <thead><tr>
-              <th style="color:var(--muted);padding:5px 10px;font-size:9px;text-transform:uppercase">Feature</th>
-              <th style="color:var(--muted);padding:5px 10px;font-size:9px;text-transform:uppercase">Lead-Acid / AGM</th>
-              <th style="color:var(--muted);padding:5px 10px;font-size:9px;text-transform:uppercase">LiFePO4</th>
-            </tr></thead>
-            <tbody>
-              <tr><td>Recommended DoD</td><td>~50%</td><td>~80–90%</td></tr>
-              <tr><td>Cycle Life (at rated DoD)</td><td>400–800 cycles</td><td>2,000–5,000+ cycles</td></tr>
-              <tr><td>Weight (100Ah 12V typical)</td><td>~55–65 lbs</td><td>~24–28 lbs</td></tr>
-              <tr><td>Upfront Cost</td><td>Lower</td><td>Higher</td></tr>
-              <tr><td>10-year Cost</td><td>Higher (more replacements)</td><td>Lower</td></tr>
-              <tr><td>Cold Weather Performance</td><td>Good</td><td>Reduced — needs heating below ~32°F</td></tr>
-            </tbody>
-          </table>
-          <div class="fix-note" style="margin-top:6px;">† Quality AGM batteries (Odyssey, VMAX) can achieve 500–800 cycles at 50% DoD. Flooded lead-acid is typically 300–500 cycles.</div>
-        </div>
-
-        <div class="divider"></div>
-
-        <div style="margin-bottom:12px;">
-          <h4 style="color:var(--accent);margin-bottom:5px;font-size:12px;">PWM vs MPPT Charge Controllers</h4>
-          <p style="font-size:12px;color:var(--muted);line-height:1.7;">
-            <strong style="color:var(--text)">PWM:</strong> Simpler and cheaper. Economical for small systems where panel Vmp closely matches battery voltage (e.g. one 12V panel to a 12V bank). Efficiency drops significantly when panel voltage is much higher than battery voltage.<br><br>
-            <strong style="color:var(--text)">MPPT:</strong> Tracks the panel's maximum power point and steps voltage down efficiently — typically 20–30% more energy harvested than PWM for the same array. Required when panel Voc exceeds battery voltage significantly, or for any system over ~200W.
-          </p>
-        </div>
-
-        <div class="divider"></div>
-
-        <div>
-          <h4 style="color:var(--accent);margin-bottom:5px;font-size:12px;">Inverter Surge vs Continuous Rating</h4>
-          <p style="font-size:12px;color:var(--muted);line-height:1.7;">
-            Every inverter has two ratings: <strong style="color:var(--text)">continuous</strong> (sustained load it can handle) and <strong style="color:var(--text)">surge/peak</strong> (brief spikes, typically 2× continuous for 1–5 seconds). Motors — air conditioners, fridge compressors, water pumps — draw 2–3× their running wattage for 1–3 seconds at startup. Always check that your inverter's surge rating exceeds the largest motor's startup draw.
-          </p>
-        </div>
-      </div>
-    </div>
-
-  </div><!-- /content -->
-
-  <!-- SIDEBAR -->
-  <div class="sidebar">
-    <div style="margin-bottom:14px;">
-      <div style="font-family:var(--hf);font-size:16px;letter-spacing:1px;color:#fff;margin-bottom:2px;">POWER SUMMARY</div>
-      <div style="font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;">Live calculation</div>
-    </div>
-    <canvas id="gauge" width="262" height="132"></canvas>
-    <div style="margin:10px 0 7px;display:flex;justify-content:space-between;font-size:10px;color:var(--muted);">
-      <span>0 Wh</span><span style="color:var(--text);font-weight:600" id="gauge-label">0 Wh/day</span><span id="gauge-max">5000 Wh</span>
-    </div>
-    <div class="divider"></div>
-    <div style="margin-bottom:12px;">
-      <div style="font-size:10px;color:var(--muted);margin-bottom:4px;display:flex;justify-content:space-between;"><span>AC Loads</span><span id="sb-ac">0 Wh</span></div>
-      <div class="progress-bar"><div class="progress-fill" id="pb-ac" style="background:var(--accent3);width:0%"></div></div>
-      <div style="font-size:10px;color:var(--muted);margin-top:7px;margin-bottom:4px;display:flex;justify-content:space-between;"><span>DC Loads</span><span id="sb-dc">0 Wh</span></div>
-      <div class="progress-bar"><div class="progress-fill" id="pb-dc" style="background:var(--accent);width:0%"></div></div>
-    </div>
-    <div class="divider"></div>
-    <div style="margin-bottom:14px;">
-      <div style="font-family:var(--hf);font-size:14px;letter-spacing:1px;color:#fff;margin-bottom:9px;">SYSTEM SIZE</div>
-      <div style="display:flex;justify-content:space-between;margin-bottom:7px;"><span style="font-size:10px;color:var(--muted);">Batteries</span><span style="font-family:var(--mf);font-size:11px;color:var(--accent2)" id="sb-bat">— Ah</span></div>
-      <div style="display:flex;justify-content:space-between;margin-bottom:7px;"><span style="font-size:10px;color:var(--muted);">Solar</span><span style="font-family:var(--mf);font-size:11px;color:var(--accent3)" id="sb-sol">— W</span></div>
-      <div style="display:flex;justify-content:space-between;margin-bottom:7px;"><span style="font-size:10px;color:var(--muted);">Inverter (cont.)</span><span style="font-family:var(--mf);font-size:11px;color:#a78bfa" id="sb-inv">— VA</span></div>
-      <div style="display:flex;justify-content:space-between;"><span style="font-size:10px;color:var(--muted);">Charge Controller</span><span style="font-family:var(--mf);font-size:11px;color:#fb923c" id="sb-cc">— A</span></div>
-    </div>
-    <div class="divider"></div>
-    <div id="sb-status"></div>
-    <div style="margin-top:12px;display:flex;flex-direction:column;gap:6px;">
-      <button class="btn btn-primary" style="width:100%;" onclick="showTab('sizing',event)">View Sizing →</button>
-      <button class="btn btn-secondary" style="width:100%;" onclick="showTab('components',event)">Components →</button>
-      <button class="btn btn-success" style="width:100%;" onclick="openSaveModal()">💾 Save This System</button>
+      <div class="alert alert-info" id="voltage-tip" style="margin-top:4px;display:none;"></div>
     </div>
   </div>
-</div>
+
+  <!-- ===== SIZING ===== -->
+  <div id="tab-sizing" class="section" role="tabpanel">
+    <div class="section-title">System Sizing Results</div>
+    <div class="section-sub">Calculated minimums based on your loads and preferences. Always verify with a qualified installer before purchasing.</div>
+    <div id="sizing-alerts" aria-live="polite"></div>
+    <div class="result-grid" aria-label="Key sizing results">
+      <div class="result-box"><div class="result-val" id="res-daily" style="color:var(--accent)">0</div><div class="result-label">Wh / Day</div></div>
+      <div class="result-box"><div class="result-val" id="res-peak" style="color:var(--danger)">0</div><div class="result-label">Peak Watts</div></div>
+      <div class="result-box"><div class="result-val" id="res-battery" style="color:var(--accent2)">0</div><div class="result-label">Ah Battery</div></div>
+      <div class="result-box"><div class="result-val" id="res-solar" style="color:var(--accent3)">0</div><div class="result-label">Watts Solar</div></div>
+      <div class="result-box"><div class="result-val" id="res-inverter" style="color:var(--purple)">0</div><div class="result-label">Inverter (cont.) VA</div></div>
+      <div class="result-box"><div class="result-val" id="res-charge" style="color:#b45309">0</div><div class="result-label">Controller (out) A</div></div>
+    </div>
+    <div class="card"><div class="card-title">🔋 Battery Bank</div>
+      <table class="spec-table"><tbody>
+        <tr><td>Total Storage Required</td><td id="det-wh">—</td></tr>
+        <tr><td>System Voltage</td><td id="det-volt">—</td></tr>
+        <tr><td>Minimum Ah Capacity</td><td id="det-ah">—</td></tr>
+        <tr><td>Recommended Ah (incl. 20% buffer)</td><td id="det-ah-rec">—</td></tr>
+        <tr><td>Usable at Chosen DoD</td><td id="det-usable">—</td></tr>
+        <tr><td>Estimated Run Time</td><td id="det-runtime">—</td></tr>
+      </tbody></table>
+    </div>
+    <div class="card"><div class="card-title">☀️ Solar Array</div>
+      <table class="spec-table"><tbody>
+        <tr><td>Required Array Output</td><td id="sol-req">—</td></tr>
+        <tr><td>Panel Configuration</td><td id="sol-config">—</td></tr>
+        <tr><td>Panels @ 200W each</td><td id="sol-panels">—</td></tr>
+        <tr><td>Panels @ 400W each</td><td id="sol-panels2">—</td></tr>
+        <tr><td>Roof Area Needed (est.)</td><td id="sol-area">—</td></tr>
+      </tbody></table>
+      <div class="fix-note">† Derate factor accounts for temperature loss, wiring resistance, soiling and MPPT losses — not panel nameplate efficiency.</div>
+    </div>
+    <div class="card"><div class="card-title">⚙️ Charge Controller</div>
+      <table class="spec-table"><tbody>
+        <tr><td>Recommended Type</td><td>MPPT</td></tr>
+        <tr><td>Min. Output (Charge) Current</td><td id="cc-amps">—</td></tr>
+        <tr><td>Suggested Controller Size</td><td id="cc-size">—</td></tr>
+        <tr><td>PV Input Voltage Rating</td><td id="cc-maxpv">—</td></tr>
+        <tr><td>Battery-Side Wire Gauge</td><td id="cc-wire">—</td></tr>
+      </tbody></table>
+      <div class="fix-note">† Output amps = solar W ÷ system V. PV input voltage rating is a fixed controller spec — verify panel string Voc does not exceed controller's rated PV input.</div>
+    </div>
+    <div class="card"><div class="card-title">🔄 Inverter</div>
+      <table class="spec-table"><tbody>
+        <tr><td>Continuous Rating Needed</td><td id="inv-cont">—</td></tr>
+        <tr><td>Surge / Peak Rating Needed</td><td id="inv-surge">—</td></tr>
+        <tr><td>Recommended Inverter Size</td><td id="inv-rec">—</td></tr>
+        <tr><td>AC Output Voltage</td><td id="inv-acv">—</td></tr>
+      </tbody></table>
+      <div class="fix-note">⚠️ Motors (AC, fridge compressor, pump) draw 2–3× their running watts at startup. Size inverter surge rating to handle the largest motor load's startup current.</div>
+    </div>
+    <div class="card"><div class="card-title">🔌 Shore Power / Generator</div>
+      <table class="spec-table"><tbody>
+        <tr><td>Min. Generator Size</td><td id="gen-size">—</td></tr>
+        <tr><td>Shore Power Current</td><td id="shore-amps">—</td></tr>
+      </tbody></table>
+      <div class="fix-note">† Shore/generator amps are based on peak load. Average draw will be lower. Run generators at 50–80% capacity for efficiency and longevity.</div>
+    </div>
+  </div>
+
+  <!-- ===== COMPONENTS ===== -->
+  <div id="tab-components" class="section" role="tabpanel">
+    <div class="section-title">Component Selector</div>
+    <div class="section-sub">Select components to build your shopping list. Hide options you don't want. Add custom products with a link from any retailer.</div>
+    <div class="card">
+      <div class="card-title">🔋 Battery Options <span class="badge badge-green">Select One</span></div>
+      <div class="comp-grid" id="battery-options" role="group" aria-label="Battery options"></div>
+      <div id="restore-battery"></div>
+      <div id="add-battery-form" style="display:none"></div>
+      <button class="btn btn-purple btn-sm" onclick="toggleAddForm('battery')">+ Add Custom Battery</button>
+    </div>
+    <div class="card">
+      <div class="card-title">☀️ Solar Panels <span class="badge badge-amber">Select One</span></div>
+      <div class="comp-grid" id="solar-options" role="group" aria-label="Solar panel options"></div>
+      <div id="restore-solar"></div>
+      <div id="add-solar-form" style="display:none"></div>
+      <button class="btn btn-purple btn-sm" onclick="toggleAddForm('solar')">+ Add Custom Panel</button>
+    </div>
+    <div class="card">
+      <div class="card-title">⚙️ Charge Controller <span class="badge badge-blue">Select One</span></div>
+      <div class="comp-grid" id="cc-options" role="group" aria-label="Charge controller options"></div>
+      <div id="restore-cc"></div>
+      <div id="add-cc-form" style="display:none"></div>
+      <button class="btn btn-purple btn-sm" onclick="toggleAddForm('cc')">+ Add Custom Controller</button>
+    </div>
+    <div class="card">
+      <div class="card-title">🔄 Inverter / Inverter-Charger <span class="badge badge-blue">Select One</span></div>
+      <div class="comp-grid" id="inv-options" role="group" aria-label="Inverter options"></div>
+      <div id="restore-inv"></div>
+      <div id="add-inv-form" style="display:none"></div>
+      <button class="btn btn-purple btn-sm" onclick="toggleAddForm('inv')">+ Add Custom Inverter</button>
+    </div>
+    <div class="card">
+      <div class="card-title">📋 Shopping List</div>
+      <div id="shopping-list"><div class="alert alert-info">ℹ️ Select components above to generate your shopping list.</div></div>
+    </div>
+  </div>
+
+  <!-- ===== WIRING ===== -->
+  <div id="tab-wiring" class="section" role="tabpanel">
+    <div class="section-title">Wiring Guide</div>
+    <div class="section-sub">Step-by-step installation guidance. <strong>Consult a licensed electrician for all AC wiring.</strong></div>
+    <div class="card">
+      <div class="card-title">Wire Sizing Reference</div>
+      <table class="spec-table" aria-label="Wire sizing reference">
+        <thead><tr>
+          <th scope="col" style="color:var(--muted);padding:7px 10px;font-size:10px;text-transform:uppercase;letter-spacing:.5px;font-weight:700">Amps</th>
+          <th scope="col" style="color:var(--muted);padding:7px 10px;font-size:10px;text-transform:uppercase;letter-spacing:.5px;font-weight:700">AWG</th>
+          <th scope="col" style="color:var(--muted);padding:7px 10px;font-size:10px;text-transform:uppercase;letter-spacing:.5px;font-weight:700">One-Way Max (12V, 3% drop)</th>
+          <th scope="col" style="color:var(--muted);padding:7px 10px;font-size:10px;text-transform:uppercase;letter-spacing:.5px;font-weight:700">Use Case</th>
+        </tr></thead>
+        <tbody>
+          <tr><td>Up to 10A</td><td>14 AWG</td><td>~7 ft</td><td>Lighting, small DC loads</td></tr>
+          <tr><td>Up to 15A</td><td>12 AWG</td><td>~8 ft</td><td>General DC circuits</td></tr>
+          <tr><td>Up to 20A</td><td>10 AWG</td><td>~8 ft</td><td>Moderate DC, AC branch circuits</td></tr>
+          <tr><td>Up to 40A</td><td>8 AWG</td><td>~5 ft</td><td>Charge controllers (small)</td></tr>
+          <tr><td>Up to 60A</td><td>6 AWG</td><td>~5 ft</td><td>MPPT controllers, small inverters</td></tr>
+          <tr><td>Up to 100A</td><td>4 AWG</td><td>~4 ft</td><td>Large inverters, battery mains</td></tr>
+          <tr><td>Up to 150A</td><td>2/0 AWG</td><td>~3 ft</td><td>High-current battery cables</td></tr>
+          <tr><td>200A+</td><td>4/0 AWG</td><td>~2 ft</td><td>Main battery bank cables</td></tr>
+        </tbody>
+      </table>
+      <div class="fix-note">⚠️ Distances are one-way runs for 12V DC at 3% voltage drop. Round-trip = double wire length. For 24V, distances roughly double; 48V roughly quadruple. Always use a voltage drop calculator for exact runs.</div>
+    </div>
+    <div class="card"><div class="card-title">Installation Sequence</div><div id="wiring-steps"></div></div>
+    <div class="card">
+      <div class="card-title">⚠️ Safety Rules</div>
+      <div class="alert alert-err" role="alert">🚫 <strong>NEVER</strong> connect solar directly to batteries without a charge controller.</div>
+      <div class="alert alert-err" role="alert">🚫 <strong>NEVER</strong> work on live circuits — disconnect battery negative first.</div>
+      <div class="alert alert-warn">⚡ Fuse every positive wire within 18" (45cm) of the battery terminal.</div>
+      <div class="alert alert-warn">🔥 Use tinned marine-grade stranded copper wire throughout.</div>
+      <div class="alert alert-ok">✅ Torque all battery terminals to manufacturer spec.</div>
+      <div class="alert alert-ok">✅ Label wires: RED=+, BLACK=−, WHITE=AC neutral, GREEN/YELLOW=AC earth.</div>
+      <div class="alert alert-info">ℹ️ All 240V AC wiring must be performed by a licensed electrician in most jurisdictions.</div>
+    </div>
+  </div>
+
+  <!-- ===== DIAGRAM ===== -->
+  <div id="tab-diagram" class="section" role="tabpanel">
+    <div class="section-title">System Diagram</div>
+    <div class="section-sub">Visual overview of your RV power system. Values update live as you change your loads.</div>
+    <div class="diagram-container"><svg id="system-svg" width="660" height="450" style="display:block;margin:auto;" role="img" aria-label="Power system diagram"></svg></div>
+    <div class="card" style="margin-top:14px">
+      <div class="card-title">Power Flow Legend</div>
+      <div style="display:flex;gap:20px;flex-wrap:wrap;font-size:13px;color:var(--text-secondary);" role="list">
+        <div role="listitem"><span style="color:var(--accent);font-weight:700;">━━</span> DC Power</div>
+        <div role="listitem"><span style="color:var(--accent3);font-weight:700;">━━</span> AC Power</div>
+        <div role="listitem"><span style="color:var(--accent2);font-weight:700;">━━</span> Solar Input</div>
+        <div role="listitem"><span style="color:var(--purple);font-weight:700;">━━</span> Shore/Gen</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== SAVED SYSTEMS ===== -->
+  <div id="tab-saved" class="section" role="tabpanel">
+    <div class="section-title">Saved Systems</div>
+    <div class="section-sub">Save your current build, load a previous design, or compare systems side-by-side.</div>
+    <div class="card">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:8px;">
+        <div class="card-title" style="margin:0">Your Saved Systems</div>
+        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+          <span id="cmp-label" style="font-size:12px;color:var(--muted);" aria-live="polite"></span>
+          <button class="btn btn-purple btn-sm" id="cmp-btn" onclick="openCompareModal()" style="display:none" aria-label="Compare selected systems">⚖️ Compare</button>
+          <button class="btn btn-success btn-sm" onclick="openSaveModal()">💾 Save Current</button>
+        </div>
+      </div>
+      <div id="saved-list" aria-live="polite"></div>
+    </div>
+  </div>
+
+  <!-- ===== EDUCATION ===== -->
+  <div id="tab-education" class="section" role="tabpanel">
+    <div class="section-title">Learn the Basics</div>
+    <div class="section-sub">RV electrical fundamentals from first principles. <a href="rv-power-designer-help.html" target="_blank" style="color:var(--accent3);font-weight:600;">Full help guide →</a></div>
+    <div class="card">
+      <div class="card-title">🔑 Key Concepts</div>
+      <div style="margin-bottom:14px;">
+        <h4 style="color:var(--accent3);margin-bottom:6px;font-size:13px;">Power Triangle — Ohm's Law</h4>
+        <p style="font-size:13px;color:var(--text-secondary);line-height:1.7;">Power (Watts) = Voltage × Current. A 12V system drawing 10A = 120W. Batteries store energy as watt-hours (Wh) — a 100Ah 12V battery holds 1,200Wh total.</p>
+        <div style="background:var(--surface2);border:1.5px solid var(--border);border-radius:6px;padding:10px;margin-top:8px;font-family:var(--mf);font-size:12px;color:var(--accent2);font-weight:600;">W = V × A &nbsp;|&nbsp; A = W ÷ V &nbsp;|&nbsp; Wh = W × hours</div>
+      </div>
+      <div class="divider"></div>
+      <div style="margin-bottom:14px;">
+        <h4 style="color:var(--accent3);margin-bottom:6px;font-size:13px;">System Voltage — 12V vs 24V vs 48V</h4>
+        <table class="spec-table" style="font-size:12px;">
+          <thead><tr>
+            <th scope="col" style="color:var(--muted);padding:6px 10px;font-size:10px;text-transform:uppercase">Feature</th>
+            <th scope="col" style="color:var(--muted);padding:6px 10px;font-size:10px;text-transform:uppercase">12V</th>
+            <th scope="col" style="color:var(--muted);padding:6px 10px;font-size:10px;text-transform:uppercase">24V</th>
+            <th scope="col" style="color:var(--muted);padding:6px 10px;font-size:10px;text-transform:uppercase">48V</th>
+          </tr></thead>
+          <tbody>
+            <tr><td>Best for</td><td>Van, small RV</td><td>Medium RV, boat</td><td>Large RV, home</td></tr>
+            <tr><td>Wire gauge</td><td>Heavy (high amps)</td><td>Medium</td><td>Light (low amps)</td></tr>
+            <tr><td>Efficiency</td><td>Good</td><td>Better</td><td>Best</td></tr>
+            <tr><td>Component cost</td><td>Lowest</td><td>Mid</td><td>Higher</td></tr>
+            <tr><td>Max practical solar</td><td>~800W</td><td>~2,000W</td><td>10,000W+</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="divider"></div>
+      <div style="margin-bottom:14px;">
+        <h4 style="color:var(--accent3);margin-bottom:6px;font-size:13px;">Battery Chemistry</h4>
+        <table class="spec-table" style="font-size:12px;">
+          <thead><tr>
+            <th scope="col" style="color:var(--muted);padding:6px 10px;font-size:10px;text-transform:uppercase">Feature</th>
+            <th scope="col" style="color:var(--muted);padding:6px 10px;font-size:10px;text-transform:uppercase">Lead-Acid / AGM</th>
+            <th scope="col" style="color:var(--muted);padding:6px 10px;font-size:10px;text-transform:uppercase">LiFePO4</th>
+          </tr></thead>
+          <tbody>
+            <tr><td>Recommended DoD</td><td>~50%</td><td>~80–90%</td></tr>
+            <tr><td>Cycle life</td><td>400–800 (AGM)</td><td>2,000–5,000+</td></tr>
+            <tr><td>Weight (100Ah 12V)</td><td>~55–65 lbs</td><td>~24–28 lbs</td></tr>
+            <tr><td>Cold weather</td><td>Good</td><td>Needs heating &lt;0°C/32°F</td></tr>
+            <tr><td>10-year cost</td><td>Higher (replacements)</td><td>Lower</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="divider"></div>
+      <div style="margin-bottom:14px;">
+        <h4 style="color:var(--accent3);margin-bottom:6px;font-size:13px;">PWM vs MPPT Charge Controllers</h4>
+        <p style="font-size:13px;color:var(--text-secondary);line-height:1.7;"><strong>PWM:</strong> Simpler and cheaper. Economical only where panel Vmp closely matches battery voltage. Efficiency drops significantly when panel voltage exceeds battery voltage.<br><br><strong>MPPT:</strong> Tracks the panel's maximum power point and steps voltage down efficiently — typically 20–30% more energy than PWM. Required for any 24V/48V system or array over ~200W.</p>
+      </div>
+      <div class="divider"></div>
+      <div>
+        <h4 style="color:var(--accent3);margin-bottom:6px;font-size:13px;">Inverter Surge vs Continuous Rating</h4>
+        <p style="font-size:13px;color:var(--text-secondary);line-height:1.7;">Every inverter has a <strong>continuous</strong> rating (sustained load) and a <strong>surge/peak</strong> rating (brief spikes, typically 2× continuous for 1–5 seconds). Motors — air conditioners, fridge compressors, water pumps — draw 2–3× their running wattage at startup. Always verify your inverter's surge rating exceeds the largest motor's startup draw.</p>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /content -->
+
+<!-- ===== SIDEBAR ===== -->
+<aside class="sidebar" aria-label="Live power summary">
+  <div style="margin-bottom:16px;">
+    <div class="sb-title">Power Summary</div>
+    <div class="sb-sub">Live calculation</div>
+  </div>
+  <canvas id="gauge" width="262" height="132" aria-hidden="true"></canvas>
+  <div style="margin:10px 0 8px;display:flex;justify-content:space-between;font-size:10px;color:var(--muted);">
+    <span>0 Wh</span>
+    <span style="color:var(--text);font-weight:700;" id="gauge-label">0 Wh/day</span>
+    <span id="gauge-max">5000 Wh</span>
+  </div>
+  <div class="divider"></div>
+  <div style="margin-bottom:14px;">
+    <div style="font-size:11px;color:var(--muted);margin-bottom:5px;display:flex;justify-content:space-between;"><span style="font-weight:600;">AC Loads</span><span id="sb-ac" style="font-family:var(--mf)">0 Wh</span></div>
+    <div class="progress-bar" role="progressbar" aria-label="AC load proportion"><div class="progress-fill" id="pb-ac" style="background:var(--accent3);width:0%"></div></div>
+    <div style="font-size:11px;color:var(--muted);margin-top:8px;margin-bottom:5px;display:flex;justify-content:space-between;"><span style="font-weight:600;">DC Loads</span><span id="sb-dc" style="font-family:var(--mf)">0 Wh</span></div>
+    <div class="progress-bar" role="progressbar" aria-label="DC load proportion"><div class="progress-fill" id="pb-dc" style="background:var(--accent);width:0%"></div></div>
+  </div>
+  <div class="divider"></div>
+  <div style="margin-bottom:16px;">
+    <div style="font-family:var(--hf);font-size:15px;letter-spacing:1px;color:var(--text);margin-bottom:10px;">System Size</div>
+    <div class="sb-row"><span class="sb-key">Batteries</span><span class="sb-val" id="sb-bat" style="color:var(--accent2)">— Ah</span></div>
+    <div class="sb-row"><span class="sb-key">Solar</span><span class="sb-val" id="sb-sol" style="color:var(--accent3)">— W</span></div>
+    <div class="sb-row"><span class="sb-key">Inverter (cont.)</span><span class="sb-val" id="sb-inv" style="color:var(--purple)">— VA</span></div>
+    <div class="sb-row"><span class="sb-key">Charge Controller</span><span class="sb-val" id="sb-cc" style="color:#b45309">— A</span></div>
+  </div>
+  <div class="divider"></div>
+  <div id="sb-status" aria-live="polite"></div>
+  <div style="margin-top:14px;display:flex;flex-direction:column;gap:8px;">
+    <button class="btn btn-primary" style="width:100%;" onclick="showTab('sizing',event)">View Sizing →</button>
+    <button class="btn btn-secondary" style="width:100%;" onclick="showTab('components',event)">Components →</button>
+    <button class="btn btn-success" style="width:100%;" onclick="openSaveModal()">💾 Save System</button>
+  </div>
+</aside>
+</div><!-- /main -->
 
 <script>
 // ===================== STATE =====================
@@ -559,14 +681,13 @@ let savedSystems=[],compareSet=new Set();
 let userProducts={battery:[],solar:[],cc:[],inv:[]};
 let hiddenBuiltIns={battery:new Set(),solar:new Set(),cc:new Set(),inv:new Set()};
 
-// ===================== BUILT-IN PRODUCT DATA =====================
-// FIX #4: each product carries its own Ah/W so qty calc uses correct capacity
+// ===================== BUILT-IN PRODUCTS =====================
 function builtIn(cat,c){
   if(cat==='battery') return [
-    {name:`Battle Born 100Ah ${c.voltage}V LiFePO4`,spec:`100Ah | ~3,000–5,000 cycles | Heated option avail.`,price:'$899',tag:'Premium',url:'https://battlebornbatteries.com',ah:100},
-    {name:`Renogy 100Ah ${c.voltage}V LiFePO4`,spec:`100Ah | BMS included | ~2,000+ cycles`,price:'$499',tag:'Value',url:'https://www.renogy.com',ah:100},
-    {name:`Ampere Time 200Ah ${c.voltage}V LiFePO4`,spec:`200Ah | ~4,000 cycles | Lower weight per Ah`,price:'$749',tag:'Capacity',url:'https://www.litime.com',ah:200},
-    {name:'Mighty Max AGM 100Ah',spec:'100Ah 12V | Sealed AGM | ~500 cycles @50% DoD',price:'$189',tag:'Budget',url:'https://www.mightymaxbattery.com',ah:100},
+    {name:`Battle Born 100Ah ${c.voltage}V LiFePO4`,spec:`100Ah | 3,000–5,000 cycles | Heated option`,price:'$899',tag:'Premium',url:'https://battlebornbatteries.com',ah:100},
+    {name:`Renogy 100Ah ${c.voltage}V LiFePO4`,spec:`100Ah | BMS included | 2,000+ cycles`,price:'$499',tag:'Value',url:'https://www.renogy.com',ah:100},
+    {name:`Ampere Time 200Ah ${c.voltage}V LiFePO4`,spec:`200Ah | 4,000 cycles | Lower weight/Ah`,price:'$749',tag:'Capacity',url:'https://www.litime.com',ah:200},
+    {name:'Mighty Max AGM 100Ah 12V',spec:'100Ah 12V | Sealed AGM | ~500 cycles @50% DoD',price:'$189',tag:'Budget AGM',url:'https://www.mightymaxbattery.com',ah:100},
   ];
   if(cat==='solar') return [
     {name:'Renogy 200W Rigid Mono',spec:'200W | 22% panel eff. | 58.8V Voc',price:'$149',tag:'Popular',url:'https://www.renogy.com',watts:200},
@@ -575,26 +696,23 @@ function builtIn(cat,c){
     {name:'Newpowa 175W Semi-Flex',spec:'175W | 20% panel eff. | Lightweight',price:'$139',tag:'Slim',url:'https://www.newpowa.com',watts:175},
   ];
   if(cat==='cc'){
-    // FIX #2: PV input voltage is a fixed controller spec, not derived from battery voltage
-    // Common MPPT controllers: Victron 75V, 100V, 150V input ratings regardless of battery V
     const sz=c.ccSize<=30?'30A':c.ccSize<=50?'50A':'100A';
     const sz2=c.ccSize<=40?'40A':'60A';
     return [
-      {name:`Victron SmartSolar MPPT ${sz}`,spec:`${sz} charge output | Bluetooth | 75V PV input rated`,price:c.ccSize<=30?'$149':c.ccSize<=50?'$249':'$499',tag:'Best',url:'https://www.victronenergy.com'},
-      {name:`Renogy Rover ${sz2} MPPT`,spec:`${sz2} charge output | LCD display | 100V PV input rated`,price:c.ccSize<=40?'$89':'$119',tag:'Value',url:'https://www.renogy.com'},
-      {name:'EPever 40A MPPT',spec:'40A charge output | 100V PV input rated | PC software',price:'$79',tag:'Budget',url:'https://www.epever.com'},
-      {name:'Victron BlueSolar 75/50',spec:'50A charge output | 75V PV input rated | Programmable',price:'$199',tag:'Pro',url:'https://www.victronenergy.com'},
+      {name:`Victron SmartSolar MPPT ${sz}`,spec:`${sz} output | Bluetooth | 75V PV input`,price:c.ccSize<=30?'$149':c.ccSize<=50?'$249':'$499',tag:'Best',url:'https://www.victronenergy.com'},
+      {name:`Renogy Rover ${sz2} MPPT`,spec:`${sz2} output | LCD display | 100V PV input`,price:c.ccSize<=40?'$89':'$119',tag:'Value',url:'https://www.renogy.com'},
+      {name:'EPever 40A MPPT',spec:'40A output | 100V PV input | PC software',price:'$79',tag:'Budget',url:'https://www.epever.com'},
+      {name:'Victron BlueSolar 75/50',spec:'50A output | 75V PV input | Programmable',price:'$199',tag:'Pro',url:'https://www.victronenergy.com'},
     ];
   }
   if(cat==='inv'){
-    // FIX #5: show both continuous and surge ratings
-    const iv=c.invSize<=1200?'1200':c.invSize<=2400?'2000':'3000';
-    const surgeFactor=2;
+    const iv=c.invCont<=1200?'1200':c.invCont<=2400?'2000':'3000';
+    const acv=c.acVoltage||240;
     return [
-      {name:`Victron MultiPlus ${c.voltage}/${iv}`,spec:`${iv}W cont. | ${+iv*surgeFactor}W surge | Inverter-Charger + Transfer Switch`,price:c.invSize<=1200?'$449':c.invSize<=2400?'$799':'$1,199',tag:'All-in-One',url:'https://www.victronenergy.com'},
-      {name:'Renogy 2000W Pure Sine',spec:'2000W cont. | 4000W surge (2s) | Compact',price:'$249',tag:'Popular',url:'https://www.renogy.com'},
-      {name:'Giandel 3000W Pure Sine',spec:'3000W cont. | 6000W surge (2s) | Remote switch',price:'$199',tag:'Budget',url:'https://www.giandelinverter.com'},
-      {name:'Aims Power 1500W PSW',spec:'1500W cont. | 3000W surge (2s) | Hardwire',price:'$179',tag:'Compact',url:'https://www.aimscorp.net'},
+      {name:`Victron MultiPlus ${c.voltage}/${iv}`,spec:`${iv}W cont. | ${+iv*2}W surge | Inverter-Charger | Transfer Switch`,price:c.invCont<=1200?'$449':c.invCont<=2400?'$799':'$1,199',tag:'All-in-One',url:'https://www.victronenergy.com'},
+      {name:`Renogy 2000W Pure Sine ${acv}V`,spec:`2000W cont. | 4000W surge | ${acv}V AC out`,price:'$249',tag:'Popular',url:'https://www.renogy.com'},
+      {name:`Giandel 3000W Pure Sine ${acv}V`,spec:`3000W cont. | 6000W surge | ${acv}V AC out`,price:'$199',tag:'Budget',url:'https://www.giandelinverter.com'},
+      {name:`Aims Power 1500W PSW ${acv}V`,spec:`1500W cont. | 3000W surge | ${acv}V AC out`,price:'$179',tag:'Compact',url:'https://www.aimscorp.net'},
     ];
   }
   return [];
@@ -602,9 +720,9 @@ function builtIn(cat,c){
 
 const BCOLS=['badge-green','badge-amber','badge-blue','badge-red'];
 
-// ===================== DEMO SYSTEM =====================
+// ===================== DEMO SYSTEMS (12V, 24V, 48V) =====================
 function calcForSystem(apps,prefs){
-  const{voltage,autonomy,dod,peakSun,solEff,invEff}=prefs;
+  const{voltage,autonomy,dod,peakSun,solEff,invEff,acVoltage=240}=prefs;
   const acLoad=apps.filter(a=>a.type==='ac').reduce((s,a)=>s+a.watts*a.hours,0);
   const dcLoad=apps.filter(a=>a.type==='dc').reduce((s,a)=>s+a.watts*a.hours,0);
   const totalWh=acLoad/invEff+dcLoad;
@@ -618,12 +736,13 @@ function calcForSystem(apps,prefs){
   const ccAmps=solarW/voltage;
   const ccSize=Math.max(10,Math.ceil(ccAmps/10)*10);
   const invCont=peakAc*1.25;
-  const invSurge=peakAc*2.5; // FIX #5: include surge estimate
+  const invSurge=peakAc*2.5;
   const genSize=peakWatts*1.5;
-  return{voltage,autonomy,dod,peakSun,solEff,invEff,acLoad,dcLoad,totalWh,peakAc,peakDc,peakWatts,totalWhAuto,minAh,recAh,solarW,ccAmps,ccSize,invCont,invSurge,genSize};
+  return{voltage,autonomy,dod,peakSun,solEff,invEff,acVoltage,acLoad,dcLoad,totalWh,peakAc,peakDc,peakWatts,totalWhAuto,minAh,recAh,solarW,ccAmps,ccSize,invCont,invSurge,genSize};
 }
 
-const DEMO_APPS=[
+// Demo: 12V weekend boondocker
+const D12_APPS=[
   {id:1,name:'LED Lighting',watts:30,hours:6,type:'dc'},
   {id:2,name:'12V Compressor Fridge',watts:45,hours:12,type:'dc'},
   {id:3,name:'Fan ×2',watts:35,hours:8,type:'dc'},
@@ -632,19 +751,60 @@ const DEMO_APPS=[
   {id:6,name:'Phone Charging ×2',watts:20,hours:4,type:'ac'},
   {id:7,name:'WiFi Router',watts:10,hours:24,type:'dc'},
 ];
-const DEMO_PREFS={voltage:12,autonomy:3,dod:0.8,peakSun:6,solEff:0.80,invEff:0.90};
-savedSystems.push({
-  id:'demo-001',name:'🏕️ Weekend Boondocker (Demo)',
-  notes:'Compact 12V LiFePO4 for a couple — 3-season SW USA camping. No AC, light office.',
-  isDemo:true,timestamp:Date.now()-86400000,
-  appliances:DEMO_APPS,prefs:DEMO_PREFS,
-  calcs:calcForSystem(DEMO_APPS,DEMO_PREFS),
+const D12_PREFS={voltage:12,autonomy:3,dod:0.8,peakSun:6,solEff:0.80,invEff:0.90,acVoltage:240};
+savedSystems.push({id:'demo-12v',name:'🏕️ 12V Weekend Boondocker (Demo)',
+  notes:'Compact 12V LiFePO4 — couple, 3-season camping, no AC, light office use.',
+  isDemo:true,timestamp:Date.now()-86400*3*1000,
+  appliances:D12_APPS,prefs:D12_PREFS,calcs:calcForSystem(D12_APPS,D12_PREFS),
   selections:{battery:'b1',solar:'b0',cc:'b0',inv:'b1'},
-  userProducts:{battery:[],solar:[],cc:[],inv:[]}
-});
+  userProducts:{battery:[],solar:[],cc:[],inv:[]}});
+
+// Demo: 24V touring motorhome
+const D24_APPS=[
+  {id:1,name:'LED Lighting',watts:45,hours:7,type:'dc'},
+  {id:2,name:'24V Compressor Fridge (large)',watts:60,hours:14,type:'dc'},
+  {id:3,name:'Fans ×3',watts:50,hours:8,type:'dc'},
+  {id:4,name:'Water Pump (DC)',watts:80,hours:1,type:'dc'},
+  {id:5,name:'TV 50"',watts:100,hours:3,type:'ac'},
+  {id:6,name:'Laptop ×2',watts:130,hours:5,type:'ac'},
+  {id:7,name:'Coffee Maker',watts:900,hours:0.25,type:'ac'},
+  {id:8,name:'Phone Charging ×4',watts:40,hours:4,type:'ac'},
+  {id:9,name:'WiFi Router',watts:12,hours:24,type:'dc'},
+  {id:10,name:'CPAP with humidifier',watts:50,hours:8,type:'ac'},
+];
+const D24_PREFS={voltage:24,autonomy:2,dod:0.8,peakSun:5,solEff:0.80,invEff:0.90,acVoltage:240};
+savedSystems.push({id:'demo-24v',name:'🚐 24V Touring Motorhome (Demo)',
+  notes:'24V system — couple full-timing, most comforts, no air con, 2–3 day autonomy.',
+  isDemo:true,timestamp:Date.now()-86400*2*1000,
+  appliances:D24_APPS,prefs:D24_PREFS,calcs:calcForSystem(D24_APPS,D24_PREFS),
+  selections:{battery:'b1',solar:'b1',cc:'b0',inv:'b0'},
+  userProducts:{battery:[],solar:[],cc:[],inv:[]}});
+
+// Demo: 48V luxury coach / large fifth wheel
+const D48_APPS=[
+  {id:1,name:'LED Lighting (whole coach)',watts:80,hours:6,type:'dc'},
+  {id:2,name:'Compressor Fridge + Freezer',watts:120,hours:16,type:'dc'},
+  {id:3,name:'Ceiling Fans ×4',watts:80,hours:10,type:'dc'},
+  {id:4,name:'Water Pump (DC)',watts:100,hours:1.5,type:'dc'},
+  {id:5,name:'Air Conditioner (15,000 BTU)',watts:1800,hours:5,type:'ac'},
+  {id:6,name:'TV 65"',watts:150,hours:4,type:'ac'},
+  {id:7,name:'Laptop ×2 + monitor',watts:200,hours:8,type:'ac'},
+  {id:8,name:'Coffee Maker',watts:900,hours:0.5,type:'ac'},
+  {id:9,name:'Microwave',watts:1100,hours:0.3,type:'ac'},
+  {id:10,name:'Washing Machine (portable)',watts:500,hours:1,type:'ac'},
+  {id:11,name:'Phone/Tablet Charging ×4',watts:60,hours:4,type:'ac'},
+  {id:12,name:'WiFi + Networking',watts:20,hours:24,type:'dc'},
+  {id:13,name:'CPAP with humidifier',watts:50,hours:8,type:'ac'},
+];
+const D48_PREFS={voltage:48,autonomy:2,dod:0.85,peakSun:6,solEff:0.80,invEff:0.95,acVoltage:240};
+savedSystems.push({id:'demo-48v',name:'🏠 48V Luxury Coach / Large 5th Wheel (Demo)',
+  notes:'48V high-power system — full-time living with air conditioning, large array + battery bank.',
+  isDemo:true,timestamp:Date.now()-86400*1*1000,
+  appliances:D48_APPS,prefs:D48_PREFS,calcs:calcForSystem(D48_APPS,D48_PREFS),
+  selections:{battery:'b2',solar:'b1',cc:'b3',inv:'b0'},
+  userProducts:{battery:[],solar:[],cc:[],inv:[]}});
 
 // ===================== PRESETS =====================
-// FIX #7: CPAP updated to 50W (typical with humidifier), range noted
 const BASIC_APPS=[
   {name:'LED Lighting',watts:30,hours:6,type:'dc'},
   {name:'Laptop',watts:65,hours:4,type:'ac'},
@@ -654,20 +814,20 @@ const BASIC_APPS=[
   {name:'Fan',watts:35,hours:8,type:'dc'},
 ];
 const FULL_APPS=[...BASIC_APPS,
-  {name:'TV (32")',watts:60,hours:3,type:'ac'},
+  {name:'TV (50")',watts:100,hours:3,type:'ac'},
   {name:'Coffee Maker',watts:900,hours:0.25,type:'ac'},
   {name:'Microwave',watts:1100,hours:0.2,type:'ac'},
-  {name:'Air Conditioner (small)',watts:1500,hours:4,type:'ac'},
-  {name:'Router/WiFi',watts:10,hours:24,type:'dc'},
-  {name:'CPAP with humidifier',watts:50,hours:8,type:'ac'}, // FIX #7: was 30W, corrected to 50W typical
+  {name:'Air Conditioner (15,000 BTU)',watts:1800,hours:4,type:'ac'},
+  {name:'Router/WiFi',watts:12,hours:24,type:'dc'},
+  {name:'CPAP with humidifier',watts:50,hours:8,type:'ac'},
 ];
 
 // ===================== TABS =====================
 function showTab(name,e){
   document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
-  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t=>{t.classList.remove('active');t.setAttribute('aria-selected','false');});
   document.getElementById('tab-'+name).classList.add('active');
-  if(e&&e.target&&e.target.classList.contains('tab'))e.target.classList.add('active');
+  if(e&&e.target&&e.target.classList.contains('tab')){e.target.classList.add('active');e.target.setAttribute('aria-selected','true');}
   if(name==='sizing')renderSizing();
   if(name==='components')renderComponents();
   if(name==='wiring')renderWiring();
@@ -675,31 +835,53 @@ function showTab(name,e){
   if(name==='saved')renderSavedList();
 }
 
+// ===================== VOLTAGE CHANGE =====================
+function onVoltageChange(){
+  const v=+document.getElementById('sys-voltage').value;
+  const tip=document.getElementById('voltage-tip');
+  if(v===24){tip.style.display='flex';tip.textContent='ℹ️ 24V system: half the current of 12V for same power — lighter wiring, better efficiency. Requires 24V-compatible components.';}
+  else if(v===48){tip.style.display='flex';tip.textContent='ℹ️ 48V system: quarter the current of 12V — thinner wires, highest efficiency. Best for large arrays and high-power inverters. Check all component voltage ratings.';}
+  else{tip.style.display='none';}
+  recalc();
+}
+
 // ===================== APPLIANCES =====================
 function addAppliance(data={}){
+  const acV=document.getElementById('ac-voltage')?+document.getElementById('ac-voltage').value:240;
   appliances.push({id:nextId++,name:data.name||'New Appliance',watts:data.watts||100,hours:data.hours||1,type:data.type||'ac'});
   renderTable();recalc();
 }
 function removeAppliance(id){appliances=appliances.filter(a=>a.id!==id);renderTable();recalc();}
 function clearAll(){appliances=[];renderTable();recalc();}
 function loadPreset(t){appliances=[];nextId=1;(t==='full'?FULL_APPS:BASIC_APPS).forEach(a=>addAppliance(a));}
+
+function getAcVoltage(){return document.getElementById('ac-voltage')?+document.getElementById('ac-voltage').value:240;}
+
 function renderTable(){
   const tb=document.getElementById('appliance-tbody');
-  if(!appliances.length){tb.innerHTML=`<tr><td colspan="6" style="text-align:center;color:var(--muted);padding:18px;font-size:12px;">No appliances yet — add one or load a preset.</td></tr>`;return;}
+  const acV=getAcVoltage();
+  if(!appliances.length){
+    tb.innerHTML=`<tr><td colspan="6" style="text-align:center;color:var(--muted);padding:20px;font-size:13px;">No appliances yet — add one or load a preset.</td></tr>`;
+    return;
+  }
   tb.innerHTML=appliances.map(a=>`<tr>
-    <td><input type="text" value="${a.name.replace(/"/g,'&quot;')}" style="width:145px;font-family:var(--bf);font-size:11px;" oninput="updateApp(${a.id},'name',this.value)"></td>
-    <td><input type="number" value="${a.watts}" min="1" max="10000" oninput="updateApp(${a.id},'watts',+this.value)"></td>
-    <td><input type="number" value="${a.hours}" min="0.1" max="24" step="0.5" oninput="updateApp(${a.id},'hours',+this.value)"></td>
-    <td><select onchange="updateApp(${a.id},'type',this.value)"><option value="ac" ${a.type==='ac'?'selected':''}>AC 120V</option><option value="dc" ${a.type==='dc'?'selected':''}>DC 12V</option></select></td>
+    <td><input type="text" value="${a.name.replace(/"/g,'&quot;')}" style="width:150px;" aria-label="Appliance name" oninput="updateApp(${a.id},'name',this.value)"></td>
+    <td><input type="number" value="${a.watts}" min="1" max="10000" aria-label="Watts" oninput="updateApp(${a.id},'watts',+this.value)"></td>
+    <td><input type="number" value="${a.hours}" min="0.1" max="24" step="0.5" aria-label="Hours per day" oninput="updateApp(${a.id},'hours',+this.value)"></td>
+    <td><select aria-label="Load type" onchange="updateApp(${a.id},'type',this.value)">
+      <option value="ac" ${a.type==='ac'?'selected':''}>AC ${acV}V</option>
+      <option value="dc" ${a.type==='dc'?'selected':''}>DC ${document.getElementById('sys-voltage')?document.getElementById('sys-voltage').value:12}V</option>
+    </select></td>
     <td class="wh-cell">${(a.watts*a.hours).toFixed(0)} Wh</td>
-    <td><button class="btn btn-danger btn-sm" onclick="removeAppliance(${a.id})">✕</button></td>
+    <td><button class="btn btn-danger btn-sm" onclick="removeAppliance(${a.id})" aria-label="Remove ${a.name}">✕</button></td>
   </tr>`).join('');
 }
-function updateApp(id,f,v){const a=appliances.find(x=>x.id===id);if(a){a[f]=v;recalc();}}
+function updateApp(id,f,v){const a=appliances.find(x=>x.id===id);if(a){a[f]=v;recalc();if(f==='type'||f==='name')renderTable();}}
 
 // ===================== CALCULATIONS =====================
 function getCalcs(){
   const voltage=+document.getElementById('sys-voltage').value;
+  const acVoltage=getAcVoltage();
   const autonomy=+document.getElementById('autonomy').value;
   const dod=+document.getElementById('battery-type').value;
   const peakSun=+document.getElementById('peak-sun').value;
@@ -715,16 +897,16 @@ function getCalcs(){
   const minAh=totalWhAuto/voltage/dod;
   const recAh=minAh*1.2;
   const solarW=(totalWh/peakSun/solEff)*1.25;
-  const ccAmps=solarW/voltage; // battery-side output current
+  const ccAmps=solarW/voltage;
   const ccSize=Math.max(10,Math.ceil(ccAmps/10)*10);
-  // FIX #5: calculate both continuous and surge inverter ratings
   const invCont=peakAc*1.25;
-  const invSurge=peakAc*2.5; // motors can draw 2-3x; 2.5x is a reasonable estimate
+  const invSurge=peakAc*2.5;
   const genSize=peakWatts*1.5;
-  return{voltage,autonomy,dod,peakSun,solEff,invEff,acLoad,dcLoad,totalWh,peakAc,peakDc,peakWatts,totalWhAuto,minAh,recAh,solarW,ccAmps,ccSize,invCont,invSurge,genSize};
+  return{voltage,acVoltage,autonomy,dod,peakSun,solEff,invEff,acLoad,dcLoad,totalWh,peakAc,peakDc,peakWatts,totalWhAuto,minAh,recAh,solarW,ccAmps,ccSize,invCont,invSurge,genSize};
 }
 
 function recalc(){
+  renderTable(); // refresh type labels
   const c=getCalcs();
   document.getElementById('hdr-load').textContent=Math.round(c.totalWh)+' Wh';
   document.getElementById('hdr-battery').textContent=Math.round(c.recAh)+' Ah';
@@ -736,17 +918,17 @@ function recalc(){
   document.getElementById('sb-sol').textContent=Math.round(c.solarW)+' W';
   document.getElementById('sb-inv').textContent=Math.round(c.invCont)+' VA';
   document.getElementById('sb-cc').textContent=Math.round(c.ccSize)+' A';
-  document.getElementById('pb-ac').style.width=Math.min(100,(c.acLoad/total*100)||0)+'%';
-  document.getElementById('pb-dc').style.width=Math.min(100,(c.dcLoad/total*100)||0)+'%';
+  document.getElementById('pb-ac').style.width=Math.min(100,total>0?c.acLoad/total*100:0)+'%';
+  document.getElementById('pb-dc').style.width=Math.min(100,total>0?c.dcLoad/total*100:0)+'%';
   document.getElementById('gauge-label').textContent=Math.round(total)+' Wh/day';
   document.getElementById('gauge-max').textContent=maxG+' Wh';
   drawGauge(total,maxG);
   const sb=document.getElementById('sb-status');
-  if(!total)sb.innerHTML='<div class="alert alert-info" style="font-size:11px;">Add appliances to begin.</div>';
-  else if(total<500)sb.innerHTML='<div class="alert alert-ok" style="font-size:11px;">🟢 Light system — simple setup.</div>';
-  else if(total<2000)sb.innerHTML='<div class="alert alert-info" style="font-size:11px;">🔵 Medium system — good solar + LiFePO4.</div>';
-  else if(total<5000)sb.innerHTML='<div class="alert alert-warn" style="font-size:11px;">🟡 Heavy system — large array + battery bank.</div>';
-  else sb.innerHTML='<div class="alert alert-err" style="font-size:11px;">🔴 Very heavy — consider reducing AC loads.</div>';
+  if(!total) sb.innerHTML='<div class="alert alert-info">Add appliances to begin.</div>';
+  else if(total<500) sb.innerHTML='<div class="alert alert-ok">🟢 Light system — straightforward setup.</div>';
+  else if(total<2000) sb.innerHTML='<div class="alert alert-info">🔵 Medium system — solid solar + LiFePO4.</div>';
+  else if(total<5000) sb.innerHTML='<div class="alert alert-warn">🟡 Heavy system — large array + bank needed.</div>';
+  else sb.innerHTML='<div class="alert alert-err">🔴 Very heavy — review all AC loads.</div>';
   renderSizingNumbers(c);
   updateDiagramValues(c);
 }
@@ -757,7 +939,7 @@ function renderSizingNumbers(c){
   s('res-peak',Math.round(c.peakWatts));
   s('res-battery',Math.round(c.recAh));
   s('res-solar',Math.round(c.solarW));
-  s('res-inverter',Math.round(c.invCont));  // continuous
+  s('res-inverter',Math.round(c.invCont));
   s('res-charge',Math.round(c.ccSize));
   const rt=c.totalWh>0?((c.recAh*c.voltage*c.dod)/(c.totalWh/24)).toFixed(1):'—';
   s('det-wh',Math.round(c.totalWhAuto)+' Wh');
@@ -767,35 +949,29 @@ function renderSizingNumbers(c){
   s('det-usable',Math.round(c.recAh*c.dod)+' Ah usable');
   s('det-runtime',rt+' days');
   s('sol-req',Math.round(c.solarW)+' W');
-  s('sol-config',c.voltage>12?'Series/Parallel':'Parallel');
+  s('sol-config',c.voltage>12?'Series/Parallel strings':'Parallel');
   s('sol-panels',Math.ceil(c.solarW/200)+' × 200W panels');
   s('sol-panels2',Math.ceil(c.solarW/400)+' × 400W panels');
   s('sol-area',Math.round(Math.ceil(c.solarW/400)*20)+'–'+Math.round(Math.ceil(c.solarW/400)*22)+' sq ft');
-  // FIX #1: label clearly as output (charge) amps
   s('cc-amps',Math.round(c.ccAmps)+' A (battery charge output)');
   s('cc-size',c.ccSize+' A MPPT (charge output)');
-  // FIX #2: PV input voltage is a fixed controller spec, show common ratings
-  s('cc-maxpv','75V / 100V / 150V — verify your controller\'s datasheet');
+  s('cc-maxpv','75V / 100V / 150V — verify datasheet');
   s('cc-wire',c.ccSize<=30?'10 AWG':c.ccSize<=60?'6 AWG':'4 AWG');
-  // FIX #5: show continuous AND surge
   s('inv-cont',Math.round(c.invCont)+' W continuous');
   s('inv-surge',Math.round(c.invSurge)+' W surge (est.)');
   s('inv-rec','≥ '+Math.round(c.invCont)+'W cont. / ≥ '+Math.round(c.invSurge)+'W surge');
+  s('inv-acv',c.acVoltage+'V AC');
   s('gen-size',Math.round(c.genSize/500)*500+'W');
-  // FIX (minor): shore amps based on peak — label accordingly
-  s('shore-amps',Math.round(c.peakWatts/120)+'A peak @ 120V');
-  s('shore-amps2',Math.round(c.peakWatts/240)+'A peak @ 240V');
-
-  // Smart alerts
-  const ad=document.getElementById('sizing-alerts');
-  if(!ad)return;
+  s('shore-amps',Math.round(c.peakWatts/c.acVoltage)+'A peak @ '+c.acVoltage+'V');
+  // Alerts
+  const ad=document.getElementById('sizing-alerts');if(!ad)return;
   let h='';
   if(!c.totalWh){ad.innerHTML='';return;}
-  if(c.peakAc>2000)h+=`<div class="alert alert-warn">⚡ High AC peak (${Math.round(c.peakAc)}W continuous). Ensure inverter surge rating covers motor startup — add 2–3× for compressors/AC.</div>`;
-  if(c.solarW>800&&c.voltage===12)h+=`<div class="alert alert-info">ℹ️ Solar >800W on 12V — consider 24V to reduce wire gauge and controller current.</div>`;
-  if(c.recAh>400&&c.voltage===12)h+=`<div class="alert alert-warn">🔋 Large battery bank at 12V requires very heavy cabling. Consider 24V or 48V.</div>`;
-  if(c.totalWh>4000)h+=`<div class="alert alert-err">🔴 Very large system — 48V inverter-charger with generator backup strongly recommended.</div>`;
-  if(c.peakAc>0&&c.invSurge>3000)h+=`<div class="alert alert-warn">⚠️ Estimated surge requirement ~${Math.round(c.invSurge)}W. Verify each motor load's LRA (locked rotor amps) at startup.</div>`;
+  if(c.peakAc>2000) h+=`<div class="alert alert-warn">⚡ High AC peak (${Math.round(c.peakAc)}W). Ensure inverter surge rating covers motor startup — motors draw 2–3× running watts.</div>`;
+  if(c.solarW>800&&c.voltage===12) h+=`<div class="alert alert-info">ℹ️ Solar >800W on 12V — consider upgrading to 24V to reduce current and wire gauge.</div>`;
+  if(c.recAh>400&&c.voltage===12) h+=`<div class="alert alert-warn">🔋 Large bank at 12V requires very heavy cabling. Consider 24V or 48V system.</div>`;
+  if(c.totalWh>4000) h+=`<div class="alert alert-err">🔴 Very large system — 48V inverter-charger with generator backup strongly recommended.</div>`;
+  if(c.peakAc>0&&c.invSurge>3000) h+=`<div class="alert alert-warn">⚠️ Surge est. ~${Math.round(c.invSurge)}W. Verify each motor load's startup current (LRA) individually.</div>`;
   ad.innerHTML=h;
 }
 function renderSizing(){renderSizingNumbers(getCalcs());}
@@ -806,12 +982,12 @@ function drawGauge(value,max){
   ctx.clearRect(0,0,cv.width,cv.height);
   const cx=cv.width/2,cy=cv.height-16,r=cv.height-26;
   const pct=Math.min(1,value/max),angle=Math.PI+pct*Math.PI;
-  ctx.beginPath();ctx.arc(cx,cy,r,Math.PI,0,false);ctx.strokeStyle='#2d3748';ctx.lineWidth=15;ctx.stroke();
-  const col=pct<.4?'#10b981':pct<.7?'#f59e0b':'#ef4444';
+  ctx.beginPath();ctx.arc(cx,cy,r,Math.PI,0,false);ctx.strokeStyle='#d0d7e2';ctx.lineWidth=15;ctx.stroke();
+  const col=pct<.4?'#0a7c54':pct<.7?'#c47f00':'#c0392b';
   ctx.beginPath();ctx.arc(cx,cy,r,Math.PI,angle,false);ctx.strokeStyle=col;ctx.lineWidth=15;ctx.lineCap='round';ctx.stroke();
   const nx=cx+(r-7)*Math.cos(angle),ny=cy+(r-7)*Math.sin(angle);
-  ctx.beginPath();ctx.moveTo(cx,cy);ctx.lineTo(nx,ny);ctx.strokeStyle='#fff';ctx.lineWidth=2;ctx.stroke();
-  ctx.beginPath();ctx.arc(cx,cy,5,0,Math.PI*2);ctx.fillStyle=col;ctx.fill();
+  ctx.beginPath();ctx.moveTo(cx,cy);ctx.lineTo(nx,ny);ctx.strokeStyle=col;ctx.lineWidth=2.5;ctx.stroke();
+  ctx.beginPath();ctx.arc(cx,cy,6,0,Math.PI*2);ctx.fillStyle=col;ctx.fill();
 }
 
 // ===================== COMPONENTS =====================
@@ -820,16 +996,16 @@ function mkCard(cat,key,o,isUser,qty){
   const idx=parseInt(key.slice(1));
   const linkHTML=o.url?`<a class="comp-link" href="${o.url}" target="_blank" rel="noopener" onclick="event.stopPropagation()">🔗 Buy</a>`:'';
   const delHTML=isUser
-    ?`<button class="btn btn-danger btn-sm" style="padding:2px 7px;font-size:10px;" onclick="event.stopPropagation();delUserProd('${cat}',${idx})" title="Remove">✕</button>`
-    :`<button class="btn btn-secondary btn-sm" style="padding:2px 7px;font-size:10px;opacity:.55;" onclick="event.stopPropagation();hideBuiltIn('${cat}',${idx})" title="Hide">Hide</button>`;
-  const qtyHTML=qty?`<div class="comp-spec" style="color:var(--accent)">${qty}</div>`:'';
-  return `<div class="comp-card${sel?' selected':''}${isUser?' user-card':''}" onclick="selectComp('${cat}','${key}')">
+    ?`<button class="btn btn-danger btn-sm" style="padding:3px 8px;font-size:10px;" onclick="event.stopPropagation();delUserProd('${cat}',${idx})" aria-label="Remove ${o.name}">✕</button>`
+    :`<button class="btn btn-secondary btn-sm" style="padding:3px 8px;font-size:10px;" onclick="event.stopPropagation();hideBuiltIn('${cat}',${idx})" aria-label="Hide ${o.name}">Hide</button>`;
+  const qtyHTML=qty?`<div class="comp-spec" style="color:var(--accent2);font-weight:600;">${qty}</div>`:'';
+  return `<div class="comp-card${sel?' selected':''}${isUser?' user-card':''}" onclick="selectComp('${cat}','${key}')" tabindex="0" role="option" aria-selected="${sel}" onkeydown="if(event.key==='Enter'||event.key===' ')selectComp('${cat}','${key}')">
     <div class="comp-card-header"><div class="comp-name">${o.name}</div><div class="comp-price">${o.price||'—'}</div></div>
     <div class="comp-spec">${o.spec}</div>
     ${qtyHTML}
     <div class="comp-footer">
       <span class="badge ${isUser?'badge-demo':BCOLS[idx%4]}">${isUser?'Custom':o.tag}</span>
-      <div style="display:flex;gap:4px;">${linkHTML}${delHTML}</div>
+      <div style="display:flex;gap:5px;align-items:center;">${linkHTML}${delHTML}</div>
     </div>
   </div>`;
 }
@@ -843,16 +1019,15 @@ function renderComponents(){
     let html=bi.map((o,i)=>{
       if(hidden.has(i))return '';
       let qty=null;
-      if(cat==='battery'&&o.ah) qty=`Need ~${Math.ceil(c.recAh/o.ah)} units`;  // FIX #4: use product's actual Ah
-      if(cat==='solar'&&o.watts) qty=`Need ~${Math.ceil(c.solarW/o.watts)} panels`;
+      if(cat==='battery'&&o.ah) qty=`Need ~${Math.ceil(c.recAh/o.ah)} units @ ${c.recAh.toFixed(0)} Ah total`;
+      if(cat==='solar'&&o.watts) qty=`Need ~${Math.ceil(c.solarW/o.watts)} panels @ ${c.solarW.toFixed(0)}W total`;
       return mkCard(cat,'b'+i,o,false,qty);
     }).join('');
     html+=userProducts[cat].map((o,i)=>mkCard(cat,'u'+i,o,true,null)).join('');
-    document.getElementById(gridId).innerHTML=html||'<div style="font-size:11px;color:var(--muted);padding:6px 0;">All built-in options hidden.</div>';
+    document.getElementById(gridId).innerHTML=html||'<div style="font-size:12px;color:var(--muted);padding:8px 0;">All built-in options hidden.</div>';
     const restoreEl=document.getElementById('restore-'+cat);
-    if(restoreEl)restoreEl.innerHTML=hidden.size>0
-      ?`<button class="btn btn-secondary btn-sm" style="margin-bottom:8px;" onclick="restoreBuiltIns('${cat}')">↩ Restore ${hidden.size} hidden option${hidden.size>1?'s':''}</button>`
-      :'';
+    if(restoreEl) restoreEl.innerHTML=hidden.size>0
+      ?`<button class="btn btn-secondary btn-sm" style="margin-bottom:10px;" onclick="restoreBuiltIns('${cat}')">↩ Restore ${hidden.size} hidden option${hidden.size>1?'s':''}</button>`:'';
   });
   renderShoppingList();
 }
@@ -878,11 +1053,12 @@ function toggleAddForm(cat){
         <div class="form-group"><label>Price</label><input type="text" id="fp-price-${cat}" placeholder="e.g. $799"></div>
       </div>
       <div class="form-group"><label>Spec / Description *</label><input type="text" id="fp-spec-${cat}" placeholder="e.g. 200Ah | 12V | 3,000 cycles | BMS included"></div>
-      <div class="form-group"><label>Product URL (Amazon, retailer, manufacturer)</label><input type="url" id="fp-url-${cat}" placeholder="https://www.amazon.com/dp/..."></div>
-      <div style="display:flex;gap:7px;margin-top:4px;">
+      <div class="form-group"><label>Product URL (any retailer)</label><input type="url" id="fp-url-${cat}" placeholder="https://www.amazon.com/dp/..."></div>
+      <div style="display:flex;gap:8px;margin-top:4px;">
         <button class="btn btn-purple btn-sm" onclick="saveCustomProduct('${cat}')">Add Product</button>
         <button class="btn btn-secondary btn-sm" onclick="hideAddForm('${cat}')">Cancel</button>
       </div>`;
+    setTimeout(()=>document.getElementById(`fp-name-${cat}`)?.focus(),50);
   }else{el.style.display='none';el.innerHTML='';}
 }
 function hideAddForm(cat){const e=document.getElementById(`add-${cat}-form`);if(e){e.style.display='none';e.innerHTML='';}}
@@ -899,110 +1075,122 @@ function saveCustomProduct(cat){
 // ===================== SHOPPING LIST =====================
 function renderShoppingList(){
   const c=getCalcs();
-  const catLabels={battery:'Battery',solar:'Solar Panel',cc:'Charge Controller',inv:'Inverter'};
+  const labels={battery:'Battery',solar:'Solar Panel',cc:'Charge Controller',inv:'Inverter'};
   const sel=Object.entries(selections).filter(([,v])=>v!==null);
   if(!sel.length){document.getElementById('shopping-list').innerHTML='<div class="alert alert-info">ℹ️ Select components above to generate your shopping list.</div>';return;}
-  let h='<table class="spec-table"><thead><tr><th style="color:var(--muted);padding:6px 10px;font-size:9px;text-transform:uppercase">Component</th><th style="color:var(--muted);padding:6px 10px;font-size:9px;text-transform:uppercase">Product</th><th style="color:var(--muted);padding:6px 10px;font-size:9px;text-transform:uppercase">Price</th><th style="color:var(--muted);padding:6px 10px;font-size:9px;text-transform:uppercase">Link</th></tr></thead><tbody>';
+  let h='<table class="spec-table"><thead><tr>';
+  ['Component','Product','Price','Link'].forEach(h2=>{h+=`<th scope="col" style="color:var(--muted);font-size:10px;text-transform:uppercase;font-weight:700;padding:7px 10px;">${h2}</th>`;});
+  h+='</tr></thead><tbody>';
   sel.forEach(([cat,key])=>{
-    const isUser=key.startsWith('u');
-    const idx=parseInt(key.slice(1));
+    const isUser=key.startsWith('u'),idx=parseInt(key.slice(1));
     const prod=isUser?userProducts[cat][idx]:builtIn(cat,c)[idx];
     if(!prod)return;
-    const lnk=prod.url?`<a href="${prod.url}" target="_blank" rel="noopener" style="color:var(--accent3);font-size:11px;">🔗 Buy</a>`:'—';
-    h+=`<tr><td>${catLabels[cat]}</td><td>${prod.name}${isUser?' <span class="badge badge-demo" style="font-size:9px">Custom</span>':''}</td><td style="color:var(--accent2);font-family:var(--mf)">${prod.price}</td><td>${lnk}</td></tr>`;
+    const lnk=prod.url?`<a href="${prod.url}" target="_blank" rel="noopener" style="color:var(--accent3);font-weight:600;font-size:12px;">🔗 Buy</a>`:'—';
+    h+=`<tr><td>${labels[cat]}</td><td>${prod.name}${isUser?' <span class="badge badge-demo" style="font-size:9px">Custom</span>':''}</td><td style="color:var(--accent2);font-weight:700;">${prod.price}</td><td>${lnk}</td></tr>`;
   });
   h+='</tbody></table>';
-  h+='<div class="alert alert-info" style="margin-top:9px;font-size:11px;">💡 Also budget for: fuses, breakers, bus bars, battery shunt/monitor, wiring, connectors, mounting hardware, transfer switch (~$300–$700).</div>';
+  h+='<div class="alert alert-info" style="margin-top:10px;font-size:12px;">💡 Also budget for: fuses, breakers, bus bars, battery monitor/shunt, wiring, connectors, mounting hardware, transfer switch (~$300–$700).</div>';
   document.getElementById('shopping-list').innerHTML=h;
 }
 
 // ===================== WIRING =====================
 function renderWiring(){
   const c=getCalcs();
-  // FIX #2 carried into wiring: don't reference battery voltage for PV input
   const pvWire=c.solarW>600?'10 AWG':'12 AWG';
   const invWire=c.invCont>1500?'2/0 AWG':'4 AWG';
-  const mainFuse=Math.round(c.recAh*c.dod*1.25);
   const invFuse=Math.round(c.invCont/c.voltage*1.25);
+  const mainFuse=Math.round(c.recAh*c.dod*1.25);
   const steps=[
-    {title:'Mount Battery Bank',body:`Secure batteries in a ventilated, accessible compartment. Use marine-grade battery hold-downs. Keep all battery cables as short as possible.`},
-    {title:'Install Main Fuse / Breaker',body:`Mount a ${mainFuse}A fuse or ANL fuse within 18" of the battery positive terminal. This protects the entire DC system.`},
-    {title:'Install Battery Monitor (Shunt)',body:`Wire a 500A shunt on the main negative cable between battery negative and the negative bus bar. This gives accurate state-of-charge readings.`},
-    {title:'Install DC Bus Bars',body:`Battery positive → main fuse → positive bus bar. Battery negative → shunt → negative bus bar. Branch all loads and sources from the bus bars.`},
-    {title:'Mount & Wire Charge Controller',body:`Mount the ${c.ccSize}A MPPT controller near the battery. Connect battery terminals first (required for setup), then PV. Use ${c.ccSize<=30?'10 AWG':c.ccSize<=60?'6 AWG':'4 AWG'} on the battery side. Verify your panel string Voc does not exceed the controller's PV input voltage rating (check datasheet).`},
-    {title:'Wire Solar Panels to Controller',body:`Run ${pvWire} from the roof junction box to the MPPT PV input. Install a fused disconnect or inline fuse on the PV+ wire near the controller. Panel Voc must stay below the controller's rated PV input voltage at coldest expected temperature.`},
-    {title:'Install Inverter',body:`Mount the inverter as close to the battery bank as possible. Use ${invWire} cable. Install a ${invFuse}A fuse on the positive cable within 18" of the battery. Ensure surge rating covers any motor loads in your system.`},
-    {title:'Shore Power / Transfer Switch',body:`Wire shore power inlet → automatic transfer switch (ATS) or inverter-charger AC input. NEVER connect shore power and inverter output to the same circuit without a proper transfer switch — this is a fire and electrocution hazard.`},
-    {title:'Test & Commission',body:`Always connect the negative cable last. Verify polarity before final battery connection. Set charge controller for your battery type and capacity. Load-test the inverter. Test ATS operation with shore power. Check all connections for heat after first use.`},
+    {title:'Mount Battery Bank',body:`Secure batteries in a ventilated, accessible compartment. Use marine-grade hold-downs. Keep battery cables as short as possible. ${c.voltage>12?`${c.voltage}V system: batteries wired in series — verify polarity carefully.`:''}`},
+    {title:'Install Main Fuse / Breaker',body:`Mount a ${Math.min(mainFuse,400)}A ANL fuse within 18" (45cm) of the battery positive terminal. This protects the entire DC system.`},
+    {title:'Install Battery Monitor (Shunt)',body:`Wire a 500A shunt on the main negative cable between battery negative and the negative bus bar. Provides accurate state-of-charge readings.`},
+    {title:'Install DC Bus Bars',body:`Battery positive → main fuse → positive bus bar. Battery negative → shunt → negative bus bar. Branch all loads and sources from bus bars.`},
+    {title:'Mount & Wire MPPT Charge Controller',body:`Mount ${c.ccSize}A MPPT near battery. Connect battery terminals first (required by controller for setup), then PV. Use ${c.ccSize<=30?'10 AWG':c.ccSize<=60?'6 AWG':'4 AWG'} on battery side. Verify panel string Voc ≤ controller's PV input voltage rating.`},
+    {title:'Wire Solar Panels to Controller',body:`Run ${pvWire} from roof junction box to MPPT PV input. Fuse or inline disconnect on PV+ near controller. At coldest temperature, panel Voc must stay below controller's rated PV input.`},
+    {title:'Install Inverter',body:`Mount inverter as close to batteries as possible. Use ${invWire} cable. ${invFuse}A fuse on positive cable within 18" of battery. Surge rating must cover largest motor startup current.`},
+    {title:'Shore Power / Transfer Switch',body:`Wire shore/generator inlet → automatic transfer switch (ATS) or inverter-charger AC input. NEVER connect shore power and inverter output to same circuit without a proper transfer switch. ${c.acVoltage===240?'240V AC — all wiring must be performed by a licensed electrician.':'120V AC — follow NEC guidelines and verify with a licensed electrician.'}`},
+    {title:'Test & Commission',body:`Connect negative cable last. Verify polarity before final connection. Set charge controller for your battery type. Load-test inverter. Test ATS with shore power. Check all connections for heat after first run.`},
   ];
   document.getElementById('wiring-steps').innerHTML=steps.map((s,i)=>
-    `<div class="wire-step"><div class="wire-num">${i+1}</div><div class="wire-content"><h4>${s.title}</h4><p>${s.body}</p></div></div>`).join('');
+    `<div class="wire-step"><div class="wire-num" aria-hidden="true">${i+1}</div><div class="wire-content"><h4>${s.title}</h4><p>${s.body}</p></div></div>`).join('');
 }
 
 // ===================== DIAGRAM =====================
 function renderDiagram(){
+  const c=getCalcs();
   const svg=document.getElementById('system-svg');
+  const bg='#f4f6f9',surf='#ffffff',bord='#d0d7e2';
+  const amber='#c47f00',green='#0a7c54',blue='#1a5fbf',purple='#6b3fa0',danger='#c0392b';
+  const text='#1a2233',muted='#5a6a82';
   svg.innerHTML=`<defs>
-    <pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse"><path d="M 20 0 L 0 0 0 20" fill="none" stroke="#1f2937" stroke-width="0.5"/></pattern>
-    <marker id="aA" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#f59e0b"/></marker>
-    <marker id="aBl" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#3b82f6"/></marker>
-    <marker id="aG" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#10b981"/></marker>
-    <marker id="aPu" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#a78bfa"/></marker>
+    <marker id="aA" markerWidth="8" markerHeight="6" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="${amber}"/></marker>
+    <marker id="aBl" markerWidth="8" markerHeight="6" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="${blue}"/></marker>
+    <marker id="aG" markerWidth="8" markerHeight="6" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="${green}"/></marker>
+    <marker id="aPu" markerWidth="8" markerHeight="6" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="${purple}"/></marker>
   </defs>
-  <rect width="660" height="450" fill="#0d1117" rx="8"/>
-  <rect width="660" height="450" fill="url(#grid)" rx="8"/>
-  <rect x="14" y="14" width="108" height="64" rx="6" fill="#1f2937" stroke="#10b981" stroke-width="1.5"/>
-  <text x="68" y="36" text-anchor="middle" font-size="11" fill="#10b981" font-family="DM Sans">☀️ SOLAR</text>
-  <text x="68" y="52" text-anchor="middle" font-size="10" fill="#6b7280" font-family="DM Mono">PANELS</text>
-  <text x="68" y="68" text-anchor="middle" font-size="9" fill="#10b981" id="d-solar" font-family="DM Mono">— W</text>
-  <rect x="14" y="366" width="108" height="64" rx="6" fill="#1f2937" stroke="#a78bfa" stroke-width="1.5"/>
-  <text x="68" y="388" text-anchor="middle" font-size="11" fill="#a78bfa" font-family="DM Sans">🔌 SHORE</text>
-  <text x="68" y="404" text-anchor="middle" font-size="10" fill="#6b7280" font-family="DM Mono">/ GEN</text>
-  <text x="68" y="420" text-anchor="middle" font-size="9" fill="#a78bfa" font-family="DM Mono">30A / 50A</text>
-  <rect x="184" y="14" width="126" height="64" rx="6" fill="#1f2937" stroke="#f59e0b" stroke-width="1.5"/>
-  <text x="247" y="36" text-anchor="middle" font-size="11" fill="#f59e0b" font-family="DM Sans">⚙️ MPPT</text>
-  <text x="247" y="52" text-anchor="middle" font-size="10" fill="#6b7280" font-family="DM Mono">CHARGE CTRL</text>
-  <text x="247" y="68" text-anchor="middle" font-size="9" fill="#f59e0b" id="d-cc" font-family="DM Mono">— A out</text>
-  <rect x="258" y="172" width="126" height="84" rx="6" fill="#1f2937" stroke="#f59e0b" stroke-width="2"/>
-  <text x="321" y="198" text-anchor="middle" font-size="12" fill="#f59e0b" font-family="DM Sans" font-weight="600">🔋 BATTERY</text>
-  <text x="321" y="215" text-anchor="middle" font-size="10" fill="#6b7280" font-family="DM Mono">BANK</text>
-  <text x="321" y="233" text-anchor="middle" font-size="11" fill="#f59e0b" id="d-bat" font-family="DM Mono">— Ah</text>
-  <text x="321" y="248" text-anchor="middle" font-size="9" fill="#6b7280" id="d-volt" font-family="DM Mono">12V LiFePO4</text>
-  <rect x="158" y="186" width="72" height="24" rx="4" fill="#161b22" stroke="#2d3748" stroke-width="1"/>
-  <text x="194" y="202" text-anchor="middle" font-size="9" fill="#6b7280" font-family="DM Mono">BUS BARS</text>
-  <rect x="428" y="172" width="126" height="84" rx="6" fill="#1f2937" stroke="#a78bfa" stroke-width="1.5"/>
-  <text x="491" y="198" text-anchor="middle" font-size="11" fill="#a78bfa" font-family="DM Sans">🔄 INVERTER</text>
-  <text x="491" y="215" text-anchor="middle" font-size="10" fill="#6b7280" font-family="DM Mono">PURE SINE</text>
-  <text x="491" y="233" text-anchor="middle" font-size="9" fill="#a78bfa" id="d-inv" font-family="DM Mono">— VA cont.</text>
-  <text x="491" y="248" text-anchor="middle" font-size="9" fill="#6b7280" id="d-inv-surge" font-family="DM Mono">— VA surge</text>
-  <rect x="184" y="366" width="126" height="64" rx="6" fill="#1f2937" stroke="#a78bfa" stroke-width="1" stroke-dasharray="4,2"/>
-  <text x="247" y="388" text-anchor="middle" font-size="10" fill="#a78bfa" font-family="DM Sans">⚡ TRANSFER</text>
-  <text x="247" y="404" text-anchor="middle" font-size="10" fill="#6b7280" font-family="DM Mono">SWITCH</text>
-  <rect x="528" y="366" width="112" height="64" rx="6" fill="#1f2937" stroke="#3b82f6" stroke-width="1.5"/>
-  <text x="584" y="388" text-anchor="middle" font-size="11" fill="#3b82f6" font-family="DM Sans">🔌 AC LOADS</text>
-  <text x="584" y="404" text-anchor="middle" font-size="10" fill="#6b7280" font-family="DM Mono">120V AC</text>
-  <text x="584" y="420" text-anchor="middle" font-size="9" fill="#3b82f6" id="d-acload" font-family="DM Mono">— W</text>
-  <rect x="528" y="262" width="112" height="64" rx="6" fill="#1f2937" stroke="#f59e0b" stroke-width="1.5"/>
-  <text x="584" y="284" text-anchor="middle" font-size="11" fill="#f59e0b" font-family="DM Sans">⚡ DC LOADS</text>
-  <text x="584" y="300" text-anchor="middle" font-size="10" fill="#6b7280" font-family="DM Mono">12/24V DC</text>
-  <text x="584" y="316" text-anchor="middle" font-size="9" fill="#f59e0b" id="d-dcload" font-family="DM Mono">— W</text>
-  <line x1="122" y1="46" x2="184" y2="46" stroke="#10b981" stroke-width="2.5" marker-end="url(#aG)"/>
-  <line x1="247" y1="78" x2="247" y2="142" stroke="#f59e0b" stroke-width="2.5"/>
-  <line x1="247" y1="142" x2="321" y2="142" stroke="#f59e0b" stroke-width="2.5"/>
-  <line x1="321" y1="142" x2="321" y2="172" stroke="#f59e0b" stroke-width="2.5" marker-end="url(#aA)"/>
-  <line x1="230" y1="198" x2="258" y2="198" stroke="#f59e0b" stroke-width="2" marker-end="url(#aA)"/>
-  <line x1="384" y1="214" x2="428" y2="214" stroke="#f59e0b" stroke-width="2.5" marker-end="url(#aA)"/>
-  <line x1="384" y1="198" x2="480" y2="198" stroke="#f59e0b" stroke-width="1.5"/>
-  <line x1="480" y1="198" x2="480" y2="294" stroke="#f59e0b" stroke-width="1.5"/>
-  <line x1="480" y1="294" x2="528" y2="294" stroke="#f59e0b" stroke-width="1.5" marker-end="url(#aA)"/>
-  <line x1="491" y1="256" x2="491" y2="338" stroke="#3b82f6" stroke-width="2"/>
-  <line x1="491" y1="338" x2="528" y2="398" stroke="#3b82f6" stroke-width="2" marker-end="url(#aBl)"/>
-  <line x1="122" y1="398" x2="184" y2="398" stroke="#a78bfa" stroke-width="2" marker-end="url(#aPu)"/>
-  <line x1="310" y1="398" x2="491" y2="398" stroke="#a78bfa" stroke-width="1.5"/>
-  <line x1="491" y1="398" x2="491" y2="256" stroke="#a78bfa" stroke-width="1.5" stroke-dasharray="5,3"/>
-  <line x1="194" y1="78" x2="194" y2="198" stroke="#f59e0b" stroke-width="1.5"/>
-  <line x1="158" y1="198" x2="194" y2="198" stroke="#f59e0b" stroke-width="1.5"/>`;
-  updateDiagramValues(getCalcs());
+  <rect width="660" height="450" fill="${bg}" rx="8"/>
+  <!-- Solar -->
+  <rect x="14" y="14" width="112" height="68" rx="8" fill="${surf}" stroke="${green}" stroke-width="2"/>
+  <text x="70" y="36" text-anchor="middle" font-size="11" fill="${green}" font-weight="700">☀️ SOLAR</text>
+  <text x="70" y="52" text-anchor="middle" font-size="10" fill="${muted}" font-family="DM Mono">PANELS</text>
+  <text x="70" y="68" text-anchor="middle" font-size="10" fill="${green}" id="d-solar" font-weight="600">—W</text>
+  <!-- Shore/Gen -->
+  <rect x="14" y="368" width="112" height="68" rx="8" fill="${surf}" stroke="${purple}" stroke-width="2"/>
+  <text x="70" y="390" text-anchor="middle" font-size="11" fill="${purple}" font-weight="700">🔌 SHORE</text>
+  <text x="70" y="407" text-anchor="middle" font-size="10" fill="${muted}" font-family="DM Mono">/ GEN</text>
+  <text x="70" y="422" text-anchor="middle" font-size="9" fill="${purple}" id="d-acv" font-family="DM Mono">—V</text>
+  <!-- MPPT -->
+  <rect x="186" y="14" width="128" height="68" rx="8" fill="${surf}" stroke="${amber}" stroke-width="2"/>
+  <text x="250" y="36" text-anchor="middle" font-size="11" fill="${amber}" font-weight="700">⚙️ MPPT</text>
+  <text x="250" y="52" text-anchor="middle" font-size="10" fill="${muted}" font-family="DM Mono">CHARGE CTRL</text>
+  <text x="250" y="68" text-anchor="middle" font-size="10" fill="${amber}" id="d-cc" font-weight="600">—A out</text>
+  <!-- Battery -->
+  <rect x="260" y="174" width="130" height="90" rx="8" fill="${surf}" stroke="${amber}" stroke-width="2.5"/>
+  <text x="325" y="200" text-anchor="middle" font-size="13" fill="${amber}" font-weight="700">🔋 BATTERY</text>
+  <text x="325" y="218" text-anchor="middle" font-size="10" fill="${muted}" font-family="DM Mono">BANK</text>
+  <text x="325" y="238" text-anchor="middle" font-size="11" fill="${amber}" id="d-bat" font-weight="700">—Ah</text>
+  <text x="325" y="254" text-anchor="middle" font-size="9" fill="${muted}" id="d-volt" font-family="DM Mono">—V</text>
+  <!-- Bus bars -->
+  <rect x="160" y="190" width="72" height="26" rx="5" fill="${bg}" stroke="${bord}" stroke-width="1.5"/>
+  <text x="196" y="207" text-anchor="middle" font-size="9" fill="${muted}" font-weight="600">BUS BARS</text>
+  <!-- Inverter -->
+  <rect x="430" y="174" width="130" height="90" rx="8" fill="${surf}" stroke="${purple}" stroke-width="2"/>
+  <text x="495" y="200" text-anchor="middle" font-size="11" fill="${purple}" font-weight="700">🔄 INVERTER</text>
+  <text x="495" y="218" text-anchor="middle" font-size="10" fill="${muted}" font-family="DM Mono">PURE SINE</text>
+  <text x="495" y="236" text-anchor="middle" font-size="9" fill="${purple}" id="d-inv" font-weight="600">—VA cont.</text>
+  <text x="495" y="252" text-anchor="middle" font-size="9" fill="${muted}" id="d-inv-surge" font-family="DM Mono">—VA surge</text>
+  <!-- Transfer Switch -->
+  <rect x="186" y="368" width="128" height="68" rx="8" fill="${bg}" stroke="${purple}" stroke-width="1.5" stroke-dasharray="5,3"/>
+  <text x="250" y="390" text-anchor="middle" font-size="10" fill="${purple}" font-weight="700">⚡ TRANSFER</text>
+  <text x="250" y="407" text-anchor="middle" font-size="10" fill="${muted}" font-family="DM Mono">SWITCH</text>
+  <!-- AC Loads -->
+  <rect x="530" y="368" width="116" height="68" rx="8" fill="${surf}" stroke="${blue}" stroke-width="2"/>
+  <text x="588" y="390" text-anchor="middle" font-size="11" fill="${blue}" font-weight="700">🔌 AC LOADS</text>
+  <text x="588" y="407" text-anchor="middle" font-size="9" fill="${muted}" id="d-acv2" font-family="DM Mono">—V AC</text>
+  <text x="588" y="422" text-anchor="middle" font-size="9" fill="${blue}" id="d-acload" font-weight="600">—W</text>
+  <!-- DC Loads -->
+  <rect x="530" y="265" width="116" height="68" rx="8" fill="${surf}" stroke="${amber}" stroke-width="2"/>
+  <text x="588" y="287" text-anchor="middle" font-size="11" fill="${amber}" font-weight="700">⚡ DC LOADS</text>
+  <text x="588" y="304" text-anchor="middle" font-size="9" fill="${muted}" id="d-dcvolt" font-family="DM Mono">—V DC</text>
+  <text x="588" y="320" text-anchor="middle" font-size="9" fill="${amber}" id="d-dcload" font-weight="600">—W</text>
+  <!-- Wires -->
+  <line x1="126" y1="48" x2="186" y2="48" stroke="${green}" stroke-width="2.5" marker-end="url(#aG)"/>
+  <line x1="250" y1="82" x2="250" y2="148" stroke="${amber}" stroke-width="2.5"/>
+  <line x1="250" y1="148" x2="325" y2="148" stroke="${amber}" stroke-width="2.5"/>
+  <line x1="325" y1="148" x2="325" y2="174" stroke="${amber}" stroke-width="2.5" marker-end="url(#aA)"/>
+  <line x1="232" y1="203" x2="260" y2="203" stroke="${amber}" stroke-width="2" marker-end="url(#aA)"/>
+  <line x1="390" y1="219" x2="430" y2="219" stroke="${amber}" stroke-width="2.5" marker-end="url(#aA)"/>
+  <line x1="390" y1="203" x2="484" y2="203" stroke="${amber}" stroke-width="1.5"/>
+  <line x1="484" y1="203" x2="484" y2="297" stroke="${amber}" stroke-width="1.5"/>
+  <line x1="484" y1="297" x2="530" y2="297" stroke="${amber}" stroke-width="1.5" marker-end="url(#aA)"/>
+  <line x1="495" y1="264" x2="495" y2="340" stroke="${blue}" stroke-width="2.5"/>
+  <line x1="495" y1="340" x2="530" y2="402" stroke="${blue}" stroke-width="2.5" marker-end="url(#aBl)"/>
+  <line x1="126" y1="402" x2="186" y2="402" stroke="${purple}" stroke-width="2" marker-end="url(#aPu)"/>
+  <line x1="314" y1="402" x2="495" y2="402" stroke="${purple}" stroke-width="1.5"/>
+  <line x1="495" y1="402" x2="495" y2="264" stroke="${purple}" stroke-width="1.5" stroke-dasharray="6,3"/>
+  <line x1="196" y1="82" x2="196" y2="203" stroke="${amber}" stroke-width="1.5"/>
+  <line x1="160" y1="203" x2="196" y2="203" stroke="${amber}" stroke-width="1.5"/>`;
+  updateDiagramValues(c);
 }
 
 function updateDiagramValues(c){
@@ -1015,12 +1203,18 @@ function updateDiagramValues(c){
   sd('d-volt',c.voltage+'V LiFePO4');
   sd('d-inv',Math.round(c.invCont)+'VA cont.');
   sd('d-inv-surge',Math.round(c.invSurge)+'VA surge');
+  sd('d-acv',(c.acVoltage||240)+'V');
+  sd('d-acv2',(c.acVoltage||240)+'V AC');
   sd('d-acload',Math.round(c.peakAc)+'W peak');
+  sd('d-dcvolt',c.voltage+'V DC');
   sd('d-dcload',Math.round(c.peakDc)+'W peak');
 }
 
 // ===================== SAVE / LOAD =====================
-function openSaveModal(){document.getElementById('save-overlay').classList.remove('hidden');setTimeout(()=>document.getElementById('save-name').focus(),50);}
+function openSaveModal(){
+  document.getElementById('save-overlay').classList.remove('hidden');
+  setTimeout(()=>document.getElementById('save-name').focus(),50);
+}
 function closeSaveModal(){document.getElementById('save-overlay').classList.add('hidden');}
 function confirmSave(){
   const name=document.getElementById('save-name').value.trim();
@@ -1031,16 +1225,18 @@ function confirmSave(){
     notes:document.getElementById('save-notes').value.trim(),
     isDemo:false,timestamp:Date.now(),
     appliances:JSON.parse(JSON.stringify(appliances)),
-    prefs:{voltage:+document.getElementById('sys-voltage').value,autonomy:+document.getElementById('autonomy').value,dod:+document.getElementById('battery-type').value,peakSun:+document.getElementById('peak-sun').value,solEff:+document.getElementById('sol-eff').value,invEff:+document.getElementById('inv-eff').value},
+    prefs:{voltage:+document.getElementById('sys-voltage').value,acVoltage:getAcVoltage(),autonomy:+document.getElementById('autonomy').value,dod:+document.getElementById('battery-type').value,peakSun:+document.getElementById('peak-sun').value,solEff:+document.getElementById('sol-eff').value,invEff:+document.getElementById('inv-eff').value},
     calcs:c,selections:JSON.parse(JSON.stringify(selections)),
     userProducts:JSON.parse(JSON.stringify(userProducts))
   });
   closeSaveModal();renderSavedList();
   const t=document.createElement('div');
   t.textContent='✅ System saved!';
-  t.style.cssText='position:fixed;bottom:20px;right:20px;background:#10b981;color:#000;padding:10px 18px;border-radius:8px;font-weight:600;font-size:13px;z-index:9999;box-shadow:0 4px 12px rgba(0,0,0,.4);';
-  document.body.appendChild(t);setTimeout(()=>t.remove(),2500);
+  t.setAttribute('role','status');
+  t.style.cssText='position:fixed;bottom:24px;right:24px;background:#0a7c54;color:#fff;padding:12px 20px;border-radius:8px;font-weight:700;font-size:13px;z-index:9999;box-shadow:0 4px 16px rgba(0,0,0,.2);';
+  document.body.appendChild(t);setTimeout(()=>t.remove(),2800);
 }
+
 function loadSystem(id){
   const sys=savedSystems.find(s=>s.id===id);if(!sys)return;
   appliances=JSON.parse(JSON.stringify(sys.appliances));
@@ -1050,36 +1246,40 @@ function loadSystem(id){
   hiddenBuiltIns={battery:new Set(),solar:new Set(),cc:new Set(),inv:new Set()};
   const p=sys.prefs;
   document.getElementById('sys-voltage').value=p.voltage;
+  if(p.acVoltage&&document.getElementById('ac-voltage'))document.getElementById('ac-voltage').value=p.acVoltage;
   document.getElementById('autonomy').value=p.autonomy;
   document.getElementById('battery-type').value=p.dod;
   document.getElementById('peak-sun').value=p.peakSun;
   document.getElementById('sol-eff').value=p.solEff;
   document.getElementById('inv-eff').value=p.invEff;
+  onVoltageChange();
   renderTable();recalc();
   showTab('loads',{target:document.querySelectorAll('.tab')[0]});
 }
+
 function deleteSystem(id){
   if(!confirm('Delete this saved system?'))return;
   savedSystems=savedSystems.filter(s=>s.id!==id);
   compareSet.delete(id);renderSavedList();
 }
+
 function renderSavedList(){
   const el=document.getElementById('saved-list');
-  if(!savedSystems.length){el.innerHTML='<div class="alert alert-info">No saved systems yet.</div>';return;}
+  if(!savedSystems.length){el.innerHTML='<div class="alert alert-info">No saved systems yet. Use "Save Current" above.</div>';return;}
   el.innerHTML=savedSystems.map(sys=>{
     const c=sys.calcs||{};
     const d=new Date(sys.timestamp).toLocaleDateString();
     const chk=compareSet.has(sys.id);
     return `<div class="saved-row${sys.isDemo?' is-demo':''}">
-      <input type="checkbox" class="cmp-chk" title="Add to comparison" ${chk?'checked':''} onchange="toggleCmp('${sys.id}',this.checked)">
+      <input type="checkbox" class="cmp-chk" aria-label="Select ${sys.name} for comparison" ${chk?'checked':''} onchange="toggleCmp('${sys.id}',this.checked)">
       <div class="ss-info">
-        <div class="ss-name">${sys.name}${sys.isDemo?' <span class="badge badge-demo" style="font-size:9px">DEMO</span>':''}</div>
-        <div class="ss-meta">${Math.round(c.totalWh||0)} Wh/day · ${Math.round(c.recAh||0)} Ah · ${Math.round(c.solarW||0)}W solar · ${d}</div>
-        ${sys.notes?`<div style="font-size:10px;color:var(--muted);margin-top:2px;font-style:italic;">${sys.notes}</div>`:''}
+        <div class="ss-name">${sys.name}${sys.isDemo?' <span class="badge badge-demo" style="font-size:9px;margin-left:5px">DEMO</span>':''}</div>
+        <div class="ss-meta">${Math.round(c.totalWh||0)} Wh/day · ${Math.round(c.recAh||0)} Ah · ${Math.round(c.solarW||0)}W solar · ${(c.voltage||12)}V · ${d}</div>
+        ${sys.notes?`<div style="font-size:11px;color:var(--muted);margin-top:3px;font-style:italic;">${sys.notes}</div>`:''}
       </div>
       <div class="ss-actions">
         <button class="btn btn-secondary btn-sm" onclick="loadSystem('${sys.id}')">Load</button>
-        ${!sys.isDemo?`<button class="btn btn-danger btn-sm" onclick="deleteSystem('${sys.id}')">✕</button>`:''}
+        ${!sys.isDemo?`<button class="btn btn-danger btn-sm" onclick="deleteSystem('${sys.id}')" aria-label="Delete ${sys.name}">✕</button>`:''}
       </div>
     </div>`;
   }).join('');
@@ -1095,7 +1295,7 @@ function updateCmpUI(){
 // ===================== COMPARE =====================
 function openCompareModal(){
   const systems=savedSystems.filter(s=>compareSet.has(s.id));
-  if(systems.length<2){alert('Select at least 2 systems.');return;}
+  if(systems.length<2){alert('Select at least 2 systems to compare.');return;}
   document.getElementById('compare-overlay').classList.remove('hidden');
   buildCompareTable(systems);
 }
@@ -1103,6 +1303,7 @@ function closeCompareModal(){document.getElementById('compare-overlay').classLis
 function buildCompareTable(systems){
   const rows=[
     {lbl:'Voltage',key:'voltage',unit:'V',section:'⚙️ Config',pref:true},
+    {lbl:'AC Mains',key:'acVoltage',unit:'V',pref:true},
     {lbl:'Days Autonomy',key:'autonomy',unit:' days',pref:true,up:true},
     {lbl:'Daily Load',key:'totalWh',unit:' Wh',section:'⚡ Power',fmt:v=>Math.round(v)},
     {lbl:'Peak Watts',key:'peakWatts',unit:'W',fmt:v=>Math.round(v)},
@@ -1110,16 +1311,15 @@ function buildCompareTable(systems){
     {lbl:'DC Load',key:'dcLoad',unit:' Wh',fmt:v=>Math.round(v)},
     {lbl:'Battery Required',key:'recAh',unit:' Ah',section:'🔋 Battery',fmt:v=>Math.round(v),up:true},
     {lbl:'Min Battery Ah',key:'minAh',unit:' Ah',fmt:v=>Math.round(v)},
-    {lbl:'Usable Capacity',key:null,unit:' Ah',fmt:(v,s)=>Math.round((s.calcs.recAh||0)*(s.prefs.dod||0.8))},
     {lbl:'Solar Array',key:'solarW',unit:'W',section:'☀️ Solar',fmt:v=>Math.round(v),up:true},
-    {lbl:'Peak Sun Hours',key:'peakSun',unit:' hrs',pref:true,up:true},
-    {lbl:'Charge Controller',key:'ccSize',unit:'A out',section:'⚙️ Control',fmt:v=>v,up:true},
+    {lbl:'Peak Sun Hrs',key:'peakSun',unit:' hrs',pref:true,up:true},
+    {lbl:'Charge Controller',key:'ccSize',unit:'A',section:'⚙️ Control',fmt:v=>v,up:true},
     {lbl:'Inverter (cont.)',key:'invCont',unit:' VA',section:'🔄 Inverter',fmt:v=>Math.round(v),up:true},
     {lbl:'Inverter (surge est.)',key:'invSurge',unit:' VA',fmt:v=>Math.round(v),up:true},
     {lbl:'Appliance Count',key:null,unit:' items',section:'📋 Loads',fmt:(v,s)=>s.appliances.length,noWinner:true},
   ];
-  let h=`<table class="cmp-table"><thead><tr><th>Specification</th>`;
-  systems.forEach(s=>{h+=`<th class="scol">${s.name}</th>`;});
+  let h=`<table class="cmp-table"><thead><tr><th scope="col">Specification</th>`;
+  systems.forEach(s=>{h+=`<th scope="col" class="scol">${s.name}</th>`;});
   h+='</tr></thead><tbody>';
   let lastSec='';
   rows.forEach(row=>{
@@ -1130,9 +1330,9 @@ function buildCompareTable(systems){
       return raw!=null?(row.fmt?row.fmt(raw,s):raw):null;
     });
     const nums=vals.filter(v=>typeof v==='number');
-    const bestVal=(!row.noWinner&&nums.length)?(row.up===true?Math.max(...nums):row.up===false?Math.min(...nums):null):null;
+    const bestVal=(!row.noWinner&&nums.length)?(row.up===true?Math.max(...nums):null):null;
     h+=`<tr>`;h+=`<td>${row.lbl}</td>`;
-    systems.forEach((s,i)=>{
+    systems.forEach((_,i)=>{
       const v=vals[i];const disp=v!=null?v+(row.unit||''):'—';
       const win=bestVal!==null&&v===bestVal;
       h+=`<td class="${win?'winner':''}"><span class="val" style="color:${win?'var(--accent2)':'var(--text)'}">${disp}</span></td>`;
@@ -1140,9 +1340,9 @@ function buildCompareTable(systems){
     h+='</tr>';
   });
   h+=`<tr class="sec-row"><td colspan="${systems.length+1}">📝 Notes</td></tr><tr><td>Build Notes</td>`;
-  systems.forEach(s=>{h+=`<td style="font-size:11px;color:var(--muted);font-style:italic;">${s.notes||'—'}</td>`;});
+  systems.forEach(s=>{h+=`<td style="font-size:12px;color:var(--muted);font-style:italic;">${s.notes||'—'}</td>`;});
   h+='</tr></tbody></table>';
-  h+='<p style="margin-top:12px;font-size:11px;color:var(--muted);">✅ <span style="color:var(--accent2)">Green</span> = higher value in comparable rows.</p>';
+  h+='<p style="margin-top:12px;font-size:12px;color:var(--muted);"><span style="color:var(--accent2);font-weight:700;">Green</span> = higher value in comparable rows.</p>';
   document.getElementById('compare-body').innerHTML=h;
 }
 
