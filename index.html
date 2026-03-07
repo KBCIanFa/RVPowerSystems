@@ -225,6 +225,35 @@
   .sb-key { font-size: 11px; color: var(--muted); font-weight: 600; }
   .sb-val { font-family: var(--mf); font-size: 12px; font-weight: 600; }
 
+  /* ===== GLOBAL SETTINGS BAR ===== */
+  .settings-bar { background: #1e3a6a; border-bottom: 2px solid var(--border); padding: 10px 24px; display: flex; align-items: center; gap: 20px; flex-wrap: wrap; }
+  .settings-bar-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .6px; color: #93afd4; white-space: nowrap; }
+  .settings-group { display: flex; align-items: center; gap: 8px; }
+  .settings-group label { margin: 0; font-size: 11px; font-weight: 700; color: #ccdaf0; text-transform: uppercase; letter-spacing: .4px; white-space: nowrap; }
+  .settings-group select { background: #162d52; border: 1.5px solid #3a5a8a; border-radius: 6px; color: #e8f0fc; font-family: var(--mf); font-size: 12px; padding: 5px 10px; outline: none; min-width: 90px; cursor: pointer; }
+  .settings-group select:focus { border-color: #fcd34d; box-shadow: 0 0 0 2px rgba(252,211,77,.25); }
+  .settings-group select:hover { border-color: #6899cc; }
+  .settings-divider { width: 1px; height: 28px; background: #3a5a8a; flex-shrink: 0; }
+  .settings-tip { font-size: 11px; color: #fcd34d; font-weight: 600; display: none; }
+  .btn-build { margin-left: auto; background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); color: #1a1000; font-family: var(--bf); font-size: 12px; font-weight: 800; padding: 8px 18px; border-radius: 7px; border: none; cursor: pointer; letter-spacing: .4px; white-space: nowrap; box-shadow: 0 2px 8px rgba(245,158,11,.4); transition: all .2s; }
+  .btn-build:hover { background: linear-gradient(135deg,#fbbf24 0%,#f59e0b 100%); box-shadow: 0 4px 14px rgba(245,158,11,.5); transform: translateY(-1px); }
+  .btn-build:focus { outline: 3px solid #fcd34d; outline-offset: 2px; }
+  /* Build result modal */
+  .build-modal { max-width: 680px; }
+  .build-section { margin-bottom: 20px; }
+  .build-section h3 { font-family: var(--hf); font-size: 17px; letter-spacing: 1px; color: var(--text); margin-bottom: 10px; padding-bottom: 6px; border-bottom: 2px solid var(--border); display: flex; align-items: center; gap: 8px; }
+  .build-row { display: flex; justify-content: space-between; align-items: flex-start; padding: 8px 0; border-bottom: 1px solid var(--border); gap: 12px; }
+  .build-row:last-child { border-bottom: none; }
+  .build-key { font-size: 12px; color: var(--muted); font-weight: 600; flex-shrink: 0; width: 180px; }
+  .build-val { font-family: var(--mf); font-size: 13px; color: var(--text); font-weight: 600; text-align: right; flex: 1; }
+  .build-val.highlight { color: var(--accent2); }
+  .build-reasoning { background: var(--accent3-bg); border: 1.5px solid #5b8fd9; border-radius: 8px; padding: 12px 14px; margin-bottom: 14px; font-size: 12px; color: #0f3672; line-height: 1.7; }
+  .build-chip { display: inline-block; background: var(--accent-bg); color: var(--accent); border: 1px solid #e8b84b; border-radius: 4px; font-size: 10px; font-weight: 700; padding: 2px 7px; margin: 2px 3px 2px 0; font-family: var(--mf); }
+  .build-chip.green { background: var(--accent2-bg); color: var(--accent2); border-color: #3bb389; }
+  .build-chip.blue { background: var(--accent3-bg); color: var(--accent3); border-color: #5b8fd9; }
+  .build-chip.red { background: var(--danger-bg); color: var(--danger); border-color: #e07060; }
+  .build-actions { display: flex; gap: 10px; margin-top: 18px; flex-wrap: wrap; }
+
   /* ===== SCROLLBAR ===== */
   ::-webkit-scrollbar { width: 6px; height: 6px; }
   ::-webkit-scrollbar-track { background: var(--surface2); }
@@ -251,6 +280,17 @@
 <body>
 
 <a href="#main-content" class="skip-link">Skip to main content</a>
+
+<!-- BUILD SYSTEM MODAL -->
+<div class="modal-overlay hidden" id="build-overlay" role="dialog" aria-modal="true" aria-labelledby="build-modal-title">
+  <div class="modal build-modal">
+    <div class="modal-header">
+      <h2 id="build-modal-title">🔨 Suggested System Build</h2>
+      <button class="modal-close" onclick="closeBuildModal()" aria-label="Close">✕</button>
+    </div>
+    <div class="modal-body" id="build-modal-body"></div>
+  </div>
+</div>
 
 <!-- SAVE MODAL -->
 <div class="modal-overlay hidden" id="save-overlay" role="dialog" aria-modal="true" aria-labelledby="save-modal-title">
@@ -311,6 +351,53 @@
   <button class="tab"        role="tab" aria-selected="false" aria-controls="tab-education" onclick="showTab('education',event)">📚 Learn</button>
 </nav>
 
+<!-- GLOBAL SETTINGS BAR — always visible -->
+<div class="settings-bar" role="region" aria-label="System settings">
+  <span class="settings-bar-label">⚙️ System Settings</span>
+  <div class="settings-divider" aria-hidden="true"></div>
+  <div class="settings-group">
+    <label for="sys-voltage">DC Voltage</label>
+    <select id="sys-voltage" onchange="onVoltageChange()" aria-label="System DC voltage">
+      <option value="12" selected>12V</option>
+      <option value="24">24V</option>
+      <option value="48">48V</option>
+    </select>
+  </div>
+  <div class="settings-divider" aria-hidden="true"></div>
+  <div class="settings-group">
+    <label for="ac-voltage">AC Mains</label>
+    <select id="ac-voltage" onchange="recalc()" aria-label="AC mains voltage">
+      <option value="240" selected>240V</option>
+      <option value="120">120V</option>
+    </select>
+  </div>
+  <div class="settings-divider" aria-hidden="true"></div>
+  <div class="settings-group">
+    <label for="battery-type-bar">Battery Type</label>
+    <select id="battery-type-bar" onchange="syncBattType(this.value)" aria-label="Battery chemistry">
+      <option value="0.5">AGM / Lead-Acid</option>
+      <option value="0.8" selected>LiFePO4 (80%)</option>
+      <option value="0.9">LiFePO4 Premium (90%)</option>
+    </select>
+  </div>
+  <div class="settings-divider" aria-hidden="true"></div>
+  <div class="settings-group">
+    <label for="autonomy-bar">Autonomy</label>
+    <select id="autonomy-bar" onchange="syncAutonomy(this.value)" aria-label="Days of autonomy">
+      <option value="1">1 day</option>
+      <option value="2" selected>2 days</option>
+      <option value="3">3 days</option>
+      <option value="4">4 days</option>
+      <option value="5">5 days</option>
+    </select>
+  </div>
+  <span class="settings-tip" id="settings-tip" aria-live="polite"></span>
+  <button class="btn-build" onclick="buildSystem()" aria-label="Auto-build suggested system from your inputs">🔨 Build System</button>
+</div>
+<!-- Hidden legacy inputs kept for JS compatibility -->
+<input type="hidden" id="autonomy" value="2">
+<input type="hidden" id="battery-type" value="0.8">
+
 <div class="main" id="main-content">
 <div class="content">
 
@@ -347,40 +434,13 @@
 
     <!-- SYSTEM PREFERENCES -->
     <div class="card">
-      <div class="card-title">⚙️ System Preferences</div>
+      <div class="card-title">⚙️ Advanced Preferences</div>
+      <div class="alert alert-info" style="margin-bottom:14px;font-size:12px;">⚡ <strong>DC Voltage</strong>, <strong>AC Mains</strong>, <strong>Battery Type</strong> and <strong>Autonomy</strong> are set in the bar above — visible and changeable from every tab.</div>
       <div class="form-row">
-        <div class="form-group">
-          <label for="sys-voltage">System Voltage</label>
-          <select id="sys-voltage" onchange="onVoltageChange()">
-            <option value="12" selected>12V — Most RVs, vans, small campers</option>
-            <option value="24">24V — Larger RVs, sailboats, medium systems</option>
-            <option value="48">48V — Large systems, high-power, efficiency</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label for="ac-voltage">AC Mains Voltage</label>
-          <select id="ac-voltage" onchange="recalc()">
-            <option value="240" selected>240V — Australia / UK / Europe</option>
-            <option value="120">120V — North America / Japan</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label for="autonomy">Days of Autonomy (no sun)</label>
-          <input type="number" id="autonomy" value="2" min="1" max="10" onchange="recalc()" aria-describedby="autonomy-hint">
-          <div id="autonomy-hint" class="fix-note">Number of cloudy/rainy days battery bank must cover without solar charging.</div>
-        </div>
-        <div class="form-group">
-          <label for="battery-type">Battery Chemistry / DoD</label>
-          <select id="battery-type" onchange="recalc()">
-            <option value="0.5">Lead-Acid / AGM — 50% DoD</option>
-            <option value="0.8" selected>LiFePO4 — 80% DoD (recommended)</option>
-            <option value="0.9">Premium LiFePO4 — 90% DoD</option>
-          </select>
-        </div>
         <div class="form-group">
           <label for="peak-sun">Peak Sun Hours / Day</label>
           <input type="number" id="peak-sun" value="5" min="1" max="10" step="0.5" onchange="recalc()" aria-describedby="sun-hint">
-          <div id="sun-hint" class="fix-note">Typical values: Desert SW 6–7 hrs, SE Australia 5–6 hrs, UK/NW Europe 2–4 hrs.</div>
+          <div id="sun-hint" class="fix-note">Desert SW / SE Australia: 5–7 hrs · UK/NW Europe: 2–4 hrs.</div>
         </div>
         <div class="form-group">
           <label for="sol-eff">System Derate Factor</label>
@@ -467,6 +527,11 @@
   <!-- ===== COMPONENTS ===== -->
   <div id="tab-components" class="section" role="tabpanel">
     <div class="section-title">Component Selector</div>
+    <div id="build-applied-banner" style="display:none;background:linear-gradient(135deg,#0a7c54,#0d9668);color:#fff;border-radius:10px;padding:13px 18px;margin-bottom:16px;display:none;align-items:center;gap:12px;font-size:13px;font-weight:600;box-shadow:0 2px 8px rgba(10,124,84,.25);">
+      <span style="font-size:20px;">🔨</span>
+      <span id="build-banner-text">Build System has selected recommended components below — highlighted in blue. Adjust any selection, then scroll down for your Shopping List.</span>
+      <button onclick="document.getElementById('build-applied-banner').style.display='none'" style="margin-left:auto;background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.4);color:#fff;border-radius:5px;padding:4px 10px;font-size:11px;cursor:pointer;font-weight:700;flex-shrink:0;">✕ Dismiss</button>
+    </div>
     <div class="section-sub">Select components to build your shopping list. Hide options you don't want. Add custom products with a link from any retailer.</div>
     <div class="card">
       <div class="card-title">🔋 Battery Options <span class="badge badge-green">Select One</span></div>
@@ -495,6 +560,36 @@
       <div id="restore-inv"></div>
       <div id="add-inv-form" style="display:none"></div>
       <button class="btn btn-purple btn-sm" onclick="toggleAddForm('inv')">+ Add Custom Inverter</button>
+    </div>
+    <div class="card">
+      <div class="card-title">🚗 DC-DC Charger (B2B) <span class="badge badge-amber">Optional</span></div>
+      <div class="section-sub" style="margin-bottom:12px;font-size:12px;">Charges your house battery from the vehicle alternator while driving. Essential for any build that moves regularly. Select <em>None</em> if you rely on solar only.</div>
+      <div class="comp-grid" id="dc2dc-options" role="group" aria-label="DC-DC charger options"></div>
+      <div id="restore-dc2dc"></div>
+      <div id="add-dc2dc-form" style="display:none"></div>
+      <div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap;">
+        <button class="btn btn-purple btn-sm" onclick="toggleAddForm('dc2dc')">+ Add Custom DC-DC Charger</button>
+        <button class="btn btn-secondary btn-sm" onclick="clearComp('dc2dc')">✕ None / Not Required</button>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">📊 Battery Monitor / Shunt <span class="badge badge-green">Recommended</span></div>
+      <div class="section-sub" style="margin-bottom:12px;font-size:12px;">Measures real-time state of charge, voltage, current, and time remaining. A shunt-based monitor is far more accurate than voltage-only meters — essential for LiFePO4.</div>
+      <div class="comp-grid" id="monitor-options" role="group" aria-label="Battery monitor options"></div>
+      <div id="restore-monitor"></div>
+      <div id="add-monitor-form" style="display:none"></div>
+      <button class="btn btn-purple btn-sm" onclick="toggleAddForm('monitor')">+ Add Custom Monitor</button>
+    </div>
+    <div class="card">
+      <div class="card-title">⚡ Transfer Switch (ATS) <span class="badge badge-blue">If using shore power</span></div>
+      <div class="section-sub" style="margin-bottom:12px;font-size:12px;">Automatically switches between shore/generator power and inverter output. Required whenever both sources connect to the same AC circuit. Skip if your inverter-charger includes a built-in ATS.</div>
+      <div class="comp-grid" id="ats-options" role="group" aria-label="Transfer switch options"></div>
+      <div id="restore-ats"></div>
+      <div id="add-ats-form" style="display:none"></div>
+      <div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap;">
+        <button class="btn btn-purple btn-sm" onclick="toggleAddForm('ats')">+ Add Custom ATS</button>
+        <button class="btn btn-secondary btn-sm" onclick="clearComp('ats')">✕ None / Not Required</button>
+      </div>
     </div>
     <div class="card">
       <div class="card-title">📋 Shopping List</div>
@@ -676,10 +771,10 @@
 
 <script>
 // ===================== STATE =====================
-let appliances=[],selections={battery:null,solar:null,cc:null,inv:null},nextId=1;
+let appliances=[],selections={battery:null,solar:null,cc:null,inv:null,dc2dc:null,monitor:null,ats:null},nextId=1;
 let savedSystems=[],compareSet=new Set();
-let userProducts={battery:[],solar:[],cc:[],inv:[]};
-let hiddenBuiltIns={battery:new Set(),solar:new Set(),cc:new Set(),inv:new Set()};
+let userProducts={battery:[],solar:[],cc:[],inv:[],dc2dc:[],monitor:[],ats:[]};
+let hiddenBuiltIns={battery:new Set(),solar:new Set(),cc:new Set(),inv:new Set(),dc2dc:new Set(),monitor:new Set(),ats:new Set()};
 
 // ===================== BUILT-IN PRODUCTS =====================
 function builtIn(cat,c){
@@ -713,6 +808,27 @@ function builtIn(cat,c){
       {name:`Renogy 2000W Pure Sine ${acv}V`,spec:`2000W cont. | 4000W surge | ${acv}V AC out`,price:'$249',tag:'Popular',url:'https://www.renogy.com'},
       {name:`Giandel 3000W Pure Sine ${acv}V`,spec:`3000W cont. | 6000W surge | ${acv}V AC out`,price:'$199',tag:'Budget',url:'https://www.giandelinverter.com'},
       {name:`Aims Power 1500W PSW ${acv}V`,spec:`1500W cont. | 3000W surge | ${acv}V AC out`,price:'$179',tag:'Compact',url:'https://www.aimscorp.net'},
+    ];
+  }
+  if(cat==='dc2dc') return [
+    {name:`Victron Orion-Tr Smart ${c.voltage}/${c.voltage}-30A`,spec:`30A | ${c.voltage}V in → ${c.voltage}V out | Bluetooth | Isolated | Engine detect`,price:'$189',tag:'Best',url:'https://www.victronenergy.com'},
+    {name:`Redarc BCDC1225D ${c.voltage}V`,spec:`25A | ${c.voltage}V | MPPT solar input | Dual-stage | DIP switch profiles`,price:'$299',tag:'Premium',url:'https://www.redarc.com.au'},
+    {name:`Renogy DCC50S ${c.voltage}V`,spec:`50A | ${c.voltage}V | Dual-input: alternator + solar | MPPT built-in`,price:'$199',tag:'High Output',url:'https://www.renogy.com'},
+    {name:`Sterling Power BB1260 ${c.voltage}V`,spec:`60A | ${c.voltage}V | Isolated | Fast charge | UK-made`,price:'$249',tag:'Heavy Duty',url:'https://www.sterling-power.com'},
+  ];
+  if(cat==='monitor') return [
+    {name:'Victron BMV-712 Smart',spec:'500A shunt | Bluetooth | SOC, voltage, current, power | Alarm relay',price:'$149',tag:'Best',url:'https://www.victronenergy.com'},
+    {name:'Victron SmartShunt 500A',spec:'500A shunt | Bluetooth | No display — pairs to VictronConnect app',price:'$99',tag:'App-Based',url:'https://www.victronenergy.com'},
+    {name:'Renogy 500A Battery Monitor',spec:'500A shunt | LCD display | SOC, voltage, current, time remaining',price:'$49',tag:'Value',url:'https://www.renogy.com'},
+    {name:'Victron BMV-700',spec:'500A shunt | Built-in display | SOC, voltage, current | No Bluetooth',price:'$109',tag:'Classic',url:'https://www.victronenergy.com'},
+  ];
+  if(cat==='ats'){
+    const acv=c.acVoltage||240;
+    return [
+      {name:`Victron MultiPlus (built-in ATS)`,spec:`Auto transfer switch included | <20ms switchover | Works with MultiPlus inverter-charger only`,price:'Included',tag:'Integrated',url:'https://www.victronenergy.com'},
+      {name:`Powertech ${acv}V Auto Transfer Switch`,spec:`${acv}V | 30A | Auto switching: shore → inverter | LED indicators`,price:'$89',tag:'Standalone',url:'https://www.powertechsupply.com.au'},
+      {name:`Camsco ${acv}V ATS 63A`,spec:`${acv}V | 63A | Dual supply | DIN rail mount | Manual override`,price:'$129',tag:'Heavy Duty',url:'https://www.camsco.com.tw'},
+      {name:`Manual Transfer Switch ${acv}V`,spec:`${acv}V | 30A | Manual selector: shore / off / inverter | Budget option`,price:'$39',tag:'Manual',url:'https://www.jaycar.com.au'},
     ];
   }
   return [];
@@ -837,11 +953,19 @@ function showTab(name,e){
 
 // ===================== VOLTAGE CHANGE =====================
 function onVoltageChange(){
-  const v=+document.getElementById('sys-voltage').value;
-  const tip=document.getElementById('voltage-tip');
-  if(v===24){tip.style.display='flex';tip.textContent='ℹ️ 24V system: half the current of 12V for same power — lighter wiring, better efficiency. Requires 24V-compatible components.';}
-  else if(v===48){tip.style.display='flex';tip.textContent='ℹ️ 48V system: quarter the current of 12V — thinner wires, highest efficiency. Best for large arrays and high-power inverters. Check all component voltage ratings.';}
-  else{tip.style.display='none';}
+  const v=getSysVoltage();
+  const tip=document.getElementById('settings-tip');
+  const cardTip=document.getElementById('voltage-tip');
+  if(v===24){
+    if(tip){tip.style.display='inline';tip.textContent='⚡ 24V: half the current of 12V — lighter wiring, better efficiency';}
+    if(cardTip){cardTip.style.display='none';}
+  } else if(v===48){
+    if(tip){tip.style.display='inline';tip.textContent='⚡ 48V: quarter the current of 12V — thinnest wires, highest efficiency. Verify all component voltage ratings.';}
+    if(cardTip){cardTip.style.display='none';}
+  } else {
+    if(tip){tip.style.display='none';}
+    if(cardTip){cardTip.style.display='none';}
+  }
   recalc();
 }
 
@@ -856,6 +980,13 @@ function clearAll(){appliances=[];renderTable();recalc();}
 function loadPreset(t){appliances=[];nextId=1;(t==='full'?FULL_APPS:BASIC_APPS).forEach(a=>addAppliance(a));}
 
 function getAcVoltage(){return document.getElementById('ac-voltage')?+document.getElementById('ac-voltage').value:240;}
+function getSysVoltage(){return document.getElementById('sys-voltage')?+document.getElementById('sys-voltage').value:12;}
+function getAutonomy(){return document.getElementById('autonomy-bar')?+document.getElementById('autonomy-bar').value:2;}
+function getBattDod(){return document.getElementById('battery-type-bar')?+document.getElementById('battery-type-bar').value:0.8;}
+
+// Keep hidden legacy inputs in sync so loadSystem still works
+function syncBattType(v){const e=document.getElementById('battery-type');if(e)e.value=v;recalc();}
+function syncAutonomy(v){const e=document.getElementById('autonomy');if(e)e.value=v;recalc();}
 
 function renderTable(){
   const tb=document.getElementById('appliance-tbody');
@@ -880,10 +1011,10 @@ function updateApp(id,f,v){const a=appliances.find(x=>x.id===id);if(a){a[f]=v;re
 
 // ===================== CALCULATIONS =====================
 function getCalcs(){
-  const voltage=+document.getElementById('sys-voltage').value;
+  const voltage=getSysVoltage();
   const acVoltage=getAcVoltage();
-  const autonomy=+document.getElementById('autonomy').value;
-  const dod=+document.getElementById('battery-type').value;
+  const autonomy=getAutonomy();
+  const dod=getBattDod();
   const peakSun=+document.getElementById('peak-sun').value;
   const solEff=+document.getElementById('sol-eff').value;
   const invEff=+document.getElementById('inv-eff').value;
@@ -1012,7 +1143,7 @@ function mkCard(cat,key,o,isUser,qty){
 
 function renderComponents(){
   const c=getCalcs();
-  ['battery','solar','cc','inv'].forEach(cat=>{
+  ['battery','solar','cc','inv','dc2dc','monitor','ats'].forEach(cat=>{
     const bi=builtIn(cat,c);
     const hidden=hiddenBuiltIns[cat];
     const gridId=cat==='inv'?'inv-options':cat+'-options';
@@ -1024,7 +1155,8 @@ function renderComponents(){
       return mkCard(cat,'b'+i,o,false,qty);
     }).join('');
     html+=userProducts[cat].map((o,i)=>mkCard(cat,'u'+i,o,true,null)).join('');
-    document.getElementById(gridId).innerHTML=html||'<div style="font-size:12px;color:var(--muted);padding:8px 0;">All built-in options hidden.</div>';
+    const gridEl=document.getElementById(gridId);
+    if(gridEl) gridEl.innerHTML=html||'<div style="font-size:12px;color:var(--muted);padding:8px 0;">All built-in options hidden.</div>';
     const restoreEl=document.getElementById('restore-'+cat);
     if(restoreEl) restoreEl.innerHTML=hidden.size>0
       ?`<button class="btn btn-secondary btn-sm" style="margin-bottom:10px;" onclick="restoreBuiltIns('${cat}')">↩ Restore ${hidden.size} hidden option${hidden.size>1?'s':''}</button>`:'';
@@ -1035,6 +1167,7 @@ function renderComponents(){
 function hideBuiltIn(cat,idx){hiddenBuiltIns[cat].add(idx);if(selections[cat]==='b'+idx)selections[cat]=null;renderComponents();}
 function restoreBuiltIns(cat){hiddenBuiltIns[cat].clear();renderComponents();}
 function selectComp(cat,key){selections[cat]=key;renderComponents();}
+function clearComp(cat){selections[cat]=null;renderComponents();}
 function delUserProd(cat,idx){
   userProducts[cat].splice(idx,1);
   if(selections[cat]==='u'+idx)selections[cat]=null;
@@ -1075,7 +1208,7 @@ function saveCustomProduct(cat){
 // ===================== SHOPPING LIST =====================
 function renderShoppingList(){
   const c=getCalcs();
-  const labels={battery:'Battery',solar:'Solar Panel',cc:'Charge Controller',inv:'Inverter'};
+  const labels={battery:'Battery',solar:'Solar Panel',cc:'Charge Controller',inv:'Inverter',dc2dc:'DC-DC Charger',monitor:'Battery Monitor',ats:'Transfer Switch'};
   const sel=Object.entries(selections).filter(([,v])=>v!==null);
   if(!sel.length){document.getElementById('shopping-list').innerHTML='<div class="alert alert-info">ℹ️ Select components above to generate your shopping list.</div>';return;}
   let h='<table class="spec-table"><thead><tr>';
@@ -1089,7 +1222,7 @@ function renderShoppingList(){
     h+=`<tr><td>${labels[cat]}</td><td>${prod.name}${isUser?' <span class="badge badge-demo" style="font-size:9px">Custom</span>':''}</td><td style="color:var(--accent2);font-weight:700;">${prod.price}</td><td>${lnk}</td></tr>`;
   });
   h+='</tbody></table>';
-  h+='<div class="alert alert-info" style="margin-top:10px;font-size:12px;">💡 Also budget for: fuses, breakers, bus bars, battery monitor/shunt, wiring, connectors, mounting hardware, transfer switch (~$300–$700).</div>';
+  h+='<div class="alert alert-info" style="margin-top:10px;font-size:12px;">💡 Also budget for: ANL fuse + holder, DC breakers, positive/negative bus bars, wiring (tinned marine grade), MC4 connectors, roof cable entry gland, mounting hardware (~$200–$600).</div>';
   document.getElementById('shopping-list').innerHTML=h;
 }
 
@@ -1242,13 +1375,16 @@ function loadSystem(id){
   appliances=JSON.parse(JSON.stringify(sys.appliances));
   nextId=Math.max(0,...appliances.map(a=>a.id))+1;
   selections=JSON.parse(JSON.stringify(sys.selections));
-  userProducts=JSON.parse(JSON.stringify(sys.userProducts||{battery:[],solar:[],cc:[],inv:[]}));
-  hiddenBuiltIns={battery:new Set(),solar:new Set(),cc:new Set(),inv:new Set()};
+  userProducts=JSON.parse(JSON.stringify(sys.userProducts||{battery:[],solar:[],cc:[],inv:[],dc2dc:[],monitor:[],ats:[]}));
+  hiddenBuiltIns={battery:new Set(),solar:new Set(),cc:new Set(),inv:new Set(),dc2dc:new Set(),monitor:new Set(),ats:new Set()};
   const p=sys.prefs;
   document.getElementById('sys-voltage').value=p.voltage;
   if(p.acVoltage&&document.getElementById('ac-voltage'))document.getElementById('ac-voltage').value=p.acVoltage;
-  document.getElementById('autonomy').value=p.autonomy;
-  document.getElementById('battery-type').value=p.dod;
+  if(document.getElementById('autonomy-bar'))document.getElementById('autonomy-bar').value=Math.min(5,Math.max(1,p.autonomy));
+  if(document.getElementById('battery-type-bar'))document.getElementById('battery-type-bar').value=p.dod;
+  // keep hidden inputs in sync
+  if(document.getElementById('autonomy'))document.getElementById('autonomy').value=p.autonomy;
+  if(document.getElementById('battery-type'))document.getElementById('battery-type').value=p.dod;
   document.getElementById('peak-sun').value=p.peakSun;
   document.getElementById('sol-eff').value=p.solEff;
   document.getElementById('inv-eff').value=p.invEff;
@@ -1345,6 +1481,179 @@ function buildCompareTable(systems){
   h+='<p style="margin-top:12px;font-size:12px;color:var(--muted);"><span style="color:var(--accent2);font-weight:700;">Green</span> = higher value in comparable rows.</p>';
   document.getElementById('compare-body').innerHTML=h;
 }
+
+// ===================== BUILD SYSTEM =====================
+function buildSystem(){
+  if(!appliances.length){
+    alert('Add at least one appliance first so the system can be sized correctly.');
+    return;
+  }
+  const c=getCalcs();
+  const v=c.voltage, acv=c.acVoltage, dod=c.dod;
+  const isLiFe=dod>=0.8;
+
+  // ---- Reasoning flags ----
+  const flags=[];
+  let voltRec=v;
+  if(c.solarW>800&&v===12){ flags.push({t:'warn',m:'Solar array >800W — 24V is more efficient at this scale'}); }
+  if(c.recAh>400&&v===12){ flags.push({t:'warn',m:'Battery bank >400Ah — 24V or 48V reduces cable weight and cost'}); }
+  if(c.totalWh>4000){ flags.push({t:'err',m:'Daily load >4,000Wh — 48V system with generator backup is strongly recommended'}); }
+  if(c.peakAc>2000){ flags.push({t:'warn',m:'Peak AC load >2,000W — inverter surge rating is critical'}); }
+  if(!isLiFe){ flags.push({t:'info',m:'AGM/Lead-Acid selected — battery bank sized at 50% DoD; LiFePO4 would halve the bank size'}); }
+  if(c.totalWh>0&&c.acLoad/c.totalWh>0.7){ flags.push({t:'info',m:'Over 70% of load is AC — consider converting lights/fridge/fan to native DC to reduce inverter losses'}); }
+
+  // ---- Auto-select best components ----
+  const bi=cat=>builtIn(cat,c);
+
+  // Battery: pick by Ah needed — prefer LiFePO4, pick fewest units
+  let bestBat=0;
+  if(isLiFe){
+    // prefer Ampere Time 200Ah (index 2) if it saves units
+    const units100=Math.ceil(c.recAh/100), units200=Math.ceil(c.recAh/200);
+    bestBat=(units200*2<units100)?2:1; // index 1=Renogy 100Ah, 2=Ampere Time 200Ah
+  } else { bestBat=3; } // Mighty Max AGM
+  selections.battery='b'+bestBat;
+
+  // Solar: pick by array size
+  let bestSolar=0;
+  if(c.solarW<=400) bestSolar=0;        // 200W panels
+  else if(c.solarW<=1200) bestSolar=1;  // 400W panels
+  else bestSolar=1;                      // still 400W, just more of them
+  selections.solar='b'+bestSolar;
+
+  // Charge controller: auto-size from ccSize
+  let bestCC=0;
+  if(c.ccSize<=30) bestCC=0;       // Victron SmartSolar 30A
+  else if(c.ccSize<=50) bestCC=0;  // Victron SmartSolar 50A
+  else bestCC=1;                    // Renogy Rover 60A
+  selections.cc='b'+bestCC;
+
+  // Inverter: Victron MultiPlus (all-in-one) for larger builds, Renogy for simple
+  let bestInv=0;
+  if(c.invCont<800&&c.totalWh<1500) bestInv=1; // Renogy 2000W for small builds
+  else bestInv=0;                               // Victron MultiPlus (inverter-charger+ATS)
+  selections.inv='b'+bestInv;
+
+  // DC-DC: always recommend Victron Orion
+  selections.dc2dc='b0';
+
+  // Monitor: BMV-712 for LiFePO4, Renogy for AGM/budget
+  selections.monitor=isLiFe?'b0':'b2';
+
+  // ATS: if using Victron MultiPlus (inv=b0) it includes ATS, else pick Powertech
+  selections.ats=bestInv===0?'b0':'b1';
+
+  // ---- Build quantity strings ----
+  const batProd=bi('battery')[bestBat];
+  const solProd=bi('solar')[bestSolar];
+  const batUnits=batProd?.ah?Math.ceil(c.recAh/batProd.ah):1;
+  const solPanels=solProd?.watts?Math.ceil(c.solarW/solProd.watts):1;
+  const ccProd=bi('cc')[bestCC];
+  const invProd=bi('inv')[bestInv];
+  const dc2Prod=bi('dc2dc')[0];
+  const monProd=bi('monitor')[isLiFe?0:2];
+  const atsProd=bi('ats')[bestInv===0?0:1];
+
+  // ---- Estimate total cost ----
+  const parsePrice=p=>{if(!p||p==='Included'||p==='—')return 0;return parseFloat(p.replace(/[^0-9.]/g,''))||0;};
+  const totalCost=(parsePrice(batProd?.price)*batUnits)+(parsePrice(solProd?.price)*solPanels)+parsePrice(ccProd?.price)+parsePrice(invProd?.price)+parsePrice(dc2Prod?.price)+parsePrice(monProd?.price)+(bestInv===0?0:parsePrice(atsProd?.price));
+
+  // ---- Render modal ----
+  const flagHTML=flags.map(f=>`<div class="build-chip ${f.t==='warn'?'':''+f.t}">${f.t==='err'?'🔴':f.t==='warn'?'⚠️':'ℹ️'} ${f.m}</div>`).join('');
+
+  const row=(k,val,hi=false)=>`<div class="build-row"><span class="build-key">${k}</span><span class="build-val${hi?' highlight':''}">${val}</span></div>`;
+
+  let html=`
+  <div class="build-reasoning">
+    <strong>Based on your inputs:</strong> ${Math.round(c.totalWh)} Wh/day total load · ${c.voltage}V system · ${acv}V AC mains · ${c.dod>=0.9?'LiFePO4 Premium (90% DoD)':c.dod>=0.8?'LiFePO4 (80% DoD)':'AGM/Lead-Acid (50% DoD)'} · ${c.autonomy} day${c.autonomy>1?'s':''} autonomy
+  </div>
+  ${flagHTML?`<div style="margin-bottom:16px;">${flagHTML}</div>`:''}
+
+  <div class="build-section">
+    <h3>🔋 Battery Bank</h3>
+    ${row('Recommended Bank',Math.round(c.recAh)+' Ah @ '+v+'V',true)}
+    ${row('Product',batProd?.name||'—')}
+    ${row('Quantity',batUnits+' unit'+( batUnits>1?'s':'')+' ('+Math.round(batUnits*(batProd?.ah||0))+' Ah total)',true)}
+    ${row('Wiring',v===12?'Parallel':'Series for voltage, parallel for capacity')}
+    ${row('Estimated Cost','$'+(parsePrice(batProd?.price)*batUnits).toLocaleString())}
+  </div>
+
+  <div class="build-section">
+    <h3>☀️ Solar Array</h3>
+    ${row('Required Array',Math.round(c.solarW)+' W',true)}
+    ${row('Product',solProd?.name||'—')}
+    ${row('Quantity',solPanels+' panel'+( solPanels>1?'s':'')+' ('+Math.round(solPanels*(solProd?.watts||0))+'W installed)',true)}
+    ${row('Roof Area (est.)',Math.round(solPanels*(solProd?.watts||0)/20)+' – '+Math.round(solPanels*(solProd?.watts||0)/18)+' sq ft')}
+    ${row('Estimated Cost','$'+(parsePrice(solProd?.price)*solPanels).toLocaleString())}
+  </div>
+
+  <div class="build-section">
+    <h3>⚙️ Charge Controller</h3>
+    ${row('Output Required',Math.round(c.ccAmps)+' A → sized to '+c.ccSize+'A',true)}
+    ${row('Product',ccProd?.name||'—')}
+    ${row('Estimated Cost','$'+parsePrice(ccProd?.price).toLocaleString())}
+  </div>
+
+  <div class="build-section">
+    <h3>🔄 Inverter / Charger</h3>
+    ${row('Continuous Required',Math.round(c.invCont)+' W',true)}
+    ${row('Surge (est.)',Math.round(c.invSurge)+' W',true)}
+    ${row('Product',invProd?.name||'—')}
+    ${row('ATS',bestInv===0?'Built-in (Victron MultiPlus)':'Separate unit required')}
+    ${row('Estimated Cost','$'+parsePrice(invProd?.price).toLocaleString())}
+  </div>
+
+  <div class="build-section">
+    <h3>🚗 DC-DC + Monitor + ATS</h3>
+    ${row('DC-DC Charger',dc2Prod?.name||'—')}
+    ${row('Battery Monitor',monProd?.name||'—')}
+    ${row('Transfer Switch',bestInv===0?'Included in MultiPlus':(atsProd?.name||'—'))}
+  </div>
+
+  <div class="build-section" style="background:var(--accent2-bg);border:1.5px solid #3bb389;border-radius:8px;padding:14px 16px;">
+    <h3 style="border-bottom-color:#3bb389;color:var(--accent2);">💰 Estimated Component Budget</h3>
+    ${row('Components (selected products)','~$'+Math.round(totalCost/100)*100+' – $'+Math.round(totalCost*1.1/100)*100,true)}
+    ${row('Ancillaries (wiring, fuses, bus bars, glands)','$300 – $700')}
+    ${row('Installation (if professional)','$500 – $2,000+')}
+    ${row('Total Estimated Range','~$'+(Math.round((totalCost+500)/100)*100).toLocaleString()+' – $'+(Math.round((totalCost*1.1+2700)/100)*100).toLocaleString(),true)}
+  </div>
+
+  <div class="build-actions">
+    <button class="btn btn-primary" onclick="applyBuildAndGo()">✅ Apply Build &amp; View Shopping List</button>
+    <button class="btn btn-secondary" onclick="closeBuildModal()">Close</button>
+  </div>
+  <p style="font-size:11px;color:var(--muted);margin-top:12px;">† Prices are estimates based on typical retail at time of writing. Always verify current pricing. Consult a qualified installer before purchasing.</p>`;
+
+  document.getElementById('build-modal-body').innerHTML=html;
+  document.getElementById('build-overlay').classList.remove('hidden');
+}
+
+function closeBuildModal(){ document.getElementById('build-overlay').classList.add('hidden'); }
+
+function applyBuildAndGo(){
+  closeBuildModal();
+  // Manually mark the components tab active (showTab checks e.target.classList)
+  document.querySelectorAll('.tab').forEach(t=>{
+    t.classList.remove('active');
+    t.setAttribute('aria-selected','false');
+  });
+  const compTab=Array.from(document.querySelectorAll('.tab')).find(t=>t.getAttribute('onclick')&&t.getAttribute('onclick').includes('components'));
+  if(compTab){ compTab.classList.add('active'); compTab.setAttribute('aria-selected','true'); }
+  // Show the section and render components (selections already set by buildSystem)
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  document.getElementById('tab-components').classList.add('active');
+  renderComponents(); // renders cards with highlights + shopping list
+  // Show the build-applied banner
+  const banner=document.getElementById('build-applied-banner');
+  if(banner){ banner.style.display='flex'; }
+  // Scroll shopping list into view after brief render delay
+  setTimeout(()=>{
+    const sl=document.getElementById('shopping-list');
+    if(sl) sl.scrollIntoView({behavior:'smooth', block:'start'});
+  }, 150);
+}
+
+function applyAndGoComponents(){ applyBuildAndGo(); }
 
 // ===================== INIT =====================
 renderTable();
