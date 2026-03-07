@@ -281,6 +281,20 @@
 
 <a href="#main-content" class="skip-link">Skip to main content</a>
 
+<!-- QUICK TEMPLATES MODAL -->
+<div class="modal-overlay hidden" id="templates-overlay" role="dialog" aria-modal="true" aria-labelledby="templates-title">
+  <div class="modal" style="max-width:740px;">
+    <div class="modal-header">
+      <h2 id="templates-title">⚡ Quick Templates</h2>
+      <button class="modal-close" onclick="document.getElementById('templates-overlay').classList.add('hidden')" aria-label="Close">✕</button>
+    </div>
+    <div class="modal-body">
+      <p style="font-size:13px;color:var(--muted);margin-bottom:16px;">Load a common caravan/RV setup instantly. Your current appliances will be replaced. Settings (voltage, battery type etc.) are also applied.</p>
+      <div id="template-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px;"></div>
+    </div>
+  </div>
+</div>
+
 <!-- BUILD SYSTEM MODAL -->
 <div class="modal-overlay hidden" id="build-overlay" role="dialog" aria-modal="true" aria-labelledby="build-modal-title">
   <div class="modal build-modal">
@@ -375,9 +389,11 @@
   <div class="settings-group">
     <label for="battery-type-bar">Battery Type</label>
     <select id="battery-type-bar" onchange="syncBattType(this.value)" aria-label="Battery chemistry">
-      <option value="0.5">AGM / Lead-Acid</option>
-      <option value="0.8" selected>LiFePO4 (80%)</option>
-      <option value="0.9">LiFePO4 Premium (90%)</option>
+      <option value="0.5">AGM (50% DoD)</option>
+      <option value="0.4">Gel (40% DoD)</option>
+      <option value="0.5">Flooded LA (50% DoD)</option>
+      <option value="0.8" selected>LiFePO4 (80% DoD)</option>
+      <option value="0.9">LiFePO4 Premium (90% DoD)</option>
     </select>
   </div>
   <div class="settings-divider" aria-hidden="true"></div>
@@ -411,6 +427,7 @@
         <div style="display:flex;gap:6px;flex-wrap:wrap;">
           <button class="btn btn-secondary btn-sm" onclick="loadPreset('basic')">Basic Preset</button>
           <button class="btn btn-secondary btn-sm" onclick="loadPreset('full')">Full RV Preset</button>
+          <button class="btn btn-primary btn-sm" onclick="openTemplates()">⚡ Quick Templates</button>
         </div>
       </div>
       <div style="overflow-x:auto;">
@@ -432,15 +449,56 @@
       </div>
     </div>
 
-    <!-- SYSTEM PREFERENCES -->
+    <!-- ADVANCED PREFERENCES -->
     <div class="card">
       <div class="card-title">⚙️ Advanced Preferences</div>
-      <div class="alert alert-info" style="margin-bottom:14px;font-size:12px;">⚡ <strong>DC Voltage</strong>, <strong>AC Mains</strong>, <strong>Battery Type</strong> and <strong>Autonomy</strong> are set in the bar above — visible and changeable from every tab.</div>
+      <div class="alert alert-info" style="margin-bottom:14px;font-size:12px;">⚡ <strong>DC Voltage</strong>, <strong>AC Mains</strong>, <strong>Battery Type</strong> and <strong>Autonomy</strong> are set in the bar above — visible from every tab.</div>
       <div class="form-row">
+        <div class="form-group">
+          <label for="location-pick">☀️ Location / Sun Hours</label>
+          <select id="location-pick" onchange="applyLocation()" aria-label="Location sun hours">
+            <option value="custom">Custom — enter manually</option>
+            <optgroup label="Australia">
+              <option value="6.5">Darwin, NT (6.5 hrs)</option>
+              <option value="6.2">Alice Springs, NT (6.2 hrs)</option>
+              <option value="6.0">Perth, WA (6.0 hrs)</option>
+              <option value="5.8">Brisbane, QLD (5.8 hrs)</option>
+              <option value="5.5">Adelaide, SA (5.5 hrs)</option>
+              <option value="5.2">Sydney, NSW (5.2 hrs)</option>
+              <option value="4.8">Melbourne, VIC (4.8 hrs)</option>
+              <option value="4.5">Hobart, TAS (4.5 hrs)</option>
+            </optgroup>
+            <optgroup label="New Zealand">
+              <option value="5.0">Auckland (5.0 hrs)</option>
+              <option value="4.5">Wellington (4.5 hrs)</option>
+              <option value="5.2">Christchurch (5.2 hrs)</option>
+            </optgroup>
+            <optgroup label="North America">
+              <option value="6.5">Phoenix, AZ (6.5 hrs)</option>
+              <option value="5.5">Los Angeles, CA (5.5 hrs)</option>
+              <option value="4.5">Denver, CO (4.5 hrs)</option>
+              <option value="4.0">Seattle, WA (4.0 hrs)</option>
+              <option value="4.5">New York, NY (4.5 hrs)</option>
+            </optgroup>
+            <optgroup label="Europe / UK">
+              <option value="4.5">Southern Spain (4.5 hrs)</option>
+              <option value="4.0">Southern France (4.0 hrs)</option>
+              <option value="3.5">Germany (3.5 hrs)</option>
+              <option value="2.5">UK — South (2.5 hrs)</option>
+              <option value="2.0">UK — North (2.0 hrs)</option>
+              <option value="2.0">Scandinavia (2.0 hrs)</option>
+            </optgroup>
+          </select>
+        </div>
         <div class="form-group">
           <label for="peak-sun">Peak Sun Hours / Day</label>
           <input type="number" id="peak-sun" value="5" min="1" max="10" step="0.5" onchange="recalc()" aria-describedby="sun-hint">
-          <div id="sun-hint" class="fix-note">Desert SW / SE Australia: 5–7 hrs · UK/NW Europe: 2–4 hrs.</div>
+          <div id="sun-hint" class="fix-note">Set by location above, or enter manually.</div>
+        </div>
+        <div class="form-group">
+          <label for="roof-space">Roof Space Available (sq ft)</label>
+          <input type="number" id="roof-space" value="60" min="10" max="400" step="5" onchange="recalc()" aria-describedby="roof-hint">
+          <div id="roof-hint" class="fix-note">Used to calculate max panel capacity. Typical van: 40–80 sq ft, caravan: 60–120 sq ft.</div>
         </div>
         <div class="form-group">
           <label for="sol-eff">System Derate Factor</label>
@@ -459,7 +517,36 @@
           </select>
         </div>
       </div>
-      <div class="alert alert-info" id="voltage-tip" style="margin-top:4px;display:none;"></div>
+      <div class="card-title" style="margin-top:8px;margin-bottom:10px;">⚡ Charging Sources (reduces solar / battery requirement)</div>
+      <div class="form-row">
+        <div class="form-group">
+          <label for="alt-amps">Alternator / DC-DC Charger (A)</label>
+          <input type="number" id="alt-amps" value="0" min="0" max="100" step="5" onchange="recalc()" aria-describedby="alt-hint">
+          <div id="alt-hint" class="fix-note">e.g. Victron Orion 30A. Enter 0 if not used.</div>
+        </div>
+        <div class="form-group">
+          <label for="alt-hours">Driving Hours / Day</label>
+          <input type="number" id="alt-hours" value="3" min="0" max="12" step="0.5" onchange="recalc()">
+        </div>
+        <div class="form-group">
+          <label for="shore-charge-amps">Shore Power Charger (A)</label>
+          <input type="number" id="shore-charge-amps" value="0" min="0" max="100" step="5" onchange="recalc()" aria-describedby="shore-hint">
+          <div id="shore-hint" class="fix-note">AC charger output current. e.g. 30A = 30A × voltage = charge rate. Enter 0 if not used.</div>
+        </div>
+        <div class="form-group">
+          <label for="shore-hours">Shore Power Hrs / Day</label>
+          <input type="number" id="shore-hours" value="0" min="0" max="24" step="0.5" onchange="recalc()">
+        </div>
+        <div class="form-group">
+          <label for="gen-charge-kw">Generator Output (kW)</label>
+          <input type="number" id="gen-charge-kw" value="0" min="0" max="20" step="0.5" onchange="recalc()" aria-describedby="gen-hint">
+          <div id="gen-hint" class="fix-note">Generator charging contribution (50% of output assumed to battery). Enter 0 if not used.</div>
+        </div>
+        <div class="form-group">
+          <label for="gen-hours">Generator Hrs / Day</label>
+          <input type="number" id="gen-hours" value="0" min="0" max="12" step="0.5" onchange="recalc()">
+        </div>
+      </div>
     </div>
   </div>
 
@@ -483,7 +570,12 @@
         <tr><td>Minimum Ah Capacity</td><td id="det-ah">—</td></tr>
         <tr><td>Recommended Ah (incl. 20% buffer)</td><td id="det-ah-rec">—</td></tr>
         <tr><td>Usable at Chosen DoD</td><td id="det-usable">—</td></tr>
-        <tr><td>Estimated Run Time</td><td id="det-runtime">—</td></tr>
+        <tr><td>Autonomy (no charge)</td><td id="det-runtime">—</td></tr>
+        <tr style="background:var(--accent2-bg)"><td>⏱ Recharge Time (solar only)</td><td id="det-recharge">—</td></tr>
+        <tr style="background:var(--accent2-bg)"><td>⏱ Recharge Time (all sources)</td><td id="det-recharge-all">—</td></tr>
+        <tr style="background:var(--accent3-bg)"><td>☁️ Cloudy Day Scenario (50% solar)</td><td id="det-cloudy">—</td></tr>
+        <tr style="background:var(--accent3-bg)"><td>☁️ Battery SoC after 1 cloudy day</td><td id="det-soc">—</td></tr>
+        <tr style="background:var(--purple-bg)"><td>⚖️ Est. Battery Weight</td><td id="det-weight">—</td></tr>
       </tbody></table>
     </div>
     <div class="card"><div class="card-title">☀️ Solar Array</div>
@@ -493,8 +585,13 @@
         <tr><td>Panels @ 200W each</td><td id="sol-panels">—</td></tr>
         <tr><td>Panels @ 400W each</td><td id="sol-panels2">—</td></tr>
         <tr><td>Roof Area Needed (est.)</td><td id="sol-area">—</td></tr>
+        <tr style="background:var(--accent2-bg)"><td>📐 Max Panels in Your Roof Space</td><td id="sol-roof-max">—</td></tr>
+        <tr style="background:var(--accent2-bg)"><td>☀️ Expected Daily Production</td><td id="sol-daily-prod">—</td></tr>
+        <tr style="background:var(--accent3-bg)"><td>⚡ Alternator Contribution/day</td><td id="sol-alt-contrib">—</td></tr>
+        <tr style="background:var(--accent3-bg)"><td>🔌 Shore/Generator Contribution/day</td><td id="sol-shore-contrib">—</td></tr>
+        <tr style="background:var(--accent3-bg)"><td>🔋 Net Daily Surplus / Deficit</td><td id="sol-net">—</td></tr>
       </tbody></table>
-      <div class="fix-note">† Derate factor accounts for temperature loss, wiring resistance, soiling and MPPT losses — not panel nameplate efficiency.</div>
+      <div class="fix-note">† Derate factor accounts for temperature loss, wiring resistance, soiling and MPPT losses. Expected production = array W × sun hrs × derate.</div>
     </div>
     <div class="card"><div class="card-title">⚙️ Charge Controller</div>
       <table class="spec-table"><tbody>
@@ -662,9 +759,13 @@
         <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
           <span id="cmp-label" style="font-size:12px;color:var(--muted);" aria-live="polite"></span>
           <button class="btn btn-purple btn-sm" id="cmp-btn" onclick="openCompareModal()" style="display:none" aria-label="Compare selected systems">⚖️ Compare</button>
+          <button class="btn btn-secondary btn-sm" onclick="exportJSON()" title="Export current build as JSON file">📥 Export JSON</button>
+          <button class="btn btn-secondary btn-sm" onclick="importJSONPrompt()" title="Import a previously exported JSON">📤 Import JSON</button>
+          <button class="btn btn-secondary btn-sm" onclick="shareConfig()" title="Generate a shareable link for current settings">🔗 Share Link</button>
           <button class="btn btn-success btn-sm" onclick="openSaveModal()">💾 Save Current</button>
         </div>
       </div>
+      <div id="share-link-box" style="display:none;margin-bottom:12px;"></div>
       <div id="saved-list" aria-live="polite"></div>
     </div>
   </div>
@@ -1018,6 +1119,15 @@ function getCalcs(){
   const peakSun=+document.getElementById('peak-sun').value;
   const solEff=+document.getElementById('sol-eff').value;
   const invEff=+document.getElementById('inv-eff').value;
+  const roofSpace=+(document.getElementById('roof-space')?.value||60);
+  // Charge sources
+  const altAmps=+(document.getElementById('alt-amps')?.value||0);
+  const altHours=+(document.getElementById('alt-hours')?.value||0);
+  const shoreAmps=+(document.getElementById('shore-charge-amps')?.value||0);
+  const shoreHours=+(document.getElementById('shore-hours')?.value||0);
+  const genKw=+(document.getElementById('gen-charge-kw')?.value||0);
+  const genHours=+(document.getElementById('gen-hours')?.value||0);
+
   const acLoad=appliances.filter(a=>a.type==='ac').reduce((s,a)=>s+a.watts*a.hours,0);
   const dcLoad=appliances.filter(a=>a.type==='dc').reduce((s,a)=>s+a.watts*a.hours,0);
   const totalWh=acLoad/invEff+dcLoad;
@@ -1027,13 +1137,39 @@ function getCalcs(){
   const totalWhAuto=totalWh*autonomy;
   const minAh=totalWhAuto/voltage/dod;
   const recAh=minAh*1.2;
+
+  // Solar
   const solarW=(totalWh/peakSun/solEff)*1.25;
+  const dailySolarProd=solarW*peakSun*solEff; // actual expected Wh/day
+  const maxRoofW=Math.floor(roofSpace/20)*200; // ~20 sq ft per 200W panel
+  const cloudySolarProd=dailySolarProd*0.5;    // 50% on cloudy day
+
+  // Charge contributions (Wh/day)
+  const altContrib=altAmps*voltage*altHours;
+  const shoreContrib=shoreAmps*voltage*shoreHours;
+  const genContrib=genKw*1000*genHours*0.5; // 50% conversion to battery
+  const totalCharge=dailySolarProd+altContrib+shoreContrib+genContrib;
+  const netDaily=totalCharge-totalWh; // surplus (+) or deficit (-)
+
+  // Recharge time: from flat (usable Ah depleted) via solar only
+  const usableWh=recAh*voltage*dod;
+  const rechargeHrsSolar=dailySolarProd>0?(usableWh/dailySolarProd):null;
+  const rechargeHrsAll=totalCharge>0?(usableWh/totalCharge):null;
+
+  // SoC after 1 cloudy day (starting full)
+  const endSoC=totalWh>0?Math.max(0,Math.min(100,((usableWh-(totalWh-cloudySolarProd-altContrib-shoreContrib-genContrib))/usableWh)*100)):100;
+
+  // Battery weight estimate (kg): LiFePO4 ~5.5kg/100Ah@12V, AGM ~12kg/100Ah@12V
+  const isLi=dod>=0.8;
+  const kgPer100Ah=isLi?5.5:12;
+  const batWeight=Math.round(recAh*(voltage/12)*kgPer100Ah/100*10)/10;
+
   const ccAmps=solarW/voltage;
   const ccSize=Math.max(10,Math.ceil(ccAmps/10)*10);
   const invCont=peakAc*1.25;
   const invSurge=peakAc*2.5;
   const genSize=peakWatts*1.5;
-  return{voltage,acVoltage,autonomy,dod,peakSun,solEff,invEff,acLoad,dcLoad,totalWh,peakAc,peakDc,peakWatts,totalWhAuto,minAh,recAh,solarW,ccAmps,ccSize,invCont,invSurge,genSize};
+  return{voltage,acVoltage,autonomy,dod,peakSun,solEff,invEff,acLoad,dcLoad,totalWh,peakAc,peakDc,peakWatts,totalWhAuto,minAh,recAh,solarW,dailySolarProd,maxRoofW,cloudySolarProd,altContrib,shoreContrib,genContrib,totalCharge,netDaily,rechargeHrsSolar,rechargeHrsAll,endSoC,batWeight,roofSpace,ccAmps,ccSize,invCont,invSurge,genSize};
 }
 
 function recalc(){
@@ -1072,32 +1208,60 @@ function renderSizingNumbers(c){
   s('res-solar',Math.round(c.solarW));
   s('res-inverter',Math.round(c.invCont));
   s('res-charge',Math.round(c.ccSize));
-  const rt=c.totalWh>0?((c.recAh*c.voltage*c.dod)/(c.totalWh/24)).toFixed(1):'—';
+  // Battery detail
   s('det-wh',Math.round(c.totalWhAuto)+' Wh');
   s('det-volt',c.voltage+'V');
   s('det-ah',Math.round(c.minAh)+' Ah (minimum)');
   s('det-ah-rec',Math.round(c.recAh)+' Ah (recommended)');
   s('det-usable',Math.round(c.recAh*c.dod)+' Ah usable');
-  s('det-runtime',rt+' days');
+  const rt=c.totalWh>0?((c.recAh*c.voltage*c.dod)/(c.totalWh)).toFixed(1):'—';
+  s('det-runtime',rt !== '—' ? rt+' days' : '—');
+  // Recharge times
+  if(c.rechargeHrsSolar!=null&&c.dailySolarProd>0){
+    const rh=c.rechargeHrsSolar;
+    s('det-recharge',rh<24?rh.toFixed(1)+' hrs':Math.ceil(rh/24)+' days ('+Math.round(rh)+' hrs sun)');
+  } else { s('det-recharge','No solar configured'); }
+  if(c.rechargeHrsAll!=null&&c.totalCharge>0){
+    const ra=c.rechargeHrsAll;
+    s('det-recharge-all',ra<24?ra.toFixed(1)+' hrs (equiv. charge)':Math.ceil(ra/24)+' days (equiv. charge)');
+  } else { s('det-recharge-all','No charge sources configured'); }
+  // Cloudy day / SoC
+  s('det-cloudy',c.totalWh>0?Math.round(c.cloudySolarProd)+' Wh in vs '+Math.round(c.totalWh)+' Wh needed — '+(c.cloudySolarProd>=c.totalWh?'✅ Sufficient':'⚠️ Deficit: '+Math.round(c.totalWh-c.cloudySolarProd)+' Wh'):'N/A');
+  s('det-soc',c.totalWh>0?Math.round(c.endSoC)+'% SoC remaining':'N/A');
+  // Battery weight
+  s('det-weight',c.batWeight+' kg (~'+Math.round(c.batWeight*2.205)+' lbs) est.');
+  // Solar detail
   s('sol-req',Math.round(c.solarW)+' W');
-  s('sol-config',c.voltage>12?'Series/Parallel strings':'Parallel');
+  s('sol-config',c.voltage>12?'Series strings (verify Voc)':'Parallel');
   s('sol-panels',Math.ceil(c.solarW/200)+' × 200W panels');
   s('sol-panels2',Math.ceil(c.solarW/400)+' × 400W panels');
   s('sol-area',Math.round(Math.ceil(c.solarW/400)*20)+'–'+Math.round(Math.ceil(c.solarW/400)*22)+' sq ft');
+  s('sol-roof-max',`${Math.floor(c.roofSpace/20)} × 200W panels = ${Math.floor(c.roofSpace/20)*200}W max (${c.roofSpace} sq ft)`);
+  s('sol-daily-prod',Math.round(c.dailySolarProd)+' Wh/day expected');
+  s('sol-alt-contrib',c.altContrib>0?'+'+Math.round(c.altContrib)+' Wh/day (alternator)':'Not configured');
+  s('sol-shore-contrib',(c.shoreContrib+c.genContrib)>0?'+'+Math.round(c.shoreContrib+c.genContrib)+' Wh/day (shore/gen)':'Not configured');
+  const net=c.netDaily;
+  s('sol-net',c.totalWh>0?(net>=0?'✅ +'+Math.round(net)+' Wh surplus':'⚠️ '+Math.round(net)+' Wh deficit — increase solar or reduce loads'):'—');
+  // CC
   s('cc-amps',Math.round(c.ccAmps)+' A (battery charge output)');
   s('cc-size',c.ccSize+' A MPPT (charge output)');
   s('cc-maxpv','75V / 100V / 150V — verify datasheet');
   s('cc-wire',c.ccSize<=30?'10 AWG':c.ccSize<=60?'6 AWG':'4 AWG');
+  // Inverter
   s('inv-cont',Math.round(c.invCont)+' W continuous');
   s('inv-surge',Math.round(c.invSurge)+' W surge (est.)');
   s('inv-rec','≥ '+Math.round(c.invCont)+'W cont. / ≥ '+Math.round(c.invSurge)+'W surge');
   s('inv-acv',c.acVoltage+'V AC');
+  // Shore/Gen
   s('gen-size',Math.round(c.genSize/500)*500+'W');
   s('shore-amps',Math.round(c.peakWatts/c.acVoltage)+'A peak @ '+c.acVoltage+'V');
   // Alerts
   const ad=document.getElementById('sizing-alerts');if(!ad)return;
   let h='';
   if(!c.totalWh){ad.innerHTML='';return;}
+  if(c.netDaily<0&&c.totalWh>0) h+=`<div class="alert alert-warn">⚡ Daily deficit of ${Math.round(-c.netDaily)} Wh — your charge sources can't keep up with your loads. Increase solar, add alternator/shore charging, or reduce consumption.</div>`;
+  if(c.endSoC<20&&c.totalWh>0) h+=`<div class="alert alert-err">🔴 Battery SoC drops to ~${Math.round(c.endSoC)}% after one cloudy day — critically low. Add more battery capacity or charge sources.</div>`;
+  if(Math.floor(c.roofSpace/20)*200 < c.solarW) h+=`<div class="alert alert-warn">📐 Roof space (${c.roofSpace} sq ft) only fits ~${Math.floor(c.roofSpace/20)*200}W of panels, but ${Math.round(c.solarW)}W is recommended. Consider higher-wattage panels or a second array.</div>`;
   if(c.peakAc>2000) h+=`<div class="alert alert-warn">⚡ High AC peak (${Math.round(c.peakAc)}W). Ensure inverter surge rating covers motor startup — motors draw 2–3× running watts.</div>`;
   if(c.solarW>800&&c.voltage===12) h+=`<div class="alert alert-info">ℹ️ Solar >800W on 12V — consider upgrading to 24V to reduce current and wire gauge.</div>`;
   if(c.recAh>400&&c.voltage===12) h+=`<div class="alert alert-warn">🔋 Large bank at 12V requires very heavy cabling. Consider 24V or 48V system.</div>`;
@@ -1655,12 +1819,332 @@ function applyBuildAndGo(){
 
 function applyAndGoComponents(){ applyBuildAndGo(); }
 
+// ===================== LOCATION PICKER =====================
+function applyLocation(){
+  const v=document.getElementById('location-pick').value;
+  if(v==='custom') return;
+  document.getElementById('peak-sun').value=v;
+  recalc();
+}
+
+// ===================== QUICK TEMPLATES =====================
+const QUICK_TEMPLATES=[
+  {
+    name:'🏕️ Weekend Warrior',
+    desc:'12V · 100Ah LiFePO4 · 200W solar\nCouple, 2-night trips, basic loads',
+    voltage:12,acVoltage:240,dod:0.8,autonomy:2,peakSun:5,solEff:0.8,invEff:0.9,
+    apps:[
+      {name:'LED Lighting',watts:30,hours:5,type:'dc'},
+      {name:'12V Fridge (60L)',watts:45,hours:12,type:'dc'},
+      {name:'Water Pump',watts:60,hours:0.3,type:'dc'},
+      {name:'Phone Charging ×2',watts:20,hours:3,type:'ac'},
+      {name:'Fan',watts:25,hours:6,type:'dc'},
+    ]
+  },
+  {
+    name:'🚐 Off-Grid Family Tourer',
+    desc:'12V · 200Ah LiFePO4 · 400W solar\nFamily of 4, week-long trips',
+    voltage:12,acVoltage:240,dod:0.8,autonomy:2,peakSun:5.5,solEff:0.8,invEff:0.9,
+    apps:[
+      {name:'LED Lighting',watts:40,hours:6,type:'dc'},
+      {name:'12V Fridge (80L)',watts:60,hours:14,type:'dc'},
+      {name:'TV 32"',watts:80,hours:3,type:'ac'},
+      {name:'Water Pump',watts:60,hours:0.5,type:'dc'},
+      {name:'Fan ×2',watts:40,hours:8,type:'dc'},
+      {name:'Phone/Tablet ×4',watts:40,hours:4,type:'ac'},
+      {name:'WiFi Router',watts:12,hours:24,type:'dc'},
+    ]
+  },
+  {
+    name:'💼 Starlink + Work Rig',
+    desc:'12V · 200Ah LiFePO4 · 400W solar\nRemote work, video calls, Starlink',
+    voltage:12,acVoltage:240,dod:0.8,autonomy:2,peakSun:5,solEff:0.8,invEff:0.9,
+    apps:[
+      {name:'Starlink Dish',watts:75,hours:10,type:'dc'},
+      {name:'Laptop ×2',watts:130,hours:8,type:'ac'},
+      {name:'External Monitor',watts:35,hours:6,type:'ac'},
+      {name:'12V Fridge',watts:50,hours:12,type:'dc'},
+      {name:'LED Lighting',watts:30,hours:5,type:'dc'},
+      {name:'Phone ×2',watts:20,hours:4,type:'ac'},
+      {name:'USB Hub / Accessories',watts:15,hours:8,type:'dc'},
+    ]
+  },
+  {
+    name:'💰 Budget AGM Setup',
+    desc:'12V · 200Ah AGM · 200W solar\nBudget-first build, simple loads',
+    voltage:12,acVoltage:240,dod:0.5,autonomy:1,peakSun:5,solEff:0.78,invEff:0.85,
+    apps:[
+      {name:'LED Lighting',watts:25,hours:5,type:'dc'},
+      {name:'12V Fridge (50L)',watts:40,hours:12,type:'dc'},
+      {name:'Water Pump',watts:55,hours:0.3,type:'dc'},
+      {name:'Phone ×2',watts:20,hours:3,type:'ac'},
+    ]
+  },
+  {
+    name:'🚌 Full-Time Liveaboard',
+    desc:'24V · 400Ah LiFePO4 · 800W solar\nFull-time, CPAP, full kitchen use',
+    voltage:24,acVoltage:240,dod:0.8,autonomy:3,peakSun:5,solEff:0.8,invEff:0.92,
+    apps:[
+      {name:'LED Lighting',watts:45,hours:7,type:'dc'},
+      {name:'12V Fridge + Freezer',watts:80,hours:14,type:'dc'},
+      {name:'CPAP with humidifier',watts:50,hours:8,type:'ac'},
+      {name:'Microwave',watts:900,hours:0.25,type:'ac'},
+      {name:'Coffee Maker',watts:900,hours:0.2,type:'ac'},
+      {name:'Laptop + Monitor',watts:130,hours:6,type:'ac'},
+      {name:'TV 55"',watts:120,hours:3,type:'ac'},
+      {name:'Water Pump',watts:80,hours:0.75,type:'dc'},
+      {name:'Fan ×2',watts:40,hours:8,type:'dc'},
+      {name:'Phone/Tablet ×2',watts:30,hours:4,type:'ac'},
+      {name:'WiFi + Networking',watts:15,hours:24,type:'dc'},
+    ]
+  },
+  {
+    name:'🚐 Van Build (Stealth)',
+    desc:'12V · 100Ah LiFePO4 · 200W solar\nMinimalist van life, low profile',
+    voltage:12,acVoltage:240,dod:0.8,autonomy:2,peakSun:4.5,solEff:0.78,invEff:0.9,
+    apps:[
+      {name:'LED Lighting',watts:20,hours:5,type:'dc'},
+      {name:'12V Fridge (40L)',watts:38,hours:12,type:'dc'},
+      {name:'Water Pump',watts:50,hours:0.3,type:'dc'},
+      {name:'Laptop',watts:65,hours:4,type:'ac'},
+      {name:'Phone ×2',watts:20,hours:3,type:'dc'},
+      {name:'USB Fan',watts:15,hours:6,type:'dc'},
+    ]
+  },
+  {
+    name:'🐴 Horse Float / Toy Hauler',
+    desc:'12V · 100Ah LiFePO4 · 200W solar\nLighting, water, accessories only',
+    voltage:12,acVoltage:240,dod:0.8,autonomy:1,peakSun:5,solEff:0.8,invEff:0.9,
+    apps:[
+      {name:'LED Lighting (interior)',watts:25,hours:6,type:'dc'},
+      {name:'Water Pump',watts:55,hours:0.5,type:'dc'},
+      {name:'Fan',watts:25,hours:4,type:'dc'},
+      {name:'Phone Charging',watts:15,hours:3,type:'dc'},
+      {name:'12V Socket Accessories',watts:30,hours:2,type:'dc'},
+    ]
+  },
+  {
+    name:'🏠 Luxury Coach (48V)',
+    desc:'48V · 600Ah LiFePO4 · 2000W solar\nFull-time, aircon, all appliances',
+    voltage:48,acVoltage:240,dod:0.85,autonomy:2,peakSun:5.5,solEff:0.82,invEff:0.95,
+    apps:[
+      {name:'LED Lighting',watts:80,hours:6,type:'dc'},
+      {name:'Fridge + Freezer',watts:120,hours:16,type:'dc'},
+      {name:'Air Conditioner (15,000 BTU)',watts:1800,hours:6,type:'ac'},
+      {name:'Washing Machine',watts:500,hours:1,type:'ac'},
+      {name:'Microwave',watts:1100,hours:0.3,type:'ac'},
+      {name:'Coffee Maker',watts:1200,hours:0.2,type:'ac'},
+      {name:'TV 65" + Soundbar',watts:180,hours:4,type:'ac'},
+      {name:'Laptop ×2 + Monitors',watts:200,hours:6,type:'ac'},
+      {name:'CPAP ×2',watts:100,hours:8,type:'ac'},
+      {name:'Phone ×4',watts:60,hours:4,type:'ac'},
+      {name:'WiFi + Networking',watts:20,hours:24,type:'dc'},
+    ]
+  },
+  {
+    name:'☀️ Solar Only (Boondocking)',
+    desc:'24V · 300Ah LiFePO4 · 600W solar\nNo shore power, solar-maximised',
+    voltage:24,acVoltage:240,dod:0.8,autonomy:3,peakSun:5.5,solEff:0.82,invEff:0.92,
+    apps:[
+      {name:'LED Lighting',watts:35,hours:6,type:'dc'},
+      {name:'12V Fridge (80L)',watts:60,hours:14,type:'dc'},
+      {name:'Laptop',watts:65,hours:5,type:'ac'},
+      {name:'Water Pump',watts:70,hours:0.5,type:'dc'},
+      {name:'Fan ×2',watts:40,hours:8,type:'dc'},
+      {name:'Phone/Tablet ×2',watts:30,hours:4,type:'ac'},
+      {name:'WiFi Router',watts:12,hours:12,type:'dc'},
+      {name:'Starlink',watts:75,hours:6,type:'dc'},
+    ]
+  },
+  {
+    name:'🏕️ Hybrid Shore + Solar',
+    desc:'12V · 200Ah LiFePO4 · 400W solar + shore\nCampground + occasional off-grid',
+    voltage:12,acVoltage:240,dod:0.8,autonomy:1,peakSun:5,solEff:0.8,invEff:0.9,
+    apps:[
+      {name:'LED Lighting',watts:35,hours:6,type:'dc'},
+      {name:'12V Fridge (80L)',watts:60,hours:14,type:'dc'},
+      {name:'TV 43"',watts:90,hours:3,type:'ac'},
+      {name:'Microwave',watts:900,hours:0.2,type:'ac'},
+      {name:'Water Pump',watts:65,hours:0.5,type:'dc'},
+      {name:'Phone ×3',watts:30,hours:4,type:'ac'},
+      {name:'WiFi',watts:12,hours:12,type:'dc'},
+      {name:'Fan',watts:25,hours:6,type:'dc'},
+    ]
+  },
+];
+
+function openTemplates(){
+  const grid=document.getElementById('template-grid');
+  grid.innerHTML=QUICK_TEMPLATES.map((t,i)=>`
+    <div style="border:1.5px solid var(--border);border-radius:10px;padding:14px;background:var(--surface);cursor:pointer;transition:all .2s;hover:border-color:var(--accent3);"
+      onclick="applyTemplate(${i})"
+      onmouseenter="this.style.borderColor='var(--accent3)';this.style.boxShadow='0 4px 12px rgba(26,95,191,.12)'"
+      onmouseleave="this.style.borderColor='var(--border)';this.style.boxShadow='none'">
+      <div style="font-size:14px;font-weight:700;color:var(--text);margin-bottom:5px;">${t.name}</div>
+      <div style="font-size:11px;color:var(--muted);line-height:1.6;white-space:pre-line;">${t.desc}</div>
+      <div style="margin-top:8px;font-size:10px;color:var(--accent3);font-weight:700;">${t.apps.length} appliances →</div>
+    </div>`).join('');
+  document.getElementById('templates-overlay').classList.remove('hidden');
+}
+
+function applyTemplate(i){
+  const t=QUICK_TEMPLATES[i];
+  // Apply settings
+  const sv=document.getElementById('sys-voltage'); if(sv) sv.value=t.voltage;
+  const av=document.getElementById('ac-voltage'); if(av) av.value=t.acVoltage;
+  const btb=document.getElementById('battery-type-bar'); if(btb) btb.value=t.dod;
+  const ab=document.getElementById('autonomy-bar'); if(ab) ab.value=Math.min(5,t.autonomy);
+  const ps=document.getElementById('peak-sun'); if(ps) ps.value=t.peakSun;
+  const se=document.getElementById('sol-eff'); if(se) se.value=t.solEff;
+  const ie=document.getElementById('inv-eff'); if(ie) ie.value=t.invEff;
+  // Sync hidden inputs
+  const bth=document.getElementById('battery-type'); if(bth) bth.value=t.dod;
+  const auth=document.getElementById('autonomy'); if(auth) auth.value=t.autonomy;
+  // Load appliances
+  appliances=[];nextId=1;
+  t.apps.forEach(a=>addAppliance(a));
+  document.getElementById('templates-overlay').classList.add('hidden');
+  onVoltageChange(); // triggers recalc + tip
+  // Switch to loads tab to show result
+  const loadsTab=document.querySelector('.tab[onclick*="loads"]');
+  if(loadsTab){loadsTab.click();}
+}
+
+// ===================== EXPORT / IMPORT / SHARE =====================
+function exportJSON(){
+  const data={
+    version:1,
+    exported:new Date().toISOString(),
+    appliances,
+    prefs:{
+      voltage:getSysVoltage(),
+      acVoltage:getAcVoltage(),
+      autonomy:getAutonomy(),
+      dod:getBattDod(),
+      peakSun:+document.getElementById('peak-sun').value,
+      solEff:+document.getElementById('sol-eff').value,
+      invEff:+document.getElementById('inv-eff').value,
+      altAmps:+(document.getElementById('alt-amps')?.value||0),
+      altHours:+(document.getElementById('alt-hours')?.value||0),
+      shoreAmps:+(document.getElementById('shore-charge-amps')?.value||0),
+      shoreHours:+(document.getElementById('shore-hours')?.value||0),
+      genKw:+(document.getElementById('gen-charge-kw')?.value||0),
+      genHours:+(document.getElementById('gen-hours')?.value||0),
+      roofSpace:+(document.getElementById('roof-space')?.value||60),
+    },
+    selections,
+    calcs:getCalcs()
+  };
+  const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url;a.download='rv-power-system.json';a.click();
+  URL.revokeObjectURL(url);
+}
+
+function importJSONPrompt(){
+  const input=document.createElement('input');
+  input.type='file';input.accept='.json,application/json';
+  input.onchange=e=>{
+    const file=e.target.files[0];if(!file)return;
+    const reader=new FileReader();
+    reader.onload=ev=>{
+      try{
+        const d=JSON.parse(ev.target.result);
+        if(!d.appliances||!d.prefs) throw new Error('Invalid file');
+        // Restore appliances
+        appliances=[];nextId=1;
+        d.appliances.forEach(a=>addAppliance(a));
+        // Restore prefs
+        const p=d.prefs;
+        const sv=document.getElementById('sys-voltage');if(sv)sv.value=p.voltage;
+        const av=document.getElementById('ac-voltage');if(av)av.value=p.acVoltage;
+        const btb=document.getElementById('battery-type-bar');if(btb)btb.value=p.dod;
+        const ab=document.getElementById('autonomy-bar');if(ab)ab.value=Math.min(5,p.autonomy);
+        const ps=document.getElementById('peak-sun');if(ps)ps.value=p.peakSun;
+        const se=document.getElementById('sol-eff');if(se)se.value=p.solEff;
+        const ie=document.getElementById('inv-eff');if(ie)ie.value=p.invEff;
+        if(p.altAmps!=null&&document.getElementById('alt-amps'))document.getElementById('alt-amps').value=p.altAmps;
+        if(p.altHours!=null&&document.getElementById('alt-hours'))document.getElementById('alt-hours').value=p.altHours;
+        if(p.shoreAmps!=null&&document.getElementById('shore-charge-amps'))document.getElementById('shore-charge-amps').value=p.shoreAmps;
+        if(p.shoreHours!=null&&document.getElementById('shore-hours'))document.getElementById('shore-hours').value=p.shoreHours;
+        if(p.genKw!=null&&document.getElementById('gen-charge-kw'))document.getElementById('gen-charge-kw').value=p.genKw;
+        if(p.genHours!=null&&document.getElementById('gen-hours'))document.getElementById('gen-hours').value=p.genHours;
+        if(p.roofSpace!=null&&document.getElementById('roof-space'))document.getElementById('roof-space').value=p.roofSpace;
+        if(d.selections) Object.assign(selections,d.selections);
+        onVoltageChange();
+        alert('✅ System imported successfully!');
+      }catch(err){alert('❌ Could not read file: '+err.message);}
+    };
+    reader.readAsText(file);
+  };
+  input.click();
+}
+
+function shareConfig(){
+  const p={
+    v:getSysVoltage(),
+    av:getAcVoltage(),
+    au:getAutonomy(),
+    d:getBattDod(),
+    ps:+document.getElementById('peak-sun').value,
+    se:+document.getElementById('sol-eff').value,
+    ie:+document.getElementById('inv-eff').value,
+    rs:+(document.getElementById('roof-space')?.value||60),
+    aa:+(document.getElementById('alt-amps')?.value||0),
+    ah:+(document.getElementById('alt-hours')?.value||0),
+    sa:+(document.getElementById('shore-charge-amps')?.value||0),
+    sh:+(document.getElementById('shore-hours')?.value||0),
+    ga:+(document.getElementById('gen-charge-kw')?.value||0),
+    gh:+(document.getElementById('gen-hours')?.value||0),
+    apps:appliances.map(a=>({n:a.name,w:a.watts,h:a.hours,t:a.type}))
+  };
+  const encoded=btoa(JSON.stringify(p));
+  const url=window.location.origin+window.location.pathname+'?cfg='+encoded;
+  const box=document.getElementById('share-link-box');
+  box.style.display='block';
+  box.innerHTML=`<div style="background:var(--accent3-bg);border:1.5px solid var(--accent3);border-radius:8px;padding:12px 14px;">
+    <div style="font-size:11px;font-weight:700;color:var(--accent3);margin-bottom:6px;">🔗 Shareable Link (copy and share):</div>
+    <input type="text" value="${url}" readonly style="width:100%;font-size:11px;font-family:var(--mf);padding:6px 8px;border:1px solid var(--border);border-radius:4px;background:var(--surface);" onclick="this.select()">
+    <div style="font-size:10px;color:var(--muted);margin-top:5px;">Recipient opens this link and your system loads automatically.</div>
+  </div>`;
+  // Auto-load if ?cfg= param exists
+}
+
+// Auto-load shared config from URL on page load
+function loadSharedConfig(){
+  try{
+    const params=new URLSearchParams(window.location.search);
+    const cfg=params.get('cfg');
+    if(!cfg)return;
+    const p=JSON.parse(atob(cfg));
+    const sv=document.getElementById('sys-voltage');if(sv)sv.value=p.v;
+    const av=document.getElementById('ac-voltage');if(av)av.value=p.av;
+    const btb=document.getElementById('battery-type-bar');if(btb)btb.value=p.d;
+    const ab=document.getElementById('autonomy-bar');if(ab)ab.value=Math.min(5,p.au);
+    const ps=document.getElementById('peak-sun');if(ps)ps.value=p.ps;
+    const se=document.getElementById('sol-eff');if(se)se.value=p.se;
+    const ie=document.getElementById('inv-eff');if(ie)ie.value=p.ie;
+    if(document.getElementById('roof-space'))document.getElementById('roof-space').value=p.rs||60;
+    if(document.getElementById('alt-amps'))document.getElementById('alt-amps').value=p.aa||0;
+    if(document.getElementById('alt-hours'))document.getElementById('alt-hours').value=p.ah||0;
+    if(document.getElementById('shore-charge-amps'))document.getElementById('shore-charge-amps').value=p.sa||0;
+    if(document.getElementById('shore-hours'))document.getElementById('shore-hours').value=p.sh||0;
+    if(document.getElementById('gen-charge-kw'))document.getElementById('gen-charge-kw').value=p.ga||0;
+    if(document.getElementById('gen-hours'))document.getElementById('gen-hours').value=p.gh||0;
+    appliances=[];nextId=1;
+    (p.apps||[]).forEach(a=>addAppliance({name:a.n,watts:a.w,hours:a.h,type:a.t}));
+    onVoltageChange();
+  }catch(e){console.warn('Could not load shared config:',e);}
+}
+
 // ===================== INIT =====================
 renderTable();
 recalc();
 drawGauge(0,5000);
 renderSavedList();
 renderDiagram();
+loadSharedConfig();
 </script>
 </body>
 </html>
