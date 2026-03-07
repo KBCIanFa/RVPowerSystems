@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RV Power Designer — Help Guide</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:#f4f6f9;--surface:#ffffff;--surface2:#eef1f6;--border:#d0d7e2;
+    --accent:#c47f00;--accent-bg:#fff8e6;
+    --accent2:#0a7c54;--accent2-bg:#e6f7f1;
+    --accent3:#1a5fbf;--accent3-bg:#e8f0fc;
+    --danger:#c0392b;--danger-bg:#fdecea;
+    --purple:#6b3fa0;--purple-bg:#f3eeff;
+    --text:#1a2233;--text2:#3d4f6a;--muted:#5a6a82;
+    --hf:'Bebas Neue',sans-serif;--bf:'DM Sans',sans-serif;--mf:'DM Mono',monospace;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{background:var(--bg);color:var(--text);font-family:var(--bf);line-height:1.7;}
+  a{color:var(--accent3);text-decoration:none;}
+  a:hover,a:focus{text-decoration:underline;outline:2px solid var(--accent3);outline-offset:2px;}
+  .skip-link{position:absolute;top:-40px;left:0;background:var(--accent3);color:#fff;padding:8px 14px;border-radius:0 0 6px 0;font-size:13px;font-weight:600;z-index:9999;}
+  .skip-link:focus{top:0;}
+
+  header{background:linear-gradient(135deg,#1a2a4a 0%,#1e3a6a 100%);border-bottom:3px solid var(--accent);padding:16px 32px;display:flex;align-items:center;gap:14px;}
+  .logo-icon{width:40px;height:40px;background:var(--accent);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;}
+  header h1{font-family:var(--hf);font-size:24px;letter-spacing:2px;color:#fff;}
+  header p{font-size:11px;color:#93afd4;letter-spacing:1px;text-transform:uppercase;}
+  .header-back{margin-left:auto;color:#93afd4;font-size:12px;padding:6px 12px;border:1px solid rgba(147,175,212,.4);border-radius:6px;}
+  .header-back:hover{color:#fff;border-color:#fff;}
+
+  .container{max-width:860px;margin:0 auto;padding:32px 24px 60px;}
+  .toc{background:var(--surface);border:1.5px solid var(--border);border-radius:10px;padding:20px 24px;margin-bottom:32px;box-shadow:0 1px 3px rgba(0,0,0,.07);}
+  .toc h2{font-family:var(--hf);font-size:18px;letter-spacing:1px;color:var(--text);margin-bottom:14px;}
+  .toc ol{margin-left:18px;}
+  .toc li{font-size:13px;margin-bottom:6px;}
+
+  .section{background:var(--surface);border:1.5px solid var(--border);border-radius:10px;padding:24px;margin-bottom:20px;box-shadow:0 1px 3px rgba(0,0,0,.07);}
+  .section h2{font-family:var(--hf);font-size:20px;letter-spacing:1.5px;color:var(--text);margin-bottom:6px;padding-bottom:10px;border-bottom:2px solid var(--border);}
+  .section h3{font-size:14px;font-weight:700;color:var(--accent3);margin:18px 0 7px;}
+  .section h4{font-size:13px;font-weight:700;color:var(--text);margin:14px 0 5px;}
+  .section p{font-size:13px;color:var(--text2);margin-bottom:10px;line-height:1.7;}
+  .section ul,ol{margin-left:20px;margin-bottom:10px;}
+  .section li{font-size:13px;color:var(--text2);margin-bottom:5px;line-height:1.6;}
+  code{font-family:var(--mf);background:var(--surface2);border:1px solid var(--border);border-radius:4px;padding:1px 5px;font-size:12px;color:var(--accent3);}
+
+  .alert{padding:10px 14px;border-radius:7px;font-size:13px;margin-bottom:12px;display:flex;align-items:flex-start;gap:9px;line-height:1.5;border-left:4px solid;}
+  .alert-warn{background:var(--accent-bg);border-color:var(--accent);color:#7a4f00;}
+  .alert-ok{background:var(--accent2-bg);border-color:var(--accent2);color:#064d34;}
+  .alert-info{background:var(--accent3-bg);border-color:var(--accent3);color:#0f3672;}
+  .alert-err{background:var(--danger-bg);border-color:var(--danger);color:#7a1c12;}
+
+  table{width:100%;border-collapse:collapse;font-size:13px;margin-bottom:12px;}
+  th{text-align:left;font-size:10px;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);padding:8px 10px;border-bottom:2px solid var(--border);font-weight:700;background:var(--surface2);}
+  td{padding:8px 10px;border-bottom:1px solid var(--border);color:var(--text2);}
+  td:first-child{font-weight:600;color:var(--text);}
+  tr:last-child td{border-bottom:none;}
+
+  .demo-card{background:var(--purple-bg);border:1.5px solid #b090d8;border-radius:8px;padding:14px 16px;margin-bottom:10px;}
+  .demo-card h4{color:var(--purple);font-size:13px;font-weight:700;margin-bottom:5px;}
+  .demo-card p{font-size:12px;color:var(--text2);margin-bottom:0;}
+
+  .formula-box{background:var(--surface2);border:1.5px solid var(--border);border-radius:6px;padding:12px 16px;margin:10px 0;font-family:var(--mf);font-size:12px;color:var(--accent2);font-weight:600;}
+
+  footer{text-align:center;padding:24px;font-size:12px;color:var(--muted);}
+</style>
+</head>
+<body>
+<a href="#main-content" class="skip-link">Skip to content</a>
+<header>
+  <div class="logo-icon" aria-hidden="true">⚡</div>
+  <div>
+    <h1>RV Power Designer</h1>
+    <p>Complete Help Guide</p>
+  </div>
+  <a href="rv-power-designer.html" class="header-back" aria-label="Return to RV Power Designer app">← Back to App</a>
+</header>
+
+<main class="container" id="main-content">
+
+  <div class="toc" role="navigation" aria-label="Table of contents">
+    <h2>Contents</h2>
+    <ol>
+      <li><a href="#s1">Getting Started</a></li>
+      <li><a href="#s2">System Preferences — Voltage & AC Mains</a></li>
+      <li><a href="#s3">Adding Appliances</a></li>
+      <li><a href="#s4">Understanding Sizing Results</a></li>
+      <li><a href="#s5">Component Selector</a></li>
+      <li><a href="#s6">Wiring Guide</a></li>
+      <li><a href="#s7">Demo Systems (12V, 24V, 48V)</a></li>
+      <li><a href="#s8">Saving &amp; Comparing Systems</a></li>
+      <li><a href="#s9">Accuracy & Limitations</a></li>
+      <li><a href="#s10">Frequently Asked Questions</a></li>
+    </ol>
+  </div>
+
+  <!-- 1 -->
+  <div class="section" id="s1">
+    <h2>1. Getting Started</h2>
+    <p>RV Power Designer helps you size an off-grid solar power system for your RV, campervan, motorhome, or boat. The workflow is:</p>
+    <ol>
+      <li><strong>Loads tab</strong> — Enter every appliance you plan to run and your system preferences.</li>
+      <li><strong>Sizing tab</strong> — Review the calculated battery, solar, controller, and inverter requirements.</li>
+      <li><strong>Components tab</strong> — Select products and generate a shopping list.</li>
+      <li><strong>Wiring tab</strong> — Follow the step-by-step installation guide.</li>
+      <li><strong>Save</strong> your design and compare multiple builds.</li>
+    </ol>
+    <div class="alert alert-info">ℹ️ All calculations update live as you enter data. The live summary in the right-hand sidebar always shows your current totals.</div>
+    <div class="alert alert-warn">⚠️ These results are planning estimates. Always verify sizing with a qualified solar installer before purchasing components, particularly for large or high-voltage systems.</div>
+  </div>
+
+  <!-- 2 -->
+  <div class="section" id="s2">
+    <h2>2. System Preferences — Voltage &amp; AC Mains</h2>
+
+    <h3>System Voltage (12V / 24V / 48V)</h3>
+    <p>This is your battery bank and DC bus voltage — one of the most important decisions in your build.</p>
+    <table>
+      <thead><tr><th>Voltage</th><th>Best For</th><th>Wire Size</th><th>Max Practical Solar</th><th>Notes</th></tr></thead>
+      <tbody>
+        <tr><td>12V</td><td>Vans, small campers, simple weekend rigs</td><td>Heaviest (high amps)</td><td>~800W before upgrading</td><td>Most components available, easiest to find 12V appliances</td></tr>
+        <tr><td>24V</td><td>Touring motorhomes, medium boats, full-timers</td><td>Medium</td><td>~2,000W</td><td>Half the current of 12V — thinner wires, better efficiency</td></tr>
+        <tr><td>48V</td><td>Large coaches, fifth wheels, serious off-grid</td><td>Lightest</td><td>10,000W+</td><td>Quarter the current of 12V — best efficiency, higher component cost</td></tr>
+      </tbody>
+    </table>
+    <p>For a 24V system, two 12V batteries are wired in series. For 48V, four 12V batteries in series (or two 24V). Ensure all components — charge controller, inverter, DC loads — are rated for your chosen voltage.</p>
+
+    <h3>AC Mains Voltage (240V / 120V)</h3>
+    <p>This setting affects how AC appliance loads are labelled in the appliance table, what your inverter must output, and how shore power amperage is calculated.</p>
+    <table>
+      <thead><tr><th>Setting</th><th>Used In</th></tr></thead>
+      <tbody>
+        <tr><td>240V (default)</td><td>Australia, New Zealand, UK, Europe, most of Asia and Africa</td></tr>
+        <tr><td>120V</td><td>North America (USA, Canada, Mexico), Japan, parts of Latin America</td></tr>
+      </tbody>
+    </table>
+    <p>This does <strong>not</strong> change the wattage calculation (watts = volts × amps, and appliances are rated in watts regardless of mains voltage). It affects the shore power amperage display and inverter product labels.</p>
+
+    <h3>Days of Autonomy</h3>
+    <p>The number of consecutive cloudy/rainy days your battery bank must cover without any solar charging. 2–3 days is typical for most regions. The battery sizing calculation multiplies your daily Wh by this number.</p>
+
+    <h3>Battery Type / Depth of Discharge (DoD)</h3>
+    <p>How deeply you can safely discharge the battery before recharging:</p>
+    <ul>
+      <li><strong>Lead-Acid / AGM — 50% DoD:</strong> Discharging deeper significantly shortens lifespan.</li>
+      <li><strong>LiFePO4 — 80% DoD:</strong> Standard recommendation for lithium iron phosphate.</li>
+      <li><strong>Premium LiFePO4 — 90% DoD:</strong> Achievable with quality cells and a conservative charge profile, but reduces cycle life slightly.</li>
+    </ul>
+
+    <h3>System Derate Factor</h3>
+    <p>This is a combined efficiency factor (not panel efficiency) that accounts for real-world losses: temperature derating of panels in heat, wiring resistance, MPPT conversion losses, soiling, and mismatch between panels. 80% is typical for a well-maintained system. Use 75% if you have partial shading, older wiring, or hot climates. Use 85% only for ideal conditions.</p>
+  </div>
+
+  <!-- 3 -->
+  <div class="section" id="s3">
+    <h2>3. Adding Appliances</h2>
+    <p>Add every device you plan to run. Be realistic about daily hours — this is the single biggest factor in your system size.</p>
+
+    <h3>Appliance Type: AC vs DC</h3>
+    <p><strong>DC loads</strong> run directly from your battery (e.g. 12V/24V fridge, LED lights, fan, water pump, USB charging). These are more efficient because they don't go through the inverter.</p>
+    <p><strong>AC loads</strong> run from your inverter (e.g. laptops, TVs, kitchen appliances, CPAP, power tools). The inverter adds ~10% loss, which is automatically accounted for in sizing.</p>
+    <div class="alert alert-info">💡 Tip: Convert as many loads as possible to native DC to reduce inverter losses and simplify your system. A 12V compressor fridge is far more efficient than a household AC fridge running off an inverter.</div>
+
+    <h3>Typical Wattage Reference</h3>
+    <table>
+      <thead><tr><th>Appliance</th><th>Typical Watts</th><th>Notes</th></tr></thead>
+      <tbody>
+        <tr><td>LED lighting (whole RV)</td><td>20–60W</td><td>DC preferred</td></tr>
+        <tr><td>12V compressor fridge</td><td>40–80W avg</td><td>DC — runs ~12–16 hrs/day average</td></tr>
+        <tr><td>Fan (ceiling/desk)</td><td>15–50W</td><td>DC preferred</td></tr>
+        <tr><td>Water pump (DC)</td><td>40–100W</td><td>Short runtime ~0.5 hr/day</td></tr>
+        <tr><td>Laptop</td><td>45–90W</td><td>AC or USB-C DC charging</td></tr>
+        <tr><td>Phone charging ×2</td><td>15–25W</td><td>Use DC USB charger if possible</td></tr>
+        <tr><td>TV (32"–50")</td><td>40–120W</td><td>LED TVs are much more efficient than plasma</td></tr>
+        <tr><td>Coffee maker</td><td>800–1,200W</td><td>Short use — high peak draw</td></tr>
+        <tr><td>Microwave</td><td>900–1,200W</td><td>Short use — demands large inverter</td></tr>
+        <tr><td>Air conditioner (15,000 BTU)</td><td>1,500–2,000W running</td><td>3,000–5,000W startup surge</td></tr>
+        <tr><td>CPAP (no humidifier)</td><td>30–60W</td><td>With humidifier: 50–100W</td></tr>
+        <tr><td>WiFi router</td><td>8–20W</td><td>Runs 24 hrs — DC if possible</td></tr>
+        <tr><td>Portable washing machine</td><td>400–700W</td><td>~1 hr/cycle</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- 4 -->
+  <div class="section" id="s4">
+    <h2>4. Understanding Sizing Results</h2>
+
+    <h3>Core Formulas</h3>
+    <div class="formula-box">
+      Battery Ah = (Daily Wh × Autonomy days) ÷ System V ÷ DoD × 1.20 buffer<br>
+      Solar W = (Daily Wh ÷ Peak Sun Hrs ÷ Derate) × 1.25 buffer<br>
+      Controller A (output) = Solar W ÷ System V<br>
+      Inverter VA = Peak AC W × 1.25 (continuous) | Peak AC W × 2.5 (surge est.)
+    </div>
+
+    <h3>Battery Bank</h3>
+    <p>The recommended Ah includes a 20% buffer above the calculated minimum. This accounts for battery aging, manufacturing variation, and unexpected extra loads. For a 24V or 48V system, your bank Ah stays the same — you achieve it by wiring batteries in series (voltage) and parallel (capacity).</p>
+
+    <h3>Solar Array</h3>
+    <p>The required wattage is calculated at your chosen derate factor. This is the <em>installed array size needed</em>, not panel nameplate efficiency. A 400W panel in shade is not 400W — hence the derate.</p>
+    <p>Panel configuration: On a 12V battery system, panels are typically wired in parallel (keeping voltage at ~18V for a 12V MPPT). On 24V/48V, you can run panels in series to raise PV voltage, which reduces current and allows thinner wire runs from the roof.</p>
+
+    <h3>Charge Controller — Output Amps vs PV Input Voltage</h3>
+    <p>The controller is sized by its <strong>output (battery charge) current</strong> in amps. This is calculated as Solar W ÷ System V.</p>
+    <p>Separately, every MPPT controller has a <strong>maximum PV input voltage rating</strong> (commonly 75V, 100V, or 150V) that is a fixed product specification, independent of battery voltage. Your panel string's open-circuit voltage (Voc) must not exceed this at the coldest expected temperature. Always verify this in the controller's datasheet.</p>
+    <div class="alert alert-err">🚫 If panel string Voc exceeds the controller's PV input rating, the controller will be permanently damaged on the first cold morning. Check the datasheet.</div>
+
+    <h3>Inverter — Continuous vs Surge Rating</h3>
+    <p>Every inverter has two ratings:</p>
+    <ul>
+      <li><strong>Continuous rating:</strong> Maximum sustained load (e.g. 2000W) — size this to cover all AC loads running simultaneously.</li>
+      <li><strong>Surge/peak rating:</strong> Brief spikes the inverter can handle for 1–5 seconds (typically 2× continuous). Motors draw 2–3× their running wattage at startup — a 1500W air conditioner may draw 4000W+ at startup.</li>
+    </ul>
+    <p>The app estimates surge at 2.5× peak AC watts. This is a conservative approximation — verify the startup current (LRA — locked rotor amps) of your specific motor-driven appliances.</p>
+
+    <h3>Shore Power / Generator</h3>
+    <p>Shore power amps shown are based on peak load at your AC mains voltage. Average draw will be significantly lower. Generators should be sized to run at 50–80% of their rated capacity for fuel efficiency and longevity. Running a generator below 30% load causes wet stacking and premature wear.</p>
+  </div>
+
+  <!-- 5 -->
+  <div class="section" id="s5">
+    <h2>5. Component Selector</h2>
+    <p>The Components tab shows built-in product recommendations sized to your calculated requirements, plus the ability to add custom products from any retailer.</p>
+
+    <h3>Hiding Options</h3>
+    <p>Click <strong>Hide</strong> on any built-in card to remove it from view. A "Restore N hidden options" button appears below each category so you can bring them back. This lets you keep only the options you're seriously considering without deleting them.</p>
+
+    <h3>Adding Custom Products</h3>
+    <p>Click <strong>+ Add Custom [type]</strong> under any category. Enter the product name, spec description, price, and a URL to any online retailer (Amazon, manufacturer site, etc.). Custom products appear with a purple "Custom" badge and are included in the Shopping List.</p>
+
+    <h3>Battery Quantity Estimate</h3>
+    <p>Each battery card shows "Need ~X units" based on the product's actual Ah rating and your required bank size. A 200Ah battery needs half as many units as a 100Ah battery. This is an estimate — always verify with exact battery specs.</p>
+
+    <h3>Shopping List</h3>
+    <p>Select one product in each category and the Shopping List is generated automatically with prices and buy links. It also reminds you to budget for ancillary items: fuses, bus bars, battery monitor, wiring, and transfer switch.</p>
+  </div>
+
+  <!-- 6 -->
+  <div class="section" id="s6">
+    <h2>6. Wiring Guide</h2>
+
+    <h3>Wire Sizing</h3>
+    <p>The wire sizing table shows one-way maximum run lengths for 12V DC at 3% voltage drop. Key points:</p>
+    <ul>
+      <li>Round-trip = double the distance (wire goes out and back). For a 10 ft one-way run, you need 20 ft of wire.</li>
+      <li>For 24V systems, distances roughly double for the same gauge and amps. For 48V, roughly quadruple.</li>
+      <li>Always use a voltage drop calculator for your exact run, load, and wire length.</li>
+      <li>When in doubt, use the next heavier gauge.</li>
+      <li>Use <strong>tinned marine-grade stranded copper</strong> throughout — not household electrical wire.</li>
+    </ul>
+    <div class="alert alert-warn">⚠️ All AC 240V wiring must be performed by a licensed electrician in Australia, NZ, and the UK. All AC 120V wiring in North America should follow NEC guidelines and be inspected by a qualified electrician.</div>
+
+    <h3>Fusing</h3>
+    <p>Every positive wire must be fused within 18 inches (45cm) of the battery positive terminal. This is the most critical safety rule — a short circuit in unfused wiring can cause a fire within seconds. Use ANL fuses for high-current runs and blade fuses or circuit breakers for branch circuits.</p>
+
+    <h3>Installation Order</h3>
+    <p>The app generates a step-by-step sequence based on your system. Always: (1) batteries first, (2) bus bars and main fuse, (3) charge controller battery side, (4) solar, (5) inverter, (6) AC wiring. Connect the negative battery cable last, and always disconnect it first when servicing.</p>
+  </div>
+
+  <!-- 7 -->
+  <div class="section" id="s7">
+    <h2>7. Demo Systems (12V, 24V, 48V)</h2>
+    <p>Three pre-built demo systems are available in the <strong>Saved Systems</strong> tab to give you a realistic starting point for different use cases. Load any demo to see the full appliance list and sizing results.</p>
+
+    <div class="demo-card">
+      <h4>🏕️ 12V Weekend Boondocker</h4>
+      <p>A compact 12V LiFePO4 system for a couple doing 3-season weekend camping. No air conditioning. Basic cooking, laptop, phone charging, 12V fridge and fans. 3-day autonomy. ~800–1,000 Wh/day. Good starting point for vans and small campers.</p>
+    </div>
+
+    <div class="demo-card">
+      <h4>🚐 24V Touring Motorhome</h4>
+      <p>A 24V system for a couple full-timing in a medium motorhome. Large 24V fridge, laptop work, TV, coffee maker, CPAP. No air conditioning. 2-day autonomy. ~1,800–2,200 Wh/day. Demonstrates the wire gauge and efficiency advantages of 24V over 12V at this scale.</p>
+    </div>
+
+    <div class="demo-card">
+      <h4>🏠 48V Luxury Coach / Large 5th Wheel</h4>
+      <p>A 48V high-power system for full-time living with air conditioning, large fridge/freezer, office setup, washing machine, and microwave. 2-day autonomy. ~8,000–10,000 Wh/day. This scale requires a large array (3,000W+), substantial battery bank, and a quality 48V inverter-charger. Generator backup is strongly recommended.</p>
+    </div>
+
+    <div class="alert alert-info">ℹ️ Demo systems cannot be deleted. Load them to use as a starting point, modify the appliances and preferences, then save as your own build.</div>
+  </div>
+
+  <!-- 8 -->
+  <div class="section" id="s8">
+    <h2>8. Saving &amp; Comparing Systems</h2>
+
+    <h3>Saving a System</h3>
+    <p>Click <strong>💾 Save System</strong> (header, sidebar, or Saved tab). Enter a name and optional notes. The saved snapshot includes all appliances, preferences, component selections, and custom products.</p>
+    <p><strong>Note:</strong> Saves are stored in memory only and will be lost when you close or refresh the browser. Export your design notes manually if you need to keep them long-term.</p>
+
+    <h3>Loading a System</h3>
+    <p>Click <strong>Load</strong> on any saved system. This replaces the current active design with the saved appliances, preferences and selections. You are taken back to the Loads tab.</p>
+
+    <h3>Comparing Systems</h3>
+    <p>Tick the checkbox next to 2 or more saved systems, then click <strong>⚖️ Compare</strong>. The comparison modal shows a side-by-side table of all key specifications. Green highlighting marks the higher value in each comparable row.</p>
+    <p>Useful for comparing: 12V vs 24V versions of the same build, AGM vs LiFePO4 battery sizing impact, conservative vs optimistic sun hours scenarios.</p>
+  </div>
+
+  <!-- 9 -->
+  <div class="section" id="s9">
+    <h2>9. Accuracy &amp; Limitations</h2>
+    <div class="alert alert-warn">⚠️ This tool provides planning estimates, not engineering specifications. All results should be verified by a qualified solar installer before purchase.</div>
+
+    <h3>What the calculations do well</h3>
+    <ul>
+      <li>Battery sizing using correct DoD, autonomy, and voltage — with a safety buffer.</li>
+      <li>Solar sizing accounting for system derate (not just panel efficiency).</li>
+      <li>Both continuous and estimated surge ratings for inverter sizing.</li>
+      <li>Per-product battery and panel quantity estimates using actual product Ah/W ratings.</li>
+      <li>AC load accounting for inverter efficiency losses.</li>
+    </ul>
+
+    <h3>Known limitations</h3>
+    <ul>
+      <li><strong>Peak sun hours:</strong> The app uses a single value for all days. In practice, solar is seasonal — summer may give 7 hrs, winter 2–3 hrs at the same location. Size for your worst-case season if full-timing.</li>
+      <li><strong>Battery temperature:</strong> LiFePO4 capacity reduces below 0°C (32°F) and charging is prohibited below 0°C without a heated battery. This is not modelled.</li>
+      <li><strong>Appliance hours:</strong> The tool assumes appliances run the same hours every day. Refrigerators, in particular, cycle on/off and actual consumption depends on ambient temperature and insulation.</li>
+      <li><strong>Self-discharge:</strong> Battery self-discharge and parasitic DC loads (BMS, battery monitor, etc.) are not included in the daily Wh total.</li>
+      <li><strong>Prices:</strong> Component prices are approximate and may be outdated. Always check current pricing at the retailer.</li>
+    </ul>
+  </div>
+
+  <!-- 10 -->
+  <div class="section" id="s10">
+    <h2>10. Frequently Asked Questions</h2>
+
+    <h3>Why does the charge controller show amps, not watts?</h3>
+    <p>MPPT charge controllers are rated by their <strong>output (battery charge) current</strong> in amps. This is because the battery bank size and voltage determines the maximum charge current — not the solar array size alone. The calculation is: Solar W ÷ System V = required output amps. Separately, the controller has a maximum PV input voltage rating (e.g. 75V, 100V) which is a fixed specification — check your controller's datasheet.</p>
+
+    <h3>Do I need a 240V inverter in Australia?</h3>
+    <p>Yes. If your AC mains voltage is 240V (Australia, NZ, UK, Europe), you need a 240V inverter. Set the AC Mains Voltage setting to 240V. Most quality inverters are available in both 120V and 240V variants. Do not use a 120V North American inverter on a 240V system.</p>
+
+    <h3>Can I mix 12V and 24V components?</h3>
+    <p>No. Your entire DC system must operate at the same voltage. Your charge controller, inverter, DC loads (fridge, fans, lights), and battery bank must all be rated for the same system voltage. The only exception is a 48V inverter-charger that includes a built-in DC-DC converter for 12V accessories (some high-end units do this).</p>
+
+    <h3>Should I choose 12V or 24V for my build?</h3>
+    <p>Use 12V if your solar array is under 800W and you have minimal high-power AC loads. Move to 24V if you need more than ~800W of solar, have a large battery bank (400Ah+), or find yourself running into heavy wire gauge requirements. 48V is for serious full-time setups with air conditioning and large arrays.</p>
+
+    <h3>Why is my inverter surge estimate so high?</h3>
+    <p>The app estimates surge at 2.5× your total peak AC wattage, which can be conservative if you have multiple motor loads. In practice, not all motors start simultaneously — what matters is the <strong>single largest motor's startup current</strong>. Check the LRA (Locked Rotor Amps) spec of your air conditioner or largest compressor. Multiply by your AC voltage to get startup watts, and make sure your inverter's surge rating exceeds this.</p>
+
+    <h3>My solar requirement seems too high — what can I reduce?</h3>
+    <p>The biggest levers in order of impact:</p>
+    <ol>
+      <li>Reduce AC loads — move appliances to native DC (12V fridge instead of AC fridge, DC fans instead of AC fans).</li>
+      <li>Reduce hours of use — be realistic about actual daily run time.</li>
+      <li>Increase peak sun hours — if you're in a sunny region and set conservatively, adjust upward.</li>
+      <li>Increase autonomy days only to what you actually need — 1 day vs 3 days tripled your battery and solar size.</li>
+      <li>Use premium LiFePO4 at 90% DoD to extract more from the same battery bank.</li>
+    </ol>
+
+    <h3>Is my data saved between sessions?</h3>
+    <p>No. The app stores everything in browser memory only. If you close or refresh the tab, your saved systems will be lost. Take screenshots or notes of your final design. Future versions may add local storage or export features.</p>
+  </div>
+
+</main>
+<footer>
+  <p>RV Power Designer Help Guide · For planning purposes only · Always consult a qualified electrician and solar installer</p>
+  <p style="margin-top:6px;"><a href="rv-power-designer.html">← Back to App</a></p>
+</footer>
+</body>
+</html>
