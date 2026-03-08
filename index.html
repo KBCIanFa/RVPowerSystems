@@ -170,6 +170,10 @@
   .wire-num { width: 28px; height: 28px; background: var(--accent3); color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 12px; flex-shrink: 0; }
   .wire-content h4 { font-size: 13px; font-weight: 700; margin-bottom: 3px; color: var(--text); }
   .wire-content p { font-size: 12px; color: var(--text-secondary); line-height: 1.6; }
+  #abyc-table th { background:var(--bg); color:var(--muted); padding:7px 8px; font-size:10px; text-transform:uppercase; letter-spacing:.5px; font-weight:700; border-bottom:2px solid var(--border); text-align:center; }
+  #abyc-table td { padding:8px 8px; border-bottom:1px solid var(--border); vertical-align:middle; font-size:12px; }
+  #abyc-table tr:last-child td { border-bottom:none; }
+  #abyc-table input[type=number]::-webkit-inner-spin-button { opacity:1; }
 
   /* ===== SPEC TABLE ===== */
   .spec-table { width: 100%; border-collapse: collapse; font-size: 13px; }
@@ -193,6 +197,33 @@
   .cmp-chk { width: 16px; height: 16px; accent-color: var(--accent3); cursor: pointer; flex-shrink: 0; }
 
   /* ===== MODALS ===== */
+  /* ===== ONBOARDING ===== */
+  .onboard-overlay { position:fixed;inset:0;background:rgba(10,20,40,.82);z-index:2000;display:flex;align-items:center;justify-content:center;padding:16px; }
+  .onboard-overlay.hidden { display:none; }
+  .onboard-modal { background:#fff;border-radius:16px;width:100%;max-width:620px;overflow:hidden;box-shadow:0 28px 80px rgba(0,0,0,.35); }
+  .onboard-header { background:linear-gradient(135deg,#1a2a4a,#1e3a6a);padding:22px 28px;border-bottom:3px solid var(--accent); }
+  .onboard-header h2 { font-family:var(--hf);font-size:26px;letter-spacing:2px;color:#fff;margin-bottom:4px; }
+  .onboard-header p { font-size:12px;color:#93afd4;text-transform:uppercase;letter-spacing:.8px; }
+  .onboard-steps { display:flex;border-bottom:1.5px solid var(--border); }
+  .onboard-step-dot { flex:1;padding:10px 6px;text-align:center;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);border-bottom:3px solid transparent;transition:all .2s;cursor:default; }
+  .onboard-step-dot.active { color:var(--accent);border-bottom-color:var(--accent); }
+  .onboard-step-dot.done { color:var(--accent2);border-bottom-color:var(--accent2); }
+  .onboard-body { padding:28px; }
+  .onboard-step { display:none; }
+  .onboard-step.active { display:block; }
+  .onboard-step h3 { font-family:var(--hf);font-size:22px;letter-spacing:1.5px;color:var(--text);margin-bottom:10px; }
+  .onboard-step p { font-size:14px;color:var(--text-secondary);line-height:1.7;margin-bottom:12px; }
+  .onboard-choice-grid { display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:14px 0; }
+  .onboard-choice { background:var(--bg);border:2px solid var(--border);border-radius:10px;padding:13px 14px;cursor:pointer;transition:all .15s;text-align:left; }
+  .onboard-choice:hover { border-color:var(--accent);background:var(--accent-bg); }
+  .onboard-choice.selected { border-color:var(--accent);background:var(--accent-bg);box-shadow:0 0 0 3px rgba(196,127,0,.15); }
+  .onboard-choice strong { font-size:13px;color:var(--text);display:block;margin-bottom:3px; }
+  .onboard-choice span { font-size:11px;color:var(--muted); }
+  .onboard-footer { padding:16px 28px;border-top:1.5px solid var(--border);display:flex;align-items:center;justify-content:space-between;background:var(--surface2); }
+  .onboard-skip { font-size:12px;color:var(--muted);cursor:pointer;text-decoration:underline;background:none;border:none;padding:0; }
+  .onboard-skip:hover { color:var(--text); }
+  .onboard-progress { font-size:11px;color:var(--muted);font-family:var(--mf); }
+  .onboard-tip { background:var(--accent2-bg);border-left:4px solid var(--accent2);border-radius:6px;padding:11px 14px;font-size:13px;color:#074d33;margin:12px 0;line-height:1.6; }
   .modal-overlay { position: fixed; inset: 0; background: rgba(10,20,40,.65); z-index: 1000; display: flex; align-items: flex-start; justify-content: center; padding: 24px; overflow-y: auto; }
   .modal-overlay.hidden { display: none; }
   .modal { background: #fff; border: 1.5px solid var(--border); border-radius: 14px; width: 100%; margin: auto; overflow: hidden; box-shadow: 0 20px 60px rgba(0,0,0,.2); }
@@ -282,6 +313,25 @@
 <a href="#main-content" class="skip-link">Skip to main content</a>
 
 <!-- QUICK TEMPLATES MODAL -->
+<div class="onboard-overlay hidden" id="onboard-overlay" role="dialog" aria-modal="true" aria-labelledby="onboard-title">
+  <div class="onboard-modal">
+    <div class="onboard-header">
+      <h2 id="onboard-title">⚡ RV POWER DESIGNER</h2>
+      <p>Quick setup &mdash; takes about 60 seconds</p>
+    </div>
+    <div class="onboard-steps" id="onboard-dots"></div>
+    <div class="onboard-body" id="onboard-body"></div>
+    <div class="onboard-footer">
+      <button class="onboard-skip" onclick="closeOnboard()">Skip &mdash; I'll set up manually</button>
+      <span class="onboard-progress" id="onboard-prog"></span>
+      <div style="display:flex;gap:8px;">
+        <button class="btn btn-secondary" id="onboard-back" onclick="onboardNav(-1)" style="display:none;">← Back</button>
+        <button class="btn btn-primary" id="onboard-next" onclick="onboardNav(1)">Next →</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <div class="modal-overlay hidden" id="templates-overlay" role="dialog" aria-modal="true" aria-labelledby="templates-title">
   <div class="modal" style="max-width:740px;">
     <div class="modal-header">
@@ -361,6 +411,7 @@
   <button class="tab"        role="tab" aria-selected="false" aria-controls="tab-components" onclick="showTab('components',event)">🔧 Components</button>
   <button class="tab"        role="tab" aria-selected="false" aria-controls="tab-wiring"    onclick="showTab('wiring',event)">🔌 Wiring</button>
   <button class="tab"        role="tab" aria-selected="false" aria-controls="tab-diagram"   onclick="showTab('diagram',event)">📊 Diagram</button>
+  <button class="tab"        role="tab" aria-selected="false" aria-controls="tab-generator"  onclick="showTab('generator',event)">🔋 Solar Generator</button>
   <button class="tab"        role="tab" aria-selected="false" aria-controls="tab-saved"     onclick="showTab('saved',event)">📁 Saved</button>
   <button class="tab"        role="tab" aria-selected="false" aria-controls="tab-education" onclick="showTab('education',event)">📚 Learn</button>
 </nav>
@@ -408,6 +459,7 @@
     </select>
   </div>
   <span class="settings-tip" id="settings-tip" aria-live="polite"></span>
+  <button class="btn btn-secondary" onclick="showOnboard()" style="margin-left:auto;font-size:12px;padding:7px 14px;" aria-label="Relaunch setup guide">🧭 Setup Guide</button>
   <button class="btn-build" onclick="buildSystem()" aria-label="Auto-build suggested system from your inputs">🔨 Build System</button>
 </div>
 <!-- Hidden legacy inputs kept for JS compatibility -->
@@ -419,6 +471,7 @@
 
   <!-- ===== LOADS ===== -->
   <div id="tab-loads" class="section active" role="tabpanel" aria-labelledby="tab-loads-btn">
+    <div id="onboard-template-banner" style="display:none;margin-bottom:10px;"></div>
     <div class="section-title">Appliance Load Calculator</div>
     <div class="section-sub">Add every appliance you plan to run to calculate daily power consumption. Include realistic daily usage hours.</div>
     <div class="card">
@@ -459,36 +512,39 @@
           <select id="location-pick" onchange="applyLocation()" aria-label="Location sun hours">
             <option value="custom">Custom — enter manually</option>
             <optgroup label="Australia">
-              <option value="6.5">Darwin, NT (6.5 hrs)</option>
-              <option value="6.2">Alice Springs, NT (6.2 hrs)</option>
-              <option value="6.0">Perth, WA (6.0 hrs)</option>
-              <option value="5.8">Brisbane, QLD (5.8 hrs)</option>
-              <option value="5.5">Adelaide, SA (5.5 hrs)</option>
-              <option value="5.2">Sydney, NSW (5.2 hrs)</option>
-              <option value="4.8">Melbourne, VIC (4.8 hrs)</option>
-              <option value="4.5">Hobart, TAS (4.5 hrs)</option>
+              <option value="darwin">Darwin, NT</option>
+              <option value="alice">Alice Springs, NT</option>
+              <option value="perth">Perth, WA</option>
+              <option value="brisbane">Brisbane, QLD</option>
+              <option value="adelaide">Adelaide, SA</option>
+              <option value="sydney">Sydney, NSW</option>
+              <option value="melbourne">Melbourne, VIC</option>
+              <option value="hobart">Hobart, TAS</option>
             </optgroup>
             <optgroup label="New Zealand">
-              <option value="5.0">Auckland (5.0 hrs)</option>
-              <option value="4.5">Wellington (4.5 hrs)</option>
-              <option value="5.2">Christchurch (5.2 hrs)</option>
+              <option value="auckland">Auckland</option>
+              <option value="wellington">Wellington</option>
+              <option value="christchurch">Christchurch</option>
             </optgroup>
             <optgroup label="North America">
-              <option value="6.5">Phoenix, AZ (6.5 hrs)</option>
-              <option value="5.5">Los Angeles, CA (5.5 hrs)</option>
-              <option value="4.5">Denver, CO (4.5 hrs)</option>
-              <option value="4.0">Seattle, WA (4.0 hrs)</option>
-              <option value="4.5">New York, NY (4.5 hrs)</option>
+              <option value="phoenix">Phoenix, AZ</option>
+              <option value="losangeles">Los Angeles, CA</option>
+              <option value="denver">Denver, CO</option>
+              <option value="seattle">Seattle, WA</option>
+              <option value="newyork">New York, NY</option>
+              <option value="miami">Miami, FL</option>
+              <option value="chicago">Chicago, IL</option>
             </optgroup>
             <optgroup label="Europe / UK">
-              <option value="4.5">Southern Spain (4.5 hrs)</option>
-              <option value="4.0">Southern France (4.0 hrs)</option>
-              <option value="3.5">Germany (3.5 hrs)</option>
-              <option value="2.5">UK — South (2.5 hrs)</option>
-              <option value="2.0">UK — North (2.0 hrs)</option>
-              <option value="2.0">Scandinavia (2.0 hrs)</option>
+              <option value="sspain">Southern Spain</option>
+              <option value="sfrance">Southern France</option>
+              <option value="germany">Germany</option>
+              <option value="uksouth">UK — South</option>
+              <option value="uknorth">UK — North</option>
+              <option value="scandinavia">Scandinavia</option>
             </optgroup>
           </select>
+          <div id="location-seasonal" style="display:none;margin-top:6px;padding:8px 10px;background:var(--accent2-bg,#eaf7f2);border-radius:6px;font-size:11px;color:var(--muted);line-height:1.6;border:1px solid #b8e8d4;"></div>
         </div>
         <div class="form-group">
           <label for="peak-sun">Peak Sun Hours / Day</label>
@@ -619,6 +675,48 @@
       </tbody></table>
       <div class="fix-note">† Shore/generator amps are based on peak load. Average draw will be lower. Run generators at 50–80% capacity for efficiency and longevity.</div>
     </div>
+    <div class="card" id="weather-sim-card">
+      <div class="card-title">🌦 30-Day Weather Simulation
+        <span class="badge badge-green" style="margin-left:8px;">Real Data</span>
+      </div>
+      <div class="section-sub" style="margin-bottom:12px;">Runs your system against 30 days of actual solar radiation data from <strong>Open-Meteo</strong> for your selected location. Shows how your battery state-of-charge would have fared day by day.</div>
+      <div id="sim-prereq" class="alert alert-info">ℹ️ Select a named location in the Loads tab to enable the simulation.</div>
+      <div id="sim-controls" style="display:none;">
+        <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:12px;">
+          <div>
+            <label style="font-size:12px;font-weight:600;color:var(--muted);display:block;margin-bottom:4px;">Start from SoC</label>
+            <select id="sim-start-soc" style="font-size:13px;padding:5px 8px;border:1px solid var(--border);border-radius:5px;background:var(--bg);">
+              <option value="1.0">100% (full)</option>
+              <option value="0.8" selected>80%</option>
+              <option value="0.5">50%</option>
+            </select>
+          </div>
+          <div>
+            <label style="font-size:12px;font-weight:600;color:var(--muted);display:block;margin-bottom:4px;">Panel derate factor</label>
+            <select id="sim-derate" style="font-size:13px;padding:5px 8px;border:1px solid var(--border);border-radius:5px;background:var(--bg);">
+              <option value="0.80">0.80 — typical</option>
+              <option value="0.75">0.75 — conservative</option>
+              <option value="0.85">0.85 — optimistic</option>
+            </select>
+          </div>
+          <button class="btn btn-primary" id="sim-run-btn" onclick="runWeatherSim()" style="margin-top:18px;">
+            ▶ Run Simulation
+          </button>
+        </div>
+        <div id="sim-status" style="font-size:12px;color:var(--muted);margin-bottom:8px;min-height:18px;"></div>
+      </div>
+      <div id="sim-results" style="display:none;">
+        <div id="sim-verdict" style="margin-bottom:14px;"></div>
+        <div id="sim-stats" style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px;"></div>
+        <div style="position:relative;height:200px;margin-bottom:6px;">
+          <canvas id="sim-chart" style="width:100%;height:100%;"></canvas>
+        </div>
+        <div style="font-size:10px;color:var(--muted);margin-bottom:14px;">Battery SoC % over 30 days · green band = healthy (>50%) · amber = caution (20–50%) · red = depleted (&lt;20%)</div>
+        <div id="sim-daily-table" style="overflow-x:auto;"></div>
+        <div class="fix-note" style="margin-top:10px;">† Simulation uses actual daily shortwave radiation from Open-Meteo historical archive. Panel output = radiation × array W × derate ÷ 1000W/m² reference. Battery SoC capped at 100% and floored at 0%. Does not model partial days, temperature derating, or alternator/shore top-ups.</div>
+      </div>
+      <div id="sim-error" style="display:none;"></div>
+    </div>
   </div>
 
   <!-- ===== COMPONENTS ===== -->
@@ -631,14 +729,14 @@
     </div>
     <div class="section-sub">Select components to build your shopping list. Hide options you don't want. Add custom products with a link from any retailer.</div>
     <div class="card">
-      <div class="card-title">🔋 Battery Options <span class="badge badge-green">Select One</span></div>
+      <div class="card-title">🔋 Battery Options <span class="badge badge-green">Select One or More</span></div>
       <div class="comp-grid" id="battery-options" role="group" aria-label="Battery options"></div>
       <div id="restore-battery"></div>
       <div id="add-battery-form" style="display:none"></div>
       <button class="btn btn-purple btn-sm" onclick="toggleAddForm('battery')">+ Add Custom Battery</button>
     </div>
     <div class="card">
-      <div class="card-title">☀️ Solar Panels <span class="badge badge-amber">Select One</span></div>
+      <div class="card-title">☀️ Solar Panels <span class="badge badge-amber">Select One or More</span></div>
       <div class="comp-grid" id="solar-options" role="group" aria-label="Solar panel options"></div>
       <div id="restore-solar"></div>
       <div id="add-solar-form" style="display:none"></div>
@@ -652,7 +750,7 @@
       <button class="btn btn-purple btn-sm" onclick="toggleAddForm('cc')">+ Add Custom Controller</button>
     </div>
     <div class="card">
-      <div class="card-title">🔄 Inverter / Inverter-Charger <span class="badge badge-blue">Select One</span></div>
+      <div class="card-title">🔄 Inverter / Inverter-Charger <span class="badge badge-blue">Select One or More</span></div>
       <div class="comp-grid" id="inv-options" role="group" aria-label="Inverter options"></div>
       <div id="restore-inv"></div>
       <div id="add-inv-form" style="display:none"></div>
@@ -699,26 +797,44 @@
     <div class="section-title">Wiring Guide</div>
     <div class="section-sub">Step-by-step installation guidance. <strong>Consult a licensed electrician for all AC wiring.</strong></div>
     <div class="card">
-      <div class="card-title">Wire Sizing Reference</div>
-      <table class="spec-table" aria-label="Wire sizing reference">
-        <thead><tr>
-          <th scope="col" style="color:var(--muted);padding:7px 10px;font-size:10px;text-transform:uppercase;letter-spacing:.5px;font-weight:700">Amps</th>
-          <th scope="col" style="color:var(--muted);padding:7px 10px;font-size:10px;text-transform:uppercase;letter-spacing:.5px;font-weight:700">AWG</th>
-          <th scope="col" style="color:var(--muted);padding:7px 10px;font-size:10px;text-transform:uppercase;letter-spacing:.5px;font-weight:700">One-Way Max (12V, 3% drop)</th>
-          <th scope="col" style="color:var(--muted);padding:7px 10px;font-size:10px;text-transform:uppercase;letter-spacing:.5px;font-weight:700">Use Case</th>
-        </tr></thead>
-        <tbody>
-          <tr><td>Up to 10A</td><td>14 AWG</td><td>~7 ft</td><td>Lighting, small DC loads</td></tr>
-          <tr><td>Up to 15A</td><td>12 AWG</td><td>~8 ft</td><td>General DC circuits</td></tr>
-          <tr><td>Up to 20A</td><td>10 AWG</td><td>~8 ft</td><td>Moderate DC, AC branch circuits</td></tr>
-          <tr><td>Up to 40A</td><td>8 AWG</td><td>~5 ft</td><td>Charge controllers (small)</td></tr>
-          <tr><td>Up to 60A</td><td>6 AWG</td><td>~5 ft</td><td>MPPT controllers, small inverters</td></tr>
-          <tr><td>Up to 100A</td><td>4 AWG</td><td>~4 ft</td><td>Large inverters, battery mains</td></tr>
-          <tr><td>Up to 150A</td><td>2/0 AWG</td><td>~3 ft</td><td>High-current battery cables</td></tr>
-          <tr><td>200A+</td><td>4/0 AWG</td><td>~2 ft</td><td>Main battery bank cables</td></tr>
-        </tbody>
-      </table>
-      <div class="fix-note">⚠️ Distances are one-way runs for 12V DC at 3% voltage drop. Round-trip = double wire length. For 24V, distances roughly double; 48V roughly quadruple. Always use a voltage drop calculator for exact runs.</div>
+      <div class="card-title">📐 ABYC Wire Sizing Calculator</div>
+      <div class="fix-note" style="margin-bottom:12px;">Sizes each cable segment per <strong>ABYC E-11</strong> standards — the same spec used by marine and RV electrical professionals. Enter the one-way run length for each segment; the calculator determines the correct AWG from both ampacity and voltage drop, then applies derating for your installation conditions.</div>
+
+      <!-- Derating options -->
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px;padding:10px 12px;background:var(--bg);border-radius:7px;border:1px solid var(--border);">
+        <strong style="width:100%;font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;">Derating Conditions (apply to all segments)</strong>
+        <label style="display:flex;align-items:center;gap:6px;font-size:13px;cursor:pointer;">
+          <input type="checkbox" id="dr-bundled" onchange="renderABYC()"> Wires bundled / in conduit <span style="color:var(--muted);font-size:11px;">(×0.70 ampacity)</span>
+        </label>
+        <label style="display:flex;align-items:center;gap:6px;font-size:13px;cursor:pointer;">
+          <input type="checkbox" id="dr-hot" onchange="renderABYC()"> Engine bay / hot area ≥50°C <span style="color:var(--muted);font-size:11px;">(×0.85 ampacity)</span>
+        </label>
+        <label style="display:flex;align-items:center;gap:6px;font-size:13px;cursor:pointer;">
+          <input type="checkbox" id="dr-continuous" onchange="renderABYC()"> Continuous load >20 min <span style="color:var(--muted);font-size:11px;">(current ×1.25 for vdrop)</span>
+        </label>
+        <label style="display:flex;align-items:center;gap:6px;font-size:13px;cursor:pointer;">
+          <input type="checkbox" id="dr-metric" onchange="renderABYC()"> Show lengths in metres
+        </label>
+      </div>
+
+      <!-- Segment table -->
+      <div id="abyc-table-wrap" style="overflow-x:auto;">
+        <table class="spec-table" id="abyc-table" style="min-width:680px;" aria-label="ABYC wire sizing segments">
+          <thead><tr>
+            <th style="text-align:left;min-width:140px;">Segment</th>
+            <th style="min-width:70px;">Amps</th>
+            <th style="min-width:90px;">Run (one-way)</th>
+            <th style="min-width:90px;">VDrop %</th>
+            <th style="min-width:100px;">Ampacity AWG</th>
+            <th style="min-width:100px;">VDrop AWG</th>
+            <th style="min-width:110px;background:var(--accent-bg,#fef8e8);"><strong>Use AWG ✓</strong></th>
+            <th style="min-width:80px;">Fuse</th>
+          </tr></thead>
+          <tbody id="abyc-rows"></tbody>
+        </table>
+      </div>
+      <div id="abyc-notes" style="margin-top:10px;font-size:11px;color:var(--muted);line-height:1.7;"></div>
+      <div class="fix-note" style="margin-top:10px;">† AWG determined by the <em>worse</em> of ampacity or voltage drop constraint. Fuse = next standard size above 125% of load amps. Always verify against your exact component datasheets and have installation checked by a qualified electrician.</div>
     </div>
     <div class="card"><div class="card-title">Installation Sequence</div><div id="wiring-steps"></div></div>
     <div class="card">
@@ -750,6 +866,23 @@
   </div>
 
   <!-- ===== SAVED SYSTEMS ===== -->
+  <!-- ===== SOLAR GENERATOR ===== -->
+  <div id="tab-generator" class="section" role="tabpanel">
+    <div class="section-title">🔋 Solar Generator Finder</div>
+    <div class="section-sub">Should you buy an all-in-one solar generator or build a custom system? Based on your load profile.</div>
+    <div id="gen-recommendation" style="margin-bottom:16px;"></div>
+    <div id="gen-comparison" style="margin-bottom:16px;"></div>
+    <div class="card">
+      <div class="card-title">📦 Matched Solar Generators</div>
+      <div class="section-sub" style="margin-bottom:12px;">Sorted by best fit for your daily energy requirement. Affiliate links help support this free tool.</div>
+      <div id="gen-product-list"></div>
+    </div>
+    <div class="card" style="margin-top:16px;">
+      <div class="card-title">⚖️ Solar Generator vs DIY Build</div>
+      <div id="gen-vs-table"></div>
+    </div>
+  </div>
+
   <div id="tab-saved" class="section" role="tabpanel">
     <div class="section-title">Saved Systems</div>
     <div class="section-sub">Save your current build, load a previous design, or compare systems side-by-side.</div>
@@ -865,6 +998,7 @@
   <div style="margin-top:14px;display:flex;flex-direction:column;gap:8px;">
     <button class="btn btn-primary" style="width:100%;" onclick="showTab('sizing',event)">View Sizing →</button>
     <button class="btn btn-secondary" style="width:100%;" onclick="showTab('components',event)">Components →</button>
+    <button class="btn btn-secondary" style="width:100%;background:var(--accent-bg);color:var(--accent);border-color:var(--accent);" onclick="showTab('generator',event)">🔋 Solar Generator Finder →</button>
     <button class="btn btn-success" style="width:100%;" onclick="openSaveModal()">💾 Save System</button>
   </div>
 </aside>
@@ -872,7 +1006,7 @@
 
 <script>
 // ===================== STATE =====================
-let appliances=[],selections={battery:null,solar:null,cc:null,inv:null,dc2dc:null,monitor:null,ats:null},nextId=1;
+let appliances=[],selections={battery:[],solar:[],inv:[],cc:null,dc2dc:null,monitor:null,ats:null},selQty={},nextId=1;
 let savedSystems=[],compareSet=new Set();
 let userProducts={battery:[],solar:[],cc:[],inv:[],dc2dc:[],monitor:[],ats:[]};
 let hiddenBuiltIns={battery:new Set(),solar:new Set(),cc:new Set(),inv:new Set(),dc2dc:new Set(),monitor:new Set(),ats:new Set()};
@@ -1047,9 +1181,10 @@ function showTab(name,e){
   if(e&&e.target&&e.target.classList.contains('tab')){e.target.classList.add('active');e.target.setAttribute('aria-selected','true');}
   if(name==='sizing')renderSizing();
   if(name==='components')renderComponents();
-  if(name==='wiring')renderWiring();
+  if(name==='wiring'){renderWiring();renderABYC();}
   if(name==='diagram')renderDiagram();
   if(name==='saved')renderSavedList();
+  if(name==='generator')renderSolarGenerator();
 }
 
 // ===================== VOLTAGE CHANGE =====================
@@ -1267,7 +1402,52 @@ function renderSizingNumbers(c){
   if(c.recAh>400&&c.voltage===12) h+=`<div class="alert alert-warn">🔋 Large bank at 12V requires very heavy cabling. Consider 24V or 48V system.</div>`;
   if(c.totalWh>4000) h+=`<div class="alert alert-err">🔴 Very large system — 48V inverter-charger with generator backup strongly recommended.</div>`;
   if(c.peakAc>0&&c.invSurge>3000) h+=`<div class="alert alert-warn">⚠️ Surge est. ~${Math.round(c.invSurge)}W. Verify each motor load's startup current (LRA) individually.</div>`;
+  h+=getCompatibilityAlerts(c);
   ad.innerHTML=h;
+}
+
+// ===================== COMPATIBILITY VALIDATION =====================
+function getCompatibilityAlerts(c){
+  let h='';
+  if(!c.totalWh) return h;
+  // CC PV input voltage check
+  const maxVoc=c.ccSize<=30?100:150;
+  const panelVoc=c.solarW>400?40:24; // 200W panel ~24Voc, 400W panel ~40Voc
+  const seriesMultiplier=c.voltage===12?1:c.voltage===24?2:4;
+  const estStringVoc=panelVoc*seriesMultiplier;
+  const coldVoc=Math.round(estStringVoc*1.20); // 20% cold temp margin
+  if(c.solarW>0&&coldVoc>maxVoc){
+    h+=`<div class="alert alert-err">🚫 <strong>Compatibility Issue:</strong> Est. panel string Voc ~${estStringVoc}V (${coldVoc}V cold-corrected) exceeds typical ${c.ccSize}A MPPT input limit of ${maxVoc}V. Reduce panels per string or select a higher-voltage controller (150V+ input rating).</div>`;
+  } else if(c.solarW>0){
+    h+=`<div class="alert alert-ok">✅ <strong>CC Voltage OK:</strong> Est. string Voc ~${estStringVoc}V (${coldVoc}V cold), within ${maxVoc}V controller limit. Verify against your exact panel datasheet Voc.</div>`;
+  }
+  // High DC current warning on 12V
+  if(c.voltage===12&&c.solarW>600){
+    const pvAmps=Math.round(c.solarW/c.voltage);
+    h+=`<div class="alert alert-warn">⚡ <strong>High DC Current:</strong> ${Math.round(c.solarW)}W at 12V = ~${pvAmps}A. Requires heavy gauge cabling (2/0 AWG or larger). Keep all battery cable runs short.</div>`;
+  }
+  // Wire sizing
+  if(c.ccSize>0){
+    const pvWire=c.ccSize<=20?'12 AWG':c.ccSize<=30?'10 AWG':c.ccSize<=50?'8 AWG':'6 AWG';
+    const batWire=c.ccSize<=30?'10 AWG':c.ccSize<=50?'6 AWG':'4 AWG';
+    h+=`<div class="alert alert-info">📐 <strong>Wire Sizing — CC:</strong> PV side → ${pvWire} min &nbsp;·&nbsp; Battery side → ${batWire} min. Use 105°C marine tinned wire.</div>`;
+  }
+  if(c.invCont>0){
+    const invWire=c.invCont<800?'6 AWG':c.invCont<1500?'4 AWG':c.invCont<2500?'2/0 AWG':'4/0 AWG';
+    const invFuse=Math.round(c.invCont/c.voltage*1.25/10)*10;
+    h+=`<div class="alert alert-info">📐 <strong>Wire Sizing — Inverter:</strong> ${invWire} min &nbsp;·&nbsp; ${invFuse}A ANL fuse within 45cm of battery positive.</div>`;
+  }
+  // Voltage system warnings
+  if(c.voltage===48){
+    h+=`<div class="alert alert-warn">⚠️ <strong>48V System:</strong> All native 12V RV circuits (lights, pumps, fans) require a 48V→12V DC-DC converter. Do not connect 12V loads directly to the 48V bank.</div>`;
+  } else if(c.voltage===24){
+    h+=`<div class="alert alert-info">ℹ️ <strong>24V System:</strong> Native 12V RV loads need a 24V→12V DC-DC converter (e.g. Victron Orion-Tr).</div>`;
+  }
+  // AC voltage match reminder
+  if(c.invCont>0){
+    h+=`<div class="alert alert-ok">✅ <strong>AC Voltage Configured:</strong> Inverter output set to ${c.acVoltage}V AC. Ensure all AC appliances are rated for ${c.acVoltage}V.</div>`;
+  }
+  return h;
 }
 function renderSizing(){renderSizingNumbers(getCalcs());}
 
@@ -1286,8 +1466,12 @@ function drawGauge(value,max){
 }
 
 // ===================== COMPONENTS =====================
+function isSelected(cat,key){
+  if(['battery','solar','inv'].includes(cat)) return selections[cat].includes(key);
+  return selections[cat]===key;
+}
 function mkCard(cat,key,o,isUser,qty){
-  const sel=selections[cat]===key;
+  const sel=isSelected(cat,key);
   const idx=parseInt(key.slice(1));
   const linkHTML=o.url?`<a class="comp-link" href="${o.url}" target="_blank" rel="noopener" onclick="event.stopPropagation()">🔗 Buy</a>`:'';
   const delHTML=isUser
@@ -1298,6 +1482,12 @@ function mkCard(cat,key,o,isUser,qty){
     <div class="comp-card-header"><div class="comp-name">${o.name}</div><div class="comp-price">${o.price||'—'}</div></div>
     <div class="comp-spec">${o.spec}</div>
     ${qtyHTML}
+    ${sel&&['battery','solar','inv'].includes(cat)?`<div style="display:flex;align-items:center;gap:6px;margin-top:4px;">
+      <span style="font-size:11px;color:var(--muted);font-weight:600;">Qty:</span>
+      <button onclick="event.stopPropagation();setQty('${cat}','${key}',-1)" style="width:22px;height:22px;border-radius:4px;border:1px solid var(--border);background:var(--bg);cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;line-height:1;" aria-label="Decrease quantity">−</button>
+      <span style="font-family:var(--mf);font-size:13px;font-weight:700;min-width:20px;text-align:center;">${selQty[cat+'_'+key]||1}</span>
+      <button onclick="event.stopPropagation();setQty('${cat}','${key}',1)" style="width:22px;height:22px;border-radius:4px;border:1px solid var(--border);background:var(--bg);cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;line-height:1;" aria-label="Increase quantity">+</button>
+    </div>`:''}
     <div class="comp-footer">
       <span class="badge ${isUser?'badge-demo':BCOLS[idx%4]}">${isUser?'Custom':o.tag}</span>
       <div style="display:flex;gap:5px;align-items:center;">${linkHTML}${delHTML}</div>
@@ -1328,14 +1518,38 @@ function renderComponents(){
   renderShoppingList();
 }
 
-function hideBuiltIn(cat,idx){hiddenBuiltIns[cat].add(idx);if(selections[cat]==='b'+idx)selections[cat]=null;renderComponents();}
+function hideBuiltIn(cat,idx){hiddenBuiltIns[cat].add(idx);if(['battery','solar','inv'].includes(cat)){selections[cat]=selections[cat].filter(k=>k!=='b'+idx);}else if(selections[cat]==='b'+idx){selections[cat]=null;}renderComponents();}
 function restoreBuiltIns(cat){hiddenBuiltIns[cat].clear();renderComponents();}
-function selectComp(cat,key){selections[cat]=key;renderComponents();}
-function clearComp(cat){selections[cat]=null;renderComponents();}
+function selectComp(cat,key){
+  if(['battery','solar','inv'].includes(cat)){
+    const idx=selections[cat].indexOf(key);
+    if(idx>=0){ selections[cat].splice(idx,1); delete selQty[cat+'_'+key]; }
+    else { selections[cat].push(key); selQty[cat+'_'+key]=1; }
+  } else {
+    selections[cat]=selections[cat]===key?null:key;
+  }
+  renderComponents();
+}
+function setQty(cat,key,delta){
+  const k=cat+'_'+key;
+  selQty[k]=Math.max(1,(selQty[k]||1)+delta);
+  renderComponents();
+}
+function clearComp(cat){
+  selections[cat]=['battery','solar','inv'].includes(cat)?[]:null;
+  renderComponents();
+}
 function delUserProd(cat,idx){
   userProducts[cat].splice(idx,1);
-  if(selections[cat]==='u'+idx)selections[cat]=null;
-  else if(selections[cat]&&selections[cat].startsWith('u')){const si=parseInt(selections[cat].slice(1));if(si>idx)selections[cat]='u'+(si-1);}
+  if(['battery','solar','inv'].includes(cat)){
+    // Remove deleted key, shift higher indices
+    selections[cat]=selections[cat]
+      .filter(k=>k!=='u'+idx)
+      .map(k=>{if(k.startsWith('u')){const si=parseInt(k.slice(1));return si>idx?'u'+(si-1):k;}return k;});
+  } else {
+    if(selections[cat]==='u'+idx) selections[cat]=null;
+    else if(selections[cat]&&selections[cat].startsWith('u')){const si=parseInt(selections[cat].slice(1));if(si>idx)selections[cat]='u'+(si-1);}
+  }
   renderComponents();
 }
 
@@ -1370,23 +1584,97 @@ function saveCustomProduct(cat){
 }
 
 // ===================== SHOPPING LIST =====================
+function getShoppingItems(c){
+  // Returns array of {cat, label, key, prod, qty} for all selected items
+  const labels={battery:'Battery',solar:'Solar Panel',cc:'Charge Controller',inv:'Inverter',dc2dc:'DC-DC Charger',monitor:'Battery Monitor',ats:'Transfer Switch'};
+  const items=[];
+  Object.entries(selections).forEach(([cat,val])=>{
+    const keys=Array.isArray(val)?val:(val?[val]:[]);
+    keys.forEach(key=>{
+      const isUser=key.startsWith('u'),idx=parseInt(key.slice(1));
+      const prod=isUser?userProducts[cat][idx]:builtIn(cat,c)[idx];
+      if(!prod) return;
+      // Calculate qty — user-set qty overrides calculated minimum
+      const userQ = selQty[cat+'_'+key]||1;
+      let qty=userQ,qtyNote='';
+      if(cat==='battery'&&prod.ah){
+        const calcQ=Math.ceil(c.recAh/prod.ah);
+        qty=Math.max(userQ,calcQ);
+        const totalAh=(prod.ah*qty).toFixed(0);
+        qtyNote=`×${qty} = ${totalAh}Ah`+(userQ!==calcQ?` (min. ${calcQ} needed)`:'');
+      } else if(cat==='solar'&&prod.watts){
+        const calcQ=Math.ceil(c.solarW/prod.watts);
+        qty=Math.max(userQ,calcQ);
+        const totalW=prod.watts*qty;
+        qtyNote=`×${qty} = ${totalW}W`+(userQ!==calcQ?` (min. ${calcQ} needed)`:'');
+      } else if(cat==='inv'){
+        qty=userQ;
+        qtyNote=`×${qty}`;
+      }
+      items.push({cat,label:labels[cat],key,prod,qty,qtyNote,isUser});
+    });
+  });
+  return items;
+}
+
+function parsePrice(str){
+  if(!str||str==='—') return 0;
+  const m=str.replace(/,/g,'').match(/[\d.]+/);
+  return m?parseFloat(m[0]):0;
+}
+
 function renderShoppingList(){
   const c=getCalcs();
-  const labels={battery:'Battery',solar:'Solar Panel',cc:'Charge Controller',inv:'Inverter',dc2dc:'DC-DC Charger',monitor:'Battery Monitor',ats:'Transfer Switch'};
-  const sel=Object.entries(selections).filter(([,v])=>v!==null);
-  if(!sel.length){document.getElementById('shopping-list').innerHTML='<div class="alert alert-info">ℹ️ Select components above to generate your shopping list.</div>';return;}
+  const items=getShoppingItems(c);
+  if(!items.length){document.getElementById('shopping-list').innerHTML='<div class="alert alert-info">ℹ️ Select components above to generate your shopping list.</div>';return;}
+
+  let totalLow=0,totalHigh=0;
   let h='<table class="spec-table"><thead><tr>';
-  ['Component','Product','Price','Link'].forEach(h2=>{h+=`<th scope="col" style="color:var(--muted);font-size:10px;text-transform:uppercase;font-weight:700;padding:7px 10px;">${h2}</th>`;});
+  ['Component','Product','Qty','Unit Price','Line Total','Link'].forEach(h2=>{h+=`<th scope="col" style="color:var(--muted);font-size:10px;text-transform:uppercase;font-weight:700;padding:7px 10px;">${h2}</th>`;});
   h+='</tr></thead><tbody>';
-  sel.forEach(([cat,key])=>{
-    const isUser=key.startsWith('u'),idx=parseInt(key.slice(1));
-    const prod=isUser?userProducts[cat][idx]:builtIn(cat,c)[idx];
-    if(!prod)return;
+
+  items.forEach(({cat,label,prod,qty,qtyNote,isUser})=>{
+    const unitPrice=parsePrice(prod.price);
+    const lineTotal=unitPrice*qty;
+    if(unitPrice) { totalLow+=lineTotal; totalHigh+=lineTotal; }
     const lnk=prod.url?`<a href="${prod.url}" target="_blank" rel="noopener" style="color:var(--accent3);font-weight:600;font-size:12px;">🔗 Buy</a>`:'—';
-    h+=`<tr><td>${labels[cat]}</td><td>${prod.name}${isUser?' <span class="badge badge-demo" style="font-size:9px">Custom</span>':''}</td><td style="color:var(--accent2);font-weight:700;">${prod.price}</td><td>${lnk}</td></tr>`;
+    const totalStr=unitPrice&&qty>0?`<strong style="color:var(--accent2);">$${lineTotal.toLocaleString()}</strong>`:'—';
+    h+=`<tr>
+      <td style="font-size:12px;color:var(--muted);font-weight:600;">${label}</td>
+      <td>${prod.name}${isUser?' <span class="badge badge-demo" style="font-size:9px">Custom</span>':''}</td>
+      <td style="font-family:var(--mf);font-size:12px;color:var(--accent3);">${qtyNote||'×1'}</td>
+      <td style="font-family:var(--mf);font-size:12px;">${prod.price}</td>
+      <td>${totalStr}</td>
+      <td>${lnk}</td>
+    </tr>`;
   });
+
+  // Dual inverter note
+  const invItems = items.filter(i=>i.cat==='inv');
+  let invNote = '';
+  if(invItems.length>1){
+    const watts=invItems.map(i=>{const m=i.prod.spec.match(/(\d[\d,]+)W/);return m?parseInt(m[1].replace(',','')):0;});
+    const totalW=watts.reduce((a,b)=>a+b,0);
+    invNote=`<div class="alert alert-info" style="margin-top:8px;font-size:12px;">⚡ <strong>Dual inverter setup:</strong> ${invItems.map(i=>i.prod.name).join(' + ')} — combined ${totalW.toLocaleString()}W continuous capacity. Ensure each inverter has dedicated battery cabling and appropriately sized fusing. Consider a transfer switch or manual changeover for selecting between them.</div>`;
+  }
+
   h+='</tbody></table>';
-  h+='<div class="alert alert-info" style="margin-top:10px;font-size:12px;">💡 Also budget for: ANL fuse + holder, DC breakers, positive/negative bus bars, wiring (tinned marine grade), MC4 connectors, roof cable entry gland, mounting hardware (~$200–$600).</div>';
+
+  // Totals row
+  const misc=350; // cables, fuses, busbars, connectors
+  h+=`<div style="margin-top:12px;background:var(--surface2);border:1.5px solid var(--border);border-radius:8px;padding:12px 16px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;">
+    <div>
+      <div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;font-weight:700;">Selected Components Total</div>
+      <div style="font-family:var(--mf);font-size:22px;font-weight:700;color:var(--accent);">$${totalLow.toLocaleString()}</div>
+    </div>
+    <div style="font-size:12px;color:var(--text-secondary);text-align:right;">
+      + ~$${misc} estimated ancillaries<br>
+      <strong>Est. complete: ~$${(totalLow+misc).toLocaleString()}</strong>
+    </div>
+  </div>`;
+
+  h+=invNote;
+  h+='<div class="alert alert-info" style="margin-top:10px;font-size:12px;">💡 Also budget for: ANL fuse + holder, DC breakers, positive/negative bus bars, tinned marine wiring, MC4 connectors, cable entry gland, mounting hardware (~$200–$600 depending on system size).</div>';
   document.getElementById('shopping-list').innerHTML=h;
 }
 
@@ -1415,78 +1703,156 @@ function renderWiring(){
 // ===================== DIAGRAM =====================
 function renderDiagram(){
   const c=getCalcs();
+  const hasDcDc=c.voltage>12;
   const svg=document.getElementById('system-svg');
   const bg='#f4f6f9',surf='#ffffff',bord='#d0d7e2';
-  const amber='#c47f00',green='#0a7c54',blue='#1a5fbf',purple='#6b3fa0',danger='#c0392b';
-  const text='#1a2233',muted='#5a6a82';
-  svg.innerHTML=`<defs>
+  const amber='#c47f00',green='#0a7c54',blue='#1a5fbf',purple='#6b3fa0',teal='#0e7490';
+  const muted='#5a6a82';
+  const defs=`<defs>
     <marker id="aA" markerWidth="8" markerHeight="6" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="${amber}"/></marker>
     <marker id="aBl" markerWidth="8" markerHeight="6" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="${blue}"/></marker>
     <marker id="aG" markerWidth="8" markerHeight="6" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="${green}"/></marker>
     <marker id="aPu" markerWidth="8" markerHeight="6" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="${purple}"/></marker>
-  </defs>
-  <rect width="660" height="450" fill="${bg}" rx="8"/>
-  <!-- Solar -->
-  <rect x="14" y="14" width="112" height="68" rx="8" fill="${surf}" stroke="${green}" stroke-width="2"/>
-  <text x="70" y="36" text-anchor="middle" font-size="11" fill="${green}" font-weight="700">☀️ SOLAR</text>
-  <text x="70" y="52" text-anchor="middle" font-size="10" fill="${muted}" font-family="DM Mono">PANELS</text>
-  <text x="70" y="68" text-anchor="middle" font-size="10" fill="${green}" id="d-solar" font-weight="600">—W</text>
-  <!-- Shore/Gen -->
-  <rect x="14" y="368" width="112" height="68" rx="8" fill="${surf}" stroke="${purple}" stroke-width="2"/>
-  <text x="70" y="390" text-anchor="middle" font-size="11" fill="${purple}" font-weight="700">🔌 SHORE</text>
-  <text x="70" y="407" text-anchor="middle" font-size="10" fill="${muted}" font-family="DM Mono">/ GEN</text>
-  <text x="70" y="422" text-anchor="middle" font-size="9" fill="${purple}" id="d-acv" font-family="DM Mono">—V</text>
-  <!-- MPPT -->
-  <rect x="186" y="14" width="128" height="68" rx="8" fill="${surf}" stroke="${amber}" stroke-width="2"/>
-  <text x="250" y="36" text-anchor="middle" font-size="11" fill="${amber}" font-weight="700">⚙️ MPPT</text>
-  <text x="250" y="52" text-anchor="middle" font-size="10" fill="${muted}" font-family="DM Mono">CHARGE CTRL</text>
-  <text x="250" y="68" text-anchor="middle" font-size="10" fill="${amber}" id="d-cc" font-weight="600">—A out</text>
-  <!-- Battery -->
-  <rect x="260" y="174" width="130" height="90" rx="8" fill="${surf}" stroke="${amber}" stroke-width="2.5"/>
-  <text x="325" y="200" text-anchor="middle" font-size="13" fill="${amber}" font-weight="700">🔋 BATTERY</text>
-  <text x="325" y="218" text-anchor="middle" font-size="10" fill="${muted}" font-family="DM Mono">BANK</text>
-  <text x="325" y="238" text-anchor="middle" font-size="11" fill="${amber}" id="d-bat" font-weight="700">—Ah</text>
-  <text x="325" y="254" text-anchor="middle" font-size="9" fill="${muted}" id="d-volt" font-family="DM Mono">—V</text>
-  <!-- Bus bars -->
-  <rect x="160" y="190" width="72" height="26" rx="5" fill="${bg}" stroke="${bord}" stroke-width="1.5"/>
-  <text x="196" y="207" text-anchor="middle" font-size="9" fill="${muted}" font-weight="600">BUS BARS</text>
-  <!-- Inverter -->
-  <rect x="430" y="174" width="130" height="90" rx="8" fill="${surf}" stroke="${purple}" stroke-width="2"/>
-  <text x="495" y="200" text-anchor="middle" font-size="11" fill="${purple}" font-weight="700">🔄 INVERTER</text>
-  <text x="495" y="218" text-anchor="middle" font-size="10" fill="${muted}" font-family="DM Mono">PURE SINE</text>
-  <text x="495" y="236" text-anchor="middle" font-size="9" fill="${purple}" id="d-inv" font-weight="600">—VA cont.</text>
-  <text x="495" y="252" text-anchor="middle" font-size="9" fill="${muted}" id="d-inv-surge" font-family="DM Mono">—VA surge</text>
-  <!-- Transfer Switch -->
-  <rect x="186" y="368" width="128" height="68" rx="8" fill="${bg}" stroke="${purple}" stroke-width="1.5" stroke-dasharray="5,3"/>
-  <text x="250" y="390" text-anchor="middle" font-size="10" fill="${purple}" font-weight="700">⚡ TRANSFER</text>
-  <text x="250" y="407" text-anchor="middle" font-size="10" fill="${muted}" font-family="DM Mono">SWITCH</text>
-  <!-- AC Loads -->
-  <rect x="530" y="368" width="116" height="68" rx="8" fill="${surf}" stroke="${blue}" stroke-width="2"/>
-  <text x="588" y="390" text-anchor="middle" font-size="11" fill="${blue}" font-weight="700">🔌 AC LOADS</text>
-  <text x="588" y="407" text-anchor="middle" font-size="9" fill="${muted}" id="d-acv2" font-family="DM Mono">—V AC</text>
-  <text x="588" y="422" text-anchor="middle" font-size="9" fill="${blue}" id="d-acload" font-weight="600">—W</text>
-  <!-- DC Loads -->
-  <rect x="530" y="265" width="116" height="68" rx="8" fill="${surf}" stroke="${amber}" stroke-width="2"/>
-  <text x="588" y="287" text-anchor="middle" font-size="11" fill="${amber}" font-weight="700">⚡ DC LOADS</text>
-  <text x="588" y="304" text-anchor="middle" font-size="9" fill="${muted}" id="d-dcvolt" font-family="DM Mono">—V DC</text>
-  <text x="588" y="320" text-anchor="middle" font-size="9" fill="${amber}" id="d-dcload" font-weight="600">—W</text>
-  <!-- Wires -->
-  <line x1="126" y1="48" x2="186" y2="48" stroke="${green}" stroke-width="2.5" marker-end="url(#aG)"/>
-  <line x1="250" y1="82" x2="250" y2="148" stroke="${amber}" stroke-width="2.5"/>
-  <line x1="250" y1="148" x2="325" y2="148" stroke="${amber}" stroke-width="2.5"/>
-  <line x1="325" y1="148" x2="325" y2="174" stroke="${amber}" stroke-width="2.5" marker-end="url(#aA)"/>
-  <line x1="232" y1="203" x2="260" y2="203" stroke="${amber}" stroke-width="2" marker-end="url(#aA)"/>
-  <line x1="390" y1="219" x2="430" y2="219" stroke="${amber}" stroke-width="2.5" marker-end="url(#aA)"/>
-  <line x1="390" y1="203" x2="484" y2="203" stroke="${amber}" stroke-width="1.5"/>
-  <line x1="484" y1="203" x2="484" y2="297" stroke="${amber}" stroke-width="1.5"/>
-  <line x1="484" y1="297" x2="530" y2="297" stroke="${amber}" stroke-width="1.5" marker-end="url(#aA)"/>
-  <line x1="495" y1="264" x2="495" y2="340" stroke="${blue}" stroke-width="2.5"/>
-  <line x1="495" y1="340" x2="530" y2="402" stroke="${blue}" stroke-width="2.5" marker-end="url(#aBl)"/>
-  <line x1="126" y1="402" x2="186" y2="402" stroke="${purple}" stroke-width="2" marker-end="url(#aPu)"/>
-  <line x1="314" y1="402" x2="495" y2="402" stroke="${purple}" stroke-width="1.5"/>
-  <line x1="495" y1="402" x2="495" y2="264" stroke="${purple}" stroke-width="1.5" stroke-dasharray="6,3"/>
-  <line x1="196" y1="82" x2="196" y2="203" stroke="${amber}" stroke-width="1.5"/>
-  <line x1="160" y1="203" x2="196" y2="203" stroke="${amber}" stroke-width="1.5"/>`;
+    <marker id="aTe" markerWidth="8" markerHeight="6" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="${teal}"/></marker>
+  </defs>`;
+
+  function box(x,y,w,h,col,label1,label2,valId,valText){
+    return `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="7" fill="${surf}" stroke="${col}" stroke-width="2"/>
+    <text x="${x+w/2}" y="${y+18}" text-anchor="middle" font-size="10" fill="${col}" font-weight="700">${label1}</text>
+    ${label2?`<text x="${x+w/2}" y="${y+30}" text-anchor="middle" font-size="9" fill="${muted}" font-family="monospace">${label2}</text>`:''}
+    ${valId?`<text x="${x+w/2}" y="${y+h-8}" text-anchor="middle" font-size="9" fill="${col}" id="${valId}" font-weight="600">${valText||'—'}</text>`:''}`;
+  }
+  function wire(x1,y1,x2,y2,col,arrow=''){
+    return `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${col}" stroke-width="2" ${arrow?`marker-end="url(#${arrow})"`:''} />`;
+  }
+  function label(x,y,txt,col,fs=8,anchor='middle'){
+    return `<text x="${x}" y="${y}" text-anchor="${anchor}" font-size="${fs}" fill="${col}" font-style="italic">${txt}</text>`;
+  }
+
+  // Determine diagram variant
+  const variant = c.voltage===12 ? (c.solarW>600?'12v-large':'12v-simple') : c.voltage===24 ? '24v' : '48v';
+
+  // ─── Diagram title & legend ───
+  const pvWireLabel = c.ccSize<=30?'10AWG':c.ccSize<=50?'6AWG':'4AWG';
+  const invWireLabel = c.invCont<1500?'4AWG':'2/0AWG';
+  const titleText = {
+    '12v-simple': '12V System — Simple Layout',
+    '12v-large':  '12V System — High-Current Layout (>600W)',
+    '24v':        '24V System — With DC-DC Converter',
+    '48v':        '48V System — With DC-DC Converter',
+  }[variant];
+
+  let svgContent = `<rect width="680" height="480" fill="${bg}" rx="8"/>
+  <text x="340" y="18" text-anchor="middle" font-size="11" fill="${muted}" font-weight="600">${titleText}</text>`;
+
+  if(variant==='12v-simple'||variant==='12v-large'){
+    // ─── 12V layout ───
+    // Solar (top-left), MPPT (top-mid), Battery (center), Inverter (right), Shore (bottom-left), AC loads (bottom-right), DC loads (mid-right)
+    svgContent+=box(10,28,105,58,green,'☀️ SOLAR','PANELS','d-solar','—W');
+    svgContent+=box(160,28,120,58,amber,'⚙️ MPPT','CHARGE CTRL','d-cc','—A');
+    svgContent+=box(245,165,130,80,amber,'🔋 BATTERY','BANK @ 12V','d-bat','—Ah');
+    svgContent+=box(420,165,130,80,purple,'🔄 INVERTER','PURE SINE','d-inv','—VA');
+    svgContent+=box(10,360,105,58,purple,'🔌 SHORE','/GEN','d-acv','—V');
+    svgContent+=box(420,360,130,58,blue,'🔌 AC LOADS','','d-acload','—W');
+    svgContent+=box(420,270,130,58,amber,'⚡ DC LOADS','12V DC','d-dcload','—W');
+    // Bus bars
+    svgContent+=`<rect x="148" y="185" width="70" height="22" rx="4" fill="${bg}" stroke="${bord}" stroke-width="1.5"/>
+    <text x="183" y="200" text-anchor="middle" font-size="8" fill="${muted}" font-weight="600">+/− BUS</text>`;
+    // Wire: Solar → MPPT
+    svgContent+=wire(115,57,160,57,green,'aG');
+    svgContent+=label(137,52,'PV',green);
+    // MPPT → Battery
+    svgContent+=wire(220,57,310,57,amber);
+    svgContent+=wire(310,57,310,165,amber,'aA');
+    svgContent+=label(265,52,pvWireLabel,amber);
+    // Battery → Bus
+    svgContent+=wire(245,196,218,196,amber,'aA');
+    // Bus → Inverter
+    svgContent+=wire(375,200,420,200,amber,'aA');
+    svgContent+=label(397,195,invWireLabel,amber);
+    // DC Loads from bus/battery
+    svgContent+=wire(375,196,410,196,amber);
+    svgContent+=wire(410,196,410,290,amber);
+    svgContent+=wire(410,290,420,290,amber,'aA');
+    // Inverter → AC Loads
+    svgContent+=wire(485,245,485,360,blue,'aBl');
+    svgContent+=label(490,318,'AC out',blue,8,'start');
+    // Shore → Transfer Switch (dashed)
+    svgContent+=`<rect x="158" y="360" width="110" height="58" rx="7" fill="${bg}" stroke="${purple}" stroke-width="1.5" stroke-dasharray="5,3"/>
+    <text x="213" y="382" text-anchor="middle" font-size="9" fill="${purple}" font-weight="600">⚡ TRANSFER</text>
+    <text x="213" y="396" text-anchor="middle" font-size="8" fill="${muted}" font-family="monospace">SWITCH</text>`;
+    svgContent+=wire(115,389,158,389,purple,'aPu');
+    svgContent+=wire(268,389,420,389,purple,'aPu');
+    // Wire labels
+    svgContent+=label(63,85,'Series string',green,8);
+    svgContent+=label(63,95,`(${c.voltage}V sys)`,green,8);
+    if(variant==='12v-large'){
+      svgContent+=`<rect x="10" y="90" width="636" height="14" rx="3" fill="#fff3cd" stroke="#c47f00" stroke-width="1"/>
+      <text x="328" y="101" text-anchor="middle" font-size="8" fill="#c47f00" font-weight="600">⚡ HIGH CURRENT SYSTEM: Use 2/0 AWG+ battery cables. Keep runs under 1m. Add 400A ANL fuse within 45cm of battery positive.</text>`;
+    }
+  } else {
+    // ─── 24V / 48V layout — includes DC-DC converter ───
+    const voltLabel=c.voltage+'V';
+    svgContent+=box(10,28,105,58,green,'☀️ SOLAR','PANELS','d-solar','—W');
+    svgContent+=box(155,28,125,58,amber,'⚙️ MPPT','CHARGE CTRL','d-cc','—A');
+    svgContent+=box(235,165,130,80,amber,`🔋 BATTERY`,`BANK @ ${voltLabel}`,'d-bat','—Ah');
+    svgContent+=box(415,165,130,80,purple,'🔄 INVERTER','PURE SINE','d-inv','—VA');
+    svgContent+=box(10,360,105,58,purple,'🔌 SHORE','/GEN','d-acv','—V');
+    svgContent+=box(415,355,130,58,blue,'🔌 AC LOADS','','d-acload','—W');
+    // DC-DC converter block (teal)
+    svgContent+=box(415,265,130,62,teal,`🔁 DC-DC`,`${voltLabel}→12V`,null,'');
+    svgContent+=`<text x="480" y="305" text-anchor="middle" font-size="8" fill="${teal}">Victron Orion-Tr</text>`;
+    // 12V DC loads output
+    svgContent+=box(575,265,95,62,amber,'⚡ DC LOADS','12V DC','d-dcload','—W');
+    // Bus bars
+    svgContent+=`<rect x="142" y="185" width="68" height="22" rx="4" fill="${bg}" stroke="${bord}" stroke-width="1.5"/>
+    <text x="176" y="200" text-anchor="middle" font-size="8" fill="${muted}" font-weight="600">+/− BUS</text>`;
+    // Solar → MPPT
+    svgContent+=wire(115,57,155,57,green,'aG');
+    svgContent+=label(134,51,'PV',green);
+    // MPPT → Battery (series string label for 24/48V)
+    svgContent+=wire(280,57,300,57,amber);
+    svgContent+=wire(300,57,300,165,amber,'aA');
+    svgContent+=label(240,51,c.voltage===24?'2× panels in series':'4× panels in series',amber,8,'start');
+    // Battery ↔ Bus
+    svgContent+=wire(235,196,210,196,amber,'aA');
+    // Bus → Inverter
+    svgContent+=wire(365,200,415,200,amber,'aA');
+    svgContent+=label(388,195,invWireLabel,amber);
+    // Bus → DC-DC
+    svgContent+=wire(365,196,400,196,amber);
+    svgContent+=wire(400,196,400,290,teal);
+    svgContent+=wire(400,290,415,290,teal,'aTe');
+    // DC-DC → 12V DC loads
+    svgContent+=wire(545,296,575,296,teal,'aTe');
+    svgContent+=label(558,290,'12V out',teal,8);
+    // Inverter → AC
+    svgContent+=wire(480,245,480,355,blue,'aBl');
+    // Shore
+    svgContent+=`<rect x="155" y="360" width="110" height="58" rx="7" fill="${bg}" stroke="${purple}" stroke-width="1.5" stroke-dasharray="5,3"/>
+    <text x="210" y="382" text-anchor="middle" font-size="9" fill="${purple}" font-weight="600">⚡ TRANSFER</text>
+    <text x="210" y="396" text-anchor="middle" font-size="8" fill="${muted}" font-family="monospace">SWITCH</text>`;
+    svgContent+=wire(115,389,155,389,purple,'aPu');
+    svgContent+=wire(265,389,415,389,purple,'aPu');
+    // Warning label for 48V
+    if(c.voltage===48){
+      svgContent+=`<rect x="10" y="90" width="660" height="14" rx="3" fill="#fff3cd" stroke="#c47f00" stroke-width="1"/>
+      <text x="340" y="101" text-anchor="middle" font-size="8" fill="#c47f00" font-weight="600">⚠️ 48V SYSTEM: All 12V RV loads MUST run through DC-DC converter. Never connect directly to 48V bank. Use licensed electrician for AC wiring.</text>`;
+    } else {
+      svgContent+=label(200,112,'24V battery: 2× 12V in series — verify polarity',amber,8);
+    }
+  }
+
+  // ─── Legend ───
+  svgContent+=`<rect x="10" y="450" width="660" height="20" rx="3" fill="${surf}" stroke="${bord}" stroke-width="1"/>
+  <line x1="20" y1="460" x2="50" y2="460" stroke="${green}" stroke-width="2"/><text x="55" y="463" font-size="8" fill="${muted}">Solar DC</text>
+  <line x1="100" y1="460" x2="130" y2="460" stroke="${amber}" stroke-width="2"/><text x="135" y="463" font-size="8" fill="${muted}">Battery DC</text>
+  <line x1="205" y1="460" x2="235" y2="460" stroke="${blue}" stroke-width="2"/><text x="240" y="463" font-size="8" fill="${muted}">AC Power</text>
+  <line x1="285" y1="460" x2="315" y2="460" stroke="${purple}" stroke-width="2"/><text x="320" y="463" font-size="8" fill="${muted}">Shore/Gen AC</text>
+  ${hasDcDc?`<line x1="405" y1="460" x2="435" y2="460" stroke="${teal}" stroke-width="2"/><text x="440" y="463" font-size="8" fill="${muted}">DC-DC (step-down)</text>`:''}
+  <line x1="545" y1="460" x2="575" y2="460" stroke="${purple}" stroke-width="1.5" stroke-dasharray="4,2"/><text x="580" y="463" font-size="8" fill="${muted}">Optional/included</text>`;
+
+  svg.innerHTML=defs+svgContent;
   updateDiagramValues(c);
 }
 
@@ -1495,16 +1861,12 @@ function updateDiagramValues(c){
   if(!svg||!svg.querySelector('#d-solar'))return;
   const sd=(id,v)=>{const e=svg.getElementById(id);if(e)e.textContent=v;};
   sd('d-solar',Math.round(c.solarW)+'W');
-  sd('d-cc',Math.round(c.ccSize)+'A out');
+  sd('d-cc',c.ccSize+'A MPPT');
   sd('d-bat',Math.round(c.recAh)+'Ah');
-  sd('d-volt',c.voltage+'V LiFePO4');
-  sd('d-inv',Math.round(c.invCont)+'VA cont.');
-  sd('d-inv-surge',Math.round(c.invSurge)+'VA surge');
-  sd('d-acv',(c.acVoltage||240)+'V');
-  sd('d-acv2',(c.acVoltage||240)+'V AC');
-  sd('d-acload',Math.round(c.peakAc)+'W peak');
-  sd('d-dcvolt',c.voltage+'V DC');
-  sd('d-dcload',Math.round(c.peakDc)+'W peak');
+  sd('d-inv',Math.round(c.invCont)+'VA cont');
+  sd('d-acv',(c.acVoltage||240)+'V AC');
+  sd('d-acload',Math.round(c.peakAc)+'W AC peak');
+  sd('d-dcload',Math.round(c.peakDc)+'W DC peak');
 }
 
 // ===================== SAVE / LOAD =====================
@@ -1539,6 +1901,10 @@ function loadSystem(id){
   appliances=JSON.parse(JSON.stringify(sys.appliances));
   nextId=Math.max(0,...appliances.map(a=>a.id))+1;
   selections=JSON.parse(JSON.stringify(sys.selections));
+  // Migrate old single-value selections to arrays for multi-select cats
+  ['battery','solar','inv'].forEach(cat=>{
+    if(!Array.isArray(selections[cat])) selections[cat]=selections[cat]?[selections[cat]]:[];
+  });
   userProducts=JSON.parse(JSON.stringify(sys.userProducts||{battery:[],solar:[],cc:[],inv:[],dc2dc:[],monitor:[],ats:[]}));
   hiddenBuiltIns={battery:new Set(),solar:new Set(),cc:new Set(),inv:new Set(),dc2dc:new Set(),monitor:new Set(),ats:new Set()};
   const p=sys.prefs;
@@ -1676,14 +2042,14 @@ function buildSystem(){
     const units100=Math.ceil(c.recAh/100), units200=Math.ceil(c.recAh/200);
     bestBat=(units200*2<units100)?2:1; // index 1=Renogy 100Ah, 2=Ampere Time 200Ah
   } else { bestBat=3; } // Mighty Max AGM
-  selections.battery='b'+bestBat;
+  selections.battery=['b'+bestBat];
 
   // Solar: pick by array size
   let bestSolar=0;
   if(c.solarW<=400) bestSolar=0;        // 200W panels
   else if(c.solarW<=1200) bestSolar=1;  // 400W panels
   else bestSolar=1;                      // still 400W, just more of them
-  selections.solar='b'+bestSolar;
+  selections.solar=['b'+bestSolar];
 
   // Charge controller: auto-size from ccSize
   let bestCC=0;
@@ -1696,7 +2062,7 @@ function buildSystem(){
   let bestInv=0;
   if(c.invCont<800&&c.totalWh<1500) bestInv=1; // Renogy 2000W for small builds
   else bestInv=0;                               // Victron MultiPlus (inverter-charger+ATS)
-  selections.inv='b'+bestInv;
+  selections.inv=['b'+bestInv];
 
   // DC-DC: always recommend Victron Orion
   selections.dc2dc='b0';
@@ -1819,11 +2185,223 @@ function applyBuildAndGo(){
 
 function applyAndGoComponents(){ applyBuildAndGo(); }
 
+// ===================== ABYC WIRE SIZING =====================
+// ABYC E-11 Table: AWG → {ampacity at 30°C (engine room 50°C derates by 0.85), mm2, ohmsPerMetre, label}
+// Ampacity values for 105°C conductor, 30°C ambient, in open air (most conservative practical column)
+const ABYC_TABLE=[
+  {awg:'14', label:'14 AWG', amp:15,  mm2:2.08,  opm:0.00827},
+  {awg:'12', label:'12 AWG', amp:20,  mm2:3.31,  opm:0.00521},
+  {awg:'10', label:'10 AWG', amp:30,  mm2:5.26,  opm:0.00328},
+  {awg:'8',  label:'8 AWG',  amp:40,  mm2:8.37,  opm:0.00206},
+  {awg:'6',  label:'6 AWG',  amp:55,  mm2:13.3,  opm:0.00130},
+  {awg:'4',  label:'4 AWG',  amp:70,  mm2:21.2,  opm:0.000815},
+  {awg:'2',  label:'2 AWG',  amp:95,  mm2:33.6,  opm:0.000513},
+  {awg:'1',  label:'1 AWG',  amp:110, mm2:42.4,  opm:0.000407},
+  {awg:'1/0',label:'1/0 AWG',amp:125, mm2:53.5,  opm:0.000323},
+  {awg:'2/0',label:'2/0 AWG',amp:145, mm2:67.4,  opm:0.000256},
+  {awg:'3/0',label:'3/0 AWG',amp:165, mm2:85.0,  opm:0.000203},
+  {awg:'4/0',label:'4/0 AWG',amp:195, mm2:107.0, opm:0.000161},
+];
+
+// Standard fuse sizes (ANL / MIDI / ATC)
+const FUSE_SIZES=[5,10,15,20,25,30,40,50,60,70,80,100,110,125,150,175,200,250,300,350,400,500];
+
+function nextFuse(amps){
+  // ABYC: fuse ≤ ampacity of wire; size at 125% of load current
+  const required=amps*1.25;
+  return FUSE_SIZES.find(f=>f>=required)||500;
+}
+
+// Find minimum AWG that meets ampacity requirement (after derating)
+function awgForAmpacity(amps, bundled, hot){
+  let derate=1.0;
+  if(bundled) derate*=0.70;
+  if(hot)     derate*=0.85;
+  for(const row of ABYC_TABLE){
+    if(row.amp*derate >= amps) return row;
+  }
+  return ABYC_TABLE[ABYC_TABLE.length-1]; // 4/0 — largest we handle
+}
+
+// Find minimum AWG that meets voltage drop requirement
+// vdrop% = (2 * I * R_per_m * length) / V * 100
+// Rearranged: R_per_m ≤ (vdropFrac * V) / (2 * I * length)
+function awgForVoltageDrop(amps, lengthM, voltage, vdropPct, continuous){
+  const I = continuous ? amps*1.25 : amps;
+  const maxOpm = (vdropPct/100 * voltage) / (2 * I * lengthM);
+  for(const row of ABYC_TABLE){
+    if(row.opm <= maxOpm) return row;
+  }
+  return ABYC_TABLE[ABYC_TABLE.length-1];
+}
+
+// Return the worse (larger) of two AWG rows
+function worstAWG(a, b){
+  const iA=ABYC_TABLE.indexOf(a), iB=ABYC_TABLE.indexOf(b);
+  return iA>=iB?a:b;
+}
+
+function actualVdrop(amps, lengthM, awgRow, voltage, continuous){
+  const I=continuous?amps*1.25:amps;
+  return (2*I*awgRow.opm*lengthM)/voltage*100;
+}
+
+function renderABYC(){
+  const c=getCalcs();
+  const tbody=document.getElementById('abyc-rows');
+  const notes=document.getElementById('abyc-notes');
+  if(!tbody) return;
+
+  const bundled=document.getElementById('dr-bundled')?.checked||false;
+  const hot=document.getElementById('dr-hot')?.checked||false;
+  const continuous=document.getElementById('dr-continuous')?.checked||false;
+  const metric=document.getElementById('dr-metric')?.checked||false;
+  const v=c.voltage;
+
+  // Helper: get run length input value in metres
+  function getLen(id){
+    const el=document.getElementById(id);
+    const val=parseFloat(el?.value)||0;
+    return metric?val:val*0.3048; // ft→m if not metric
+  }
+
+  // Define segments: {id, label, amps, vdropPct, note}
+  const pvAmps = c.solarW>0 ? c.solarW/v*1.25 : 0; // PV short-circuit ×1.25
+  const ccBatAmps = c.ccSize||0;
+  const invAmps = c.invCont>0 ? c.invCont/v*1.25 : 0;
+  const mainAmps = Math.max(ccBatAmps, invAmps)*1.1;
+  const dcLoadAmps = c.peakDc>0 ? c.peakDc/v : 0;
+
+  const segments=[
+    {id:'run-pv',    label:'Solar Panels → MPPT CC',  amps:pvAmps,    vdrop:3, note:'PV string wire. Size for short-circuit current (Isc) × 1.25.', show:c.solarW>0},
+    {id:'run-cc',    label:'MPPT CC → Battery',        amps:ccBatAmps, vdrop:3, note:'Charge controller output to battery/bus bar.', show:c.ccSize>0},
+    {id:'run-inv',   label:'Battery → Inverter',       amps:invAmps,   vdrop:1, note:'Inverter draw at full load. 1% VDrop recommended for high-current cable.', show:c.invCont>0},
+    {id:'run-main',  label:'Battery → Main Bus Bar',   amps:mainAmps,  vdrop:1, note:'Main positive cable from battery to bus bar.', show:true},
+    {id:'run-dc',    label:'Bus Bar → DC Loads',       amps:dcLoadAmps,vdrop:3, note:'Branch circuit to DC load panel. Size for total peak DC load.', show:c.peakDc>0},
+    {id:'run-shore', label:'Shore/Charger → Battery',  amps:Math.round(c.shoreContrib>0?c.shoreContrib/v/3:30), vdrop:3, note:'Shore charger output cable.', show:true},
+  ].filter(s=>s.show&&s.amps>1);
+
+  // Save existing input values so we can restore after re-render
+  const savedLens={};
+  segments.forEach(s=>{
+    const el=document.getElementById(s.id);
+    if(el) savedLens[s.id]=el.value;
+  });
+
+  const unit=metric?'m':'ft';
+  const placeholder=metric?'e.g. 1.5':'e.g. 5';
+
+  let rows='';
+  const warnings=[];
+  segments.forEach(s=>{
+    const lenVal=savedLens[s.id]||'';
+    const lenM=lenVal?(metric?parseFloat(lenVal):parseFloat(lenVal)*0.3048):null;
+
+    let ampAwg=null,vdAwg=null,finalAwg=null,fuse=null,vdropActual=null,driven='';
+    if(lenM&&lenM>0&&s.amps>0){
+      ampAwg=awgForAmpacity(s.amps,bundled,hot);
+      vdAwg=awgForVoltageDrop(s.amps,lenM,v,s.vdrop,continuous);
+      finalAwg=worstAWG(ampAwg,vdAwg);
+      fuse=nextFuse(s.amps);
+      vdropActual=actualVdrop(s.amps,lenM,finalAwg,v,continuous);
+      driven=ABYC_TABLE.indexOf(vdAwg)>=ABYC_TABLE.indexOf(ampAwg)?'vdrop':'amp';
+      if(vdropActual>5) warnings.push(`⚠️ <strong>${s.label}</strong>: voltage drop is ${vdropActual.toFixed(1)}% — consider a shorter run or larger conductor.`);
+    }
+
+    const awgCell=(row,highlight)=>row
+      ?`<span style="font-weight:700;color:${highlight?'var(--accent)':'var(--text)'};">${row.label}</span>`
+      :`<span style="color:var(--muted);">—</span>`;
+
+    const finalCell=finalAwg
+      ?`<span style="font-weight:700;font-size:13px;color:var(--accent2,#0a7c54);background:var(--accent2-bg,#eaf7f2);padding:2px 7px;border-radius:4px;">${finalAwg.label}</span>${driven==='vdrop'?' <span title="Voltage drop limited" style="font-size:10px;color:var(--muted);">VD↑</span>':driven==='amp'?' <span title="Ampacity limited" style="font-size:10px;color:var(--muted);">A↑</span>':''}`
+      :`<span style="color:var(--muted);">Enter length</span>`;
+
+    rows+=`<tr>
+      <td style="font-weight:600;font-size:12px;">${s.label}<br><span style="font-weight:400;color:var(--muted);font-size:10px;">${s.note}</span></td>
+      <td style="text-align:center;">${s.amps>0?Math.round(s.amps)+'A':'—'}</td>
+      <td><input type="number" id="${s.id}" value="${lenVal}" min="0" step="${metric?'0.1':'0.5'}" placeholder="${placeholder}"
+        style="width:72px;padding:4px 6px;border:1px solid var(--border);border-radius:5px;font-size:12px;background:var(--bg);"
+        oninput="renderABYC()" aria-label="${s.label} run length in ${unit}">
+        <span style="font-size:11px;color:var(--muted);"> ${unit}</span></td>
+      <td style="text-align:center;">${s.vdrop}%</td>
+      <td style="text-align:center;">${awgCell(ampAwg,false)}</td>
+      <td style="text-align:center;">${awgCell(vdAwg,false)}</td>
+      <td style="text-align:center;">${finalCell}</td>
+      <td style="text-align:center;">${fuse?fuse+'A':'—'}</td>
+    </tr>`;
+  });
+
+  tbody.innerHTML=rows||'<tr><td colspan="8" style="text-align:center;color:var(--muted);padding:16px;">Add appliances to generate segments.</td></tr>';
+
+  // Build derating summary note
+  let derateNote='';
+  const factors=[];
+  if(bundled) factors.push('bundled/conduit (×0.70 ampacity)');
+  if(hot)     factors.push('hot area ≥50°C (×0.85 ampacity)');
+  if(continuous) factors.push('continuous load (current ×1.25 for VDrop)');
+  if(factors.length) derateNote=`<strong>Active derating:</strong> ${factors.join(' + ')}. `;
+  derateNote+=`<strong>Standard:</strong> ABYC E-11 · 105°C tinned copper · 30°C ambient. `;
+  derateNote+=`<strong>VDrop target:</strong> 3% for branch circuits, 1% for inverter/main cables. `;
+  derateNote+=warnings.length?'<br>'+warnings.join('<br>'):'';
+  notes.innerHTML=derateNote;
+}
+
 // ===================== LOCATION PICKER =====================
+// PSH data: {avg, summer, winter, note}
+// Lat/lng for Open-Meteo API calls — matched to LOCATION_PSH keys
+const LOCATION_COORDS={
+  darwin:    {lat:-12.46,lng:130.84}, alice:     {lat:-23.70,lng:133.88},
+  perth:     {lat:-31.95,lng:115.86}, brisbane:  {lat:-27.47,lng:153.03},
+  adelaide:  {lat:-34.93,lng:138.60}, sydney:    {lat:-33.87,lng:151.21},
+  melbourne: {lat:-37.81,lng:144.96}, hobart:    {lat:-42.88,lng:147.33},
+  auckland:  {lat:-36.85,lng:174.76}, wellington:{lat:-41.29,lng:174.78},
+  christchurch:{lat:-43.53,lng:172.64},
+  phoenix:   {lat:33.45,lng:-112.07}, losangeles:{lat:34.05,lng:-118.24},
+  denver:    {lat:39.74,lng:-104.98}, seattle:   {lat:47.61,lng:-122.33},
+  newyork:   {lat:40.71,lng:-74.01},  miami:     {lat:25.76,lng:-80.19},
+  chicago:   {lat:41.88,lng:-87.63},
+  sspain:    {lat:37.39,lng:-5.99},   sfrance:   {lat:43.30,lng:5.37},
+  germany:   {lat:52.52,lng:13.41},   uksouth:   {lat:51.51,lng:-0.13},
+  uknorth:   {lat:53.80,lng:-1.55},   scandinavia:{lat:59.91,lng:10.75},
+};
+
+const LOCATION_PSH={
+  darwin:    {avg:6.5,summer:7.2,winter:5.8,note:'Excellent year-round. Wet season (Nov–Apr) may reduce by 10–20%.'},
+  alice:     {avg:6.2,summer:7.0,winter:5.4,note:'Outstanding solar resource. Minimal seasonal variation.'},
+  perth:     {avg:6.0,summer:7.5,winter:4.5,note:'Excellent summer. Winter drops significantly — size for worst case.'},
+  brisbane:  {avg:5.8,summer:6.5,winter:5.0,note:'Good year-round with mild winter dip.'},
+  adelaide:  {avg:5.5,summer:7.0,winter:3.8,note:'Strong summer but notable winter drop. Plan for 3.8 hrs if travelling in winter.'},
+  sydney:    {avg:5.2,summer:6.2,winter:4.0,note:'Moderate seasonal variation. Winter sizing recommended.'},
+  melbourne: {avg:4.8,summer:6.5,winter:2.8,note:'Large seasonal swing. Winter is challenging — consider generator backup or shore power.'},
+  hobart:    {avg:4.5,summer:6.0,winter:2.5,note:'Low winter solar. If travelling May–Aug, add significant generator or shore power.'},
+  auckland:  {avg:5.0,summer:6.2,winter:3.2,note:'Moderate resource. Winter significant — plan for 3.2 hrs in Jun/Jul.'},
+  wellington:{avg:4.5,summer:5.8,winter:2.8,note:'Windy city with variable cloud. Winter sizing strongly recommended.'},
+  christchurch:{avg:5.2,summer:6.5,winter:3.0,note:'Good summer. Winter drops to 3.0 hrs — factor if travelling Jun–Aug.'},
+  phoenix:   {avg:6.5,summer:7.5,winter:5.5,note:'Best solar in North America. Very consistent year-round.'},
+  losangeles:{avg:5.5,summer:6.5,winter:4.5,note:'Excellent. Coastal fog may reduce mornings. Consistent overall.'},
+  denver:    {avg:4.5,summer:5.5,winter:3.5,note:'Good resource but high altitude. Winter notable drop.'},
+  seattle:   {avg:4.0,summer:6.0,winter:1.5,note:'Very poor winter solar. Oct–Mar requires substantial alternative charging.'},
+  newyork:   {avg:4.5,summer:5.5,winter:3.0,note:'Moderate. East coast winters reduce output significantly.'},
+  miami:     {avg:5.5,summer:5.8,winter:5.0,note:'Consistent year-round thanks to latitude. Minor seasonal variation.'},
+  chicago:   {avg:4.2,summer:5.5,winter:2.5,note:'Low winter solar. Nov–Feb typically require supplemental charging.'},
+  sspain:    {avg:4.5,summer:6.0,winter:3.0,note:'Good Mediterranean resource. Winter drops to 3 hrs in Dec/Jan.'},
+  sfrance:   {avg:4.0,summer:5.5,winter:2.5,note:'Decent summer. Winter can be poor — factor if travelling Nov–Feb.'},
+  germany:   {avg:3.5,summer:5.0,winter:1.5,note:'Poor winter solar (1.5 hrs). Shore power or generator essential Oct–Mar.'},
+  uksouth:   {avg:2.5,summer:4.5,winter:1.0,note:'Very poor winter. Nov–Feb solar is minimal — plan for alternative charging.'},
+  uknorth:   {avg:2.0,summer:4.0,winter:0.8,note:'Challenging. Generator or shore power needed most of the year.'},
+  scandinavia:{avg:2.0,summer:5.5,winter:0.5,note:'Extreme variation. Summer midnight sun vs near-zero winter solar.'},
+};
+
 function applyLocation(){
   const v=document.getElementById('location-pick').value;
-  if(v==='custom') return;
-  document.getElementById('peak-sun').value=v;
+  const box=document.getElementById('location-seasonal');
+  if(v==='custom'||!LOCATION_PSH[v]){box.style.display='none';return;}
+  const d=LOCATION_PSH[v];
+  document.getElementById('peak-sun').value=d.avg;
+  const ratio=d.winter/d.avg;
+  const winterWarn=ratio<0.6?`<span style="color:#b85c00;font-weight:600;">⚠️ Winter solar drops to ${d.winter} hrs — ${Math.round((1-ratio)*100)}% less than average. Consider sizing for worst-case or adding shore/generator charging.</span>`:'';
+  box.innerHTML=`<strong>☀️ Annual average: ${d.avg} hrs/day</strong> &nbsp;|&nbsp; Summer: ${d.summer} hrs &nbsp;|&nbsp; Winter: ${d.winter} hrs<br>${d.note}${winterWarn?'<br>'+winterWarn:''}`;
+  box.style.display='block';
   recalc();
 }
 
@@ -2071,7 +2649,12 @@ function importJSONPrompt(){
         if(p.genKw!=null&&document.getElementById('gen-charge-kw'))document.getElementById('gen-charge-kw').value=p.genKw;
         if(p.genHours!=null&&document.getElementById('gen-hours'))document.getElementById('gen-hours').value=p.genHours;
         if(p.roofSpace!=null&&document.getElementById('roof-space'))document.getElementById('roof-space').value=p.roofSpace;
-        if(d.selections) Object.assign(selections,d.selections);
+        if(d.selections){
+          Object.assign(selections,d.selections);
+          ['battery','solar','inv'].forEach(cat=>{
+            if(!Array.isArray(selections[cat])) selections[cat]=selections[cat]?[selections[cat]]:[];
+          });
+        }
         onVoltageChange();
         alert('✅ System imported successfully!');
       }catch(err){alert('❌ Could not read file: '+err.message);}
@@ -2138,6 +2721,489 @@ function loadSharedConfig(){
   }catch(e){console.warn('Could not load shared config:',e);}
 }
 
+// ===================== SOLAR GENERATOR MODULE =====================
+const SOLAR_GENERATORS = [
+  // ── EcoFlow ──
+  {
+    brand:'EcoFlow', name:'RIVER 2', model:'river2',
+    whCap:256, invW:300, surgeW:600, acOutlets:2, dcOutlets:true,
+    solarMaxW:110, weight:3.5, price:249, priceRange:'$199–$269',
+    expandable:false, lifespan:'800+ cycles', chargeMins:60,
+    pros:['Fastest charge (60 min AC)','Ultra lightweight 3.5kg','X-Stream fast charge'],
+    cons:['Small 256Wh capacity','Limited solar input (110W)','Not expandable'],
+    bestFor:'Overnight camping, phones/laptops/lights only',
+    affiliateUrl:'https://www.ecoflow.com/river-2',
+    tag:'Ultralight'
+  },
+  {
+    brand:'EcoFlow', name:'DELTA 2', model:'delta2',
+    whCap:1024, invW:1800, surgeW:2700, acOutlets:6, dcOutlets:true,
+    solarMaxW:500, weight:12, price:999, priceRange:'$799–$1,099',
+    expandable:true, expandToWh:2048, lifespan:'3000+ cycles (LFP)',
+    chargeMins:80,
+    pros:['LFP battery (3000 cycles)','Expandable to 2kWh','500W solar input','Fast 80-min charge'],
+    cons:['1800W inverter limits some appliances','Heavier than RIVER range'],
+    bestFor:'Weekend to week-long trips, fridge + laptop + lights',
+    affiliateUrl:'https://www.ecoflow.com/delta-2',
+    tag:'Best All-Rounder'
+  },
+  {
+    brand:'EcoFlow', name:'DELTA 2 Max', model:'delta2max',
+    whCap:2048, invW:2400, surgeW:5000, acOutlets:6, dcOutlets:true,
+    solarMaxW:1000, weight:23, price:1799, priceRange:'$1,499–$1,999',
+    expandable:true, expandToWh:6144, lifespan:'3000+ cycles (LFP)',
+    chargeMins:100,
+    pros:['2kWh base, expandable to 6kWh','2400W inverter','5000W surge (air-con compatible)','1000W solar input'],
+    cons:['Heavy at 23kg','High price for base unit'],
+    bestFor:'Extended trips, aircon-capable, full-time use',
+    affiliateUrl:'https://www.ecoflow.com/delta-2-max',
+    tag:'Power User'
+  },
+  {
+    brand:'EcoFlow', name:'DELTA Pro', model:'deltapro',
+    whCap:3600, invW:3600, surgeW:7200, acOutlets:6, dcOutlets:true,
+    solarMaxW:1600, weight:45, price:2999, priceRange:'$2,499–$3,299',
+    expandable:true, expandToWh:25000, lifespan:'3500+ cycles (LFP)',
+    chargeMins:130,
+    pros:['3.6kWh capacity','Expandable to 25kWh with extra batteries','3600W inverter','Generator & EV charger compatible'],
+    cons:['Very heavy 45kg','Expensive base price','Overkill for most RV use'],
+    bestFor:'Full-time liveaboards, large motorhomes, whole-van power',
+    affiliateUrl:'https://www.ecoflow.com/delta-pro',
+    tag:'Professional'
+  },
+  // ── Jackery ──
+  {
+    brand:'Jackery', name:'Explorer 300 Plus', model:'jackery300',
+    whCap:288, invW:300, surgeW:600, acOutlets:2, dcOutlets:true,
+    solarMaxW:120, weight:3.75, price:299, priceRange:'$199–$329',
+    expandable:false, lifespan:'800+ cycles (LFP)',
+    chargeMins:60,
+    pros:['LFP battery','Compact and lightweight','SolarSaga panel compatibility'],
+    cons:['Small capacity','Low inverter power','No expansion'],
+    bestFor:'Day hikes, overnight stays, device charging',
+    affiliateUrl:'https://www.jackery.com/explorer-300-plus',
+    tag:'Compact'
+  },
+  {
+    brand:'Jackery', name:'Explorer 1000 Plus', model:'jackery1000',
+    whCap:1264, invW:2000, surgeW:4000, acOutlets:3, dcOutlets:true,
+    solarMaxW:600, weight:14.5, price:1099, priceRange:'$799–$1,199',
+    expandable:true, expandToWh:5000, lifespan:'4000+ cycles (LFP)',
+    chargeMins:90,
+    pros:['LFP 4000+ cycle lifespan','2000W / 4000W surge','Expandable to 5kWh','Compatible with SolarSaga panels'],
+    cons:['Heavier than EcoFlow equivalent'],
+    bestFor:'Week+ trips, fridge + TV + laptop + lights',
+    affiliateUrl:'https://www.jackery.com/explorer-1000-plus',
+    tag:'Long Life'
+  },
+  // ── Bluetti ──
+  {
+    brand:'Bluetti', name:'EB3A', model:'bluetti-eb3a',
+    whCap:268, invW:600, surgeW:1200, acOutlets:2, dcOutlets:true,
+    solarMaxW:200, weight:4.6, price:299, priceRange:'$199–$329',
+    expandable:false, lifespan:'2500+ cycles (LFP)',
+    chargeMins:30,
+    pros:['600W inverter in tiny unit','30-min fast charge','LFP battery'],
+    cons:['Small capacity','No expansion path'],
+    bestFor:'Solo camping, high-watt appliances briefly',
+    affiliateUrl:'https://www.bluettipower.com/eb3a',
+    tag:'Fast Charge'
+  },
+  {
+    brand:'Bluetti', name:'AC200P', model:'bluetti-ac200p',
+    whCap:2000, invW:2000, surgeW:4800, acOutlets:6, dcOutlets:true,
+    solarMaxW:700, weight:27.5, price:1699, priceRange:'$1,299–$1,799',
+    expandable:false, lifespan:'3500+ cycles (LFP)',
+    chargeMins:150,
+    pros:['2kWh in one unit','2000W / 4800W surge','17 output ports','LFP longevity'],
+    cons:['Heavy 27.5kg','Not expandable','Bulkier form factor'],
+    bestFor:'Large van builds, aircon capable, extended trips',
+    affiliateUrl:'https://www.bluettipower.com/ac200p',
+    tag:'High Capacity'
+  },
+  {
+    brand:'Bluetti', name:'AC300 + B300', model:'bluetti-ac300',
+    whCap:3072, invW:3000, surgeW:6000, acOutlets:6, dcOutlets:true,
+    solarMaxW:2400, weight:40, price:3299, priceRange:'$2,799–$3,599',
+    expandable:true, expandToWh:12288, lifespan:'3500+ cycles (LFP)',
+    chargeMins:180,
+    pros:['Modular — AC300 unit + B300 battery packs','Up to 12kWh expandable','3000W pure sine inverter','2400W solar input'],
+    cons:['Complex setup','Expensive','Heavy'],
+    bestFor:'Full-time RV living, coach-level power needs',
+    affiliateUrl:'https://www.bluettipower.com/ac300',
+    tag:'Modular'
+  },
+  // ── Anker ──
+  {
+    brand:'Anker', name:'SOLIX C1000', model:'anker-c1000',
+    whCap:1056, invW:1800, surgeW:2400, acOutlets:4, dcOutlets:true,
+    solarMaxW:600, weight:13, price:999, priceRange:'$799–$1,099',
+    expandable:true, expandToWh:2112, lifespan:'3000+ cycles (LFP)',
+    chargeMins:58,
+    pros:['58-min rapid charge','LFP battery','App-controlled','Compact design'],
+    cons:['1800W inverter only','Newer brand — less field-tested'],
+    bestFor:'Tech-savvy campers, weekend to week-long trips',
+    affiliateUrl:'https://www.anker.com/solix-c1000',
+    tag:'Smart Charging'
+  }
+];
+
+function renderSolarGenerator(){
+  const c = getCalcs();
+  const totalWh = c.totalWh;
+  const peakAc = c.peakAc;
+  const invCont = c.invCont;
+
+  // ── Recommendation Banner ──
+  const recEl = document.getElementById('gen-recommendation');
+  let recHtml = '';
+  if(totalWh === 0){
+    recEl.innerHTML = `<div class="alert alert-info">Add appliances in the Loads tab first to get personalised solar generator recommendations.</div>`;
+    document.getElementById('gen-product-list').innerHTML = '';
+    document.getElementById('gen-vs-table').innerHTML = '';
+    document.getElementById('gen-comparison').innerHTML = '';
+    return;
+  }
+
+  const THRESHOLD_WH = 2200; // above this, DIY wins on value
+  const isDIYBetter = totalWh > THRESHOLD_WH;
+  const isEdge = totalWh >= 1200 && totalWh <= THRESHOLD_WH;
+
+  if(isDIYBetter){
+    recHtml = `<div class="alert" style="background:#fff8e6;border-left:4px solid var(--accent);border-radius:8px;padding:14px 16px;">
+      <strong>⚡ Your load profile (${Math.round(totalWh)}Wh/day) favours a custom DIY system.</strong>
+      <br><span style="font-size:13px;color:var(--text-secondary);">Above ~2,200Wh/day, DIY is almost always cheaper and more flexible than solar generators. Solar generators are still listed below for reference, but the Components tab and Wiring guide are your best path forward.</span>
+    </div>`;
+  } else if(isEdge){
+    recHtml = `<div class="alert" style="background:var(--accent3-bg);border-left:4px solid var(--accent3);border-radius:8px;padding:14px 16px;">
+      <strong>🤔 You're in the crossover zone (${Math.round(totalWh)}Wh/day) — either approach could work.</strong>
+      <br><span style="font-size:13px;color:var(--text-secondary);">A mid-size solar generator (1–2kWh expandable) is convenient and portable. A DIY build gives more flexibility and lower cost per Wh. Compare both below.</span>
+    </div>`;
+  } else {
+    recHtml = `<div class="alert" style="background:var(--accent2-bg);border-left:4px solid var(--accent2);border-radius:8px;padding:14px 16px;">
+      <strong>✅ A solar generator is a great fit for your load profile (${Math.round(totalWh)}Wh/day).</strong>
+      <br><span style="font-size:13px;color:var(--text-secondary);">All-in-one units cover your needs with minimal wiring, fast setup, and portability. Matched options are listed below.</span>
+    </div>`;
+  }
+  recEl.innerHTML = recHtml;
+
+  // ── Score & filter generators ──
+  const scored = SOLAR_GENERATORS.map(g => {
+    let score = 100;
+    const autonomy = c.autonomy || 1;
+    const needed = totalWh * autonomy;
+    // Capacity fit
+    const capRatio = g.whCap / needed;
+    if(capRatio < 0.6) score -= 40;
+    else if(capRatio < 0.9) score -= 15;
+    else if(capRatio > 3.0) score -= 20; // overkill
+    // Check expandable covers autonomy
+    if(g.expandable && g.expandToWh >= needed * 0.9) score += 15;
+    // Inverter fit
+    if(g.invW < peakAc * 1.1) score -= 30; // inverter too small
+    else if(g.invW >= invCont) score += 10;
+    // Solar input
+    if(g.solarMaxW >= c.solarW * 0.7) score += 10;
+    // Value score (Wh per dollar)
+    const whPerDollar = g.whCap / g.price;
+    if(whPerDollar > 1.5) score += 8;
+    return {...g, score, capRatio, needed};
+  }).sort((a,b) => b.score - a.score);
+
+  // ── Product Cards ──
+  const listEl = document.getElementById('gen-product-list');
+  const top = scored.slice(0, 5);
+  listEl.innerHTML = top.map((g, i) => {
+    const fit = g.invW < peakAc * 1.1 ? '🔴 Inverter too small for your peak AC load' :
+                g.whCap < totalWh * 0.7 ? '🟡 Capacity may be tight — consider expanded version' :
+                g.whCap >= totalWh * c.autonomy * 0.9 ? '🟢 Covers full autonomy requirement' :
+                '🟢 Good daily match';
+    const rank = i === 0 ? `<span class="badge" style="background:var(--accent-bg);color:var(--accent);border:1px solid var(--accent);margin-left:8px;">⭐ Best Match</span>` : '';
+    return `<div class="card" style="margin-bottom:12px;border:${i===0?'2px solid var(--accent)':'1.5px solid var(--border)'};">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:10px;">
+        <div>
+          <span style="font-family:var(--hf);font-size:18px;letter-spacing:1px;">${g.brand} ${g.name}</span>${rank}
+          <span class="badge" style="background:var(--accent3-bg);color:var(--accent3);border:1px solid var(--accent3);margin-left:6px;">${g.tag}</span>
+        </div>
+        <div style="text-align:right;">
+          <div style="font-family:var(--mf);font-size:18px;font-weight:700;color:var(--accent);">${g.priceRange}</div>
+          <div style="font-size:11px;color:var(--muted);">AUD approx.</div>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:8px;margin-bottom:10px;">
+        ${specChip('⚡ Capacity', g.whCap+'Wh')}
+        ${specChip('🔌 Inverter', g.invW+'W / '+g.surgeW+'W surge')}
+        ${specChip('☀️ Solar In', g.solarMaxW+'W max')}
+        ${specChip('⚖️ Weight', g.weight+'kg')}
+        ${specChip('🔋 Lifespan', g.lifespan)}
+        ${g.expandable ? specChip('📦 Expandable', 'up to '+g.expandToWh+'Wh') : specChip('📦 Expandable', 'No')}
+      </div>
+      <div style="margin-bottom:10px;font-size:12px;color:var(--text-secondary);">
+        <strong>Best for:</strong> ${g.bestFor}
+      </div>
+      <div style="font-size:12px;margin-bottom:10px;">${fit}</div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:6px;">
+        <div style="flex:1;min-width:160px;">
+          <div style="font-size:11px;font-weight:700;color:var(--accent2);margin-bottom:4px;">PROS</div>
+          ${g.pros.map(p=>`<div style="font-size:12px;color:var(--text-secondary);margin-bottom:2px;">✓ ${p}</div>`).join('')}
+        </div>
+        <div style="flex:1;min-width:160px;">
+          <div style="font-size:11px;font-weight:700;color:var(--danger);margin-bottom:4px;">CONS</div>
+          ${g.cons.map(p=>`<div style="font-size:12px;color:var(--text-secondary);margin-bottom:2px;">✗ ${p}</div>`).join('')}
+        </div>
+      </div>
+      <a href="${g.affiliateUrl}" target="_blank" rel="noopener" style="display:inline-block;background:var(--accent);color:#1a1000;font-weight:700;font-size:13px;padding:8px 18px;border-radius:7px;text-decoration:none;margin-top:4px;">View ${g.brand} ${g.name} →</a>
+      <span style="font-size:10px;color:var(--muted);margin-left:8px;">Affiliate link — helps support this free tool</span>
+    </div>`;
+  }).join('');
+
+  // ── Vs Table ──
+  const best = scored[0];
+  const diyEstimate = estimateDIYCost(c);
+  const vsEl = document.getElementById('gen-vs-table');
+  vsEl.innerHTML = `<table style="width:100%;border-collapse:collapse;font-size:13px;">
+    <thead>
+      <tr>
+        <th style="padding:9px 12px;background:var(--surface2);font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);border-bottom:2px solid var(--border);">Criteria</th>
+        <th style="padding:9px 12px;background:var(--accent-bg);font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:var(--accent);border-bottom:2px solid var(--border);">Solar Generator<br><span style="font-weight:400;font-size:10px;">${best.brand} ${best.name}</span></th>
+        <th style="padding:9px 12px;background:var(--accent3-bg);font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:var(--accent3);border-bottom:2px solid var(--border);">DIY Custom Build<br><span style="font-weight:400;font-size:10px;">Based on your sizing</span></th>
+      </tr>
+    </thead>
+    <tbody>
+      ${vsRow('Upfront Cost', best.priceRange, '$'+diyEstimate.low+' – $'+diyEstimate.high, diyEstimate.low < best.price ? 'diy' : 'gen')}
+      ${vsRow('Setup Time', '5 min — plug and play', '1–3 days install', 'gen')}
+      ${vsRow('Capacity', best.whCap+'Wh'+(best.expandable?' (exp. to '+best.expandToWh+'Wh)':''), Math.round(c.recAh * c.voltage)+'Wh usable', c.recAh * c.voltage > best.whCap ? 'diy' : 'gen')}
+      ${vsRow('Portability', 'Portable — move between vehicles', 'Fixed installation', 'gen')}
+      ${vsRow('Repairability', 'Replace whole unit if faulty', 'Individual components replaceable', 'diy')}
+      ${vsRow('Expandability', best.expandable ? 'Yes — add battery packs' : 'No — fixed capacity', 'Yes — add panels, batteries freely', 'diy')}
+      ${vsRow('Inverter Power', best.invW+'W / '+best.surgeW+'W surge', Math.round(c.invCont)+'W cont. / '+Math.round(c.invSurge)+'W surge', c.invCont > best.invW ? 'diy' : 'gen')}
+      ${vsRow('Lifespan', best.lifespan, 'Batteries 3000–5000 cycles, panels 25+ yr', 'draw')}
+      ${vsRow('Wiring required', 'None', 'Full DC wiring install', 'gen')}
+      ${vsRow('Best for', best.bestFor, 'Permanent install, large loads, >2kWh/day', totalWh > 1500 ? 'diy' : 'gen')}
+    </tbody>
+  </table>`;
+
+  document.getElementById('gen-comparison').innerHTML = '';
+}
+
+function specChip(label, val){
+  return `<div style="background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:6px 10px;">
+    <div style="font-size:10px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.4px;">${label}</div>
+    <div style="font-size:12px;font-weight:600;color:var(--text);font-family:var(--mf);">${val}</div>
+  </div>`;
+}
+
+function vsRow(label, genVal, diyVal, winner){
+  const gStyle = winner==='gen' ? 'background:var(--accent2-bg);font-weight:700;color:var(--accent2);' : 'color:var(--text-secondary);';
+  const dStyle = winner==='diy' ? 'background:var(--accent2-bg);font-weight:700;color:var(--accent2);' : 'color:var(--text-secondary);';
+  return `<tr>
+    <td style="padding:8px 12px;border-bottom:1px solid var(--border);font-weight:600;font-size:12px;color:var(--muted);">${label}</td>
+    <td style="padding:8px 12px;border-bottom:1px solid var(--border);font-size:13px;${gStyle}">${genVal}</td>
+    <td style="padding:8px 12px;border-bottom:1px solid var(--border);font-size:13px;${dStyle}">${diyVal}</td>
+  </tr>`;
+}
+
+function estimateDIYCost(c){
+  // Rough component cost estimate based on sizing
+  const battCost = c.recAh * (c.dod >= 0.8 ? 5.5 : 3.5); // LFP vs AGM per Ah
+  const solarCost = c.solarW * 0.8;
+  const ccCost = c.ccSize <= 30 ? 180 : c.ccSize <= 50 ? 280 : 420;
+  const invCost = c.invCont <= 1000 ? 350 : c.invCont <= 2000 ? 650 : 1100;
+  const misc = 250; // cables, fuses, bus bars, monitor
+  const total = battCost + solarCost + ccCost + invCost + misc;
+  return { low: Math.round(total * 0.85 / 50) * 50, high: Math.round(total * 1.25 / 50) * 50 };
+}
+
+// ===================== ONBOARDING =====================
+const ONBOARD_STEPS=[
+  {
+    title:'1 — What are you building?',
+    content(){
+      return `<p>This tool sizes a complete off-grid power system — battery bank, solar array, charge controller, inverter, and wiring. It takes about 60 seconds to get a first estimate.</p>
+      <p><strong>What type of rig?</strong></p>
+      <div class="onboard-choice-grid">
+        <div class="onboard-choice" onclick="obSelect(this,'rig','van')" data-key="rig" data-val="van"><strong>🚐 Van / Camper</strong><span>Small to medium, typically 12V</span></div>
+        <div class="onboard-choice" onclick="obSelect(this,'rig','caravan')" data-key="rig" data-val="caravan"><strong>🏕️ Caravan / Trailer</strong><span>Towed rig, 12V or 24V</span></div>
+        <div class="onboard-choice" onclick="obSelect(this,'rig','motorhome')" data-key="rig" data-val="motorhome"><strong>🚌 Motorhome / Coach</strong><span>Larger rig, 24V or 48V</span></div>
+        <div class="onboard-choice" onclick="obSelect(this,'rig','boat')" data-key="rig" data-val="boat"><strong>⛵ Boat / Marine</strong><span>12V or 24V, marine-grade</span></div>
+      </div>`;
+    },
+    validate(state){ return !!state.rig; }
+  },
+  {
+    title:'2 — How do you use it?',
+    content(){
+      return `<p><strong>How do you typically camp?</strong></p>
+      <div class="onboard-choice-grid">
+        <div class="onboard-choice" onclick="obSelect(this,'style','weekend')" data-key="style" data-val="weekend"><strong>🏕️ Weekends only</strong><span>1–2 nights, access to shore power nearby</span></div>
+        <div class="onboard-choice" onclick="obSelect(this,'style','touring')" data-key="style" data-val="touring"><strong>🗺️ Extended touring</strong><span>Week+ trips, mix of powered and free camps</span></div>
+        <div class="onboard-choice" onclick="obSelect(this,'style','offgrid')" data-key="style" data-val="offgrid"><strong>☀️ Off-grid boondocking</strong><span>No shore power — solar only</span></div>
+        <div class="onboard-choice" onclick="obSelect(this,'style','fulltime')" data-key="style" data-val="fulltime"><strong>🏠 Full-time living</strong><span>Primary residence, all mod cons</span></div>
+      </div>`;
+    },
+    validate(state){ return !!state.style; }
+  },
+  {
+    title:'3 — Key loads',
+    content(){
+      return `<p><strong>What will you run?</strong> (select all that apply)</p>
+      <div class="onboard-choice-grid">
+        <div class="onboard-choice" onclick="obToggle(this,'loads','fridge')" data-key="loads" data-val="fridge"><strong>🧊 Fridge / Freezer</strong><span>Largest continuous DC load</span></div>
+        <div class="onboard-choice" onclick="obToggle(this,'loads','aircon')" data-key="loads" data-val="aircon"><strong>❄️ Air Conditioning</strong><span>High AC load — needs large system</span></div>
+        <div class="onboard-choice" onclick="obToggle(this,'loads','laptop')" data-key="loads" data-val="laptop"><strong>💻 Laptop / Work gear</strong><span>AC or DC charging</span></div>
+        <div class="onboard-choice" onclick="obToggle(this,'loads','tv')" data-key="loads" data-val="tv"><strong>📺 TV / Entertainment</strong><span>AC appliance</span></div>
+        <div class="onboard-choice" onclick="obToggle(this,'loads','starlink')" data-key="loads" data-val="starlink"><strong>🛰️ Starlink</strong><span>~50–75W DC continuous</span></div>
+        <div class="onboard-choice" onclick="obToggle(this,'loads','microwave')" data-key="loads" data-val="microwave"><strong>🍳 Microwave / Induction</strong><span>High AC surge loads</span></div>
+      </div>
+      <div class="onboard-tip">💡 Don't worry about getting this perfect — you'll fine-tune appliances in the Loads tab.</div>`;
+    },
+    validate(){ return true; } // optional
+  },
+  {
+    title:'4 — Where do you travel?',
+    content(){
+      return `<p>Your location sets the <strong>peak sun hours</strong> — the biggest variable in solar sizing.</p>
+      <div class="onboard-choice-grid">
+        <div class="onboard-choice" onclick="obSelect(this,'region','aus-sunny')" data-key="region" data-val="aus-sunny"><strong>🇦🇺 Aus — Sunny</strong><span>QLD, WA, NT (5.5–6.5 hrs)</span></div>
+        <div class="onboard-choice" onclick="obSelect(this,'region','aus-south')" data-key="region" data-val="aus-south"><strong>🇦🇺 Aus — Southern</strong><span>VIC, TAS, SA (4.5–5.2 hrs)</span></div>
+        <div class="onboard-choice" onclick="obSelect(this,'region','nz')" data-key="region" data-val="nz"><strong>🇳🇿 New Zealand</strong><span>4.5–5.2 hrs average</span></div>
+        <div class="onboard-choice" onclick="obSelect(this,'region','us-sunny')" data-key="region" data-val="us-sunny"><strong>🇺🇸 USA — Sunbelt</strong><span>AZ, CA, FL (5.5–6.5 hrs)</span></div>
+        <div class="onboard-choice" onclick="obSelect(this,'region','us-north')" data-key="region" data-val="us-north"><strong>🇺🇸 USA — Northern</strong><span>PNW, NE states (3.5–4.5 hrs)</span></div>
+        <div class="onboard-choice" onclick="obSelect(this,'region','europe')" data-key="region" data-val="europe"><strong>🇪🇺 Europe / UK</strong><span>2.0–4.5 hrs varies widely</span></div>
+      </div>`;
+    },
+    validate(state){ return !!state.region; }
+  },
+  {
+    title:'5 — Ready to go!',
+    content(state){
+      // Map answers to recommendations
+      const voltMap={van:'12V',caravan:'12V',motorhome:state.style==='fulltime'?'48V':'24V',boat:'12V'};
+      const autoMap={weekend:1,touring:2,offgrid:3,fulltime:3};
+      const pshMap={'aus-sunny':6.0,'aus-south':4.8,'nz':4.8,'us-sunny':6.0,'us-north':4.0,'europe':3.5};
+      const volt=voltMap[state.rig]||'12V';
+      const auto=autoMap[state.style]||2;
+      const psh=pshMap[state.region]||5.0;
+      const hasAC=(state.loads||[]).includes('aircon');
+      const hasMW=(state.loads||[]).includes('microwave');
+      const bigAC=hasAC||hasMW;
+      state._volt=volt; state._auto=auto; state._psh=psh;
+      return `<p>Based on your answers, here's what we recommend as a starting point:</p>
+      <table style="width:100%;border-collapse:collapse;font-size:13px;margin:8px 0 16px;">
+        <tr style="border-bottom:1px solid var(--border)"><td style="padding:7px 0;color:var(--muted);font-weight:600;">DC Voltage</td><td style="padding:7px 0;font-weight:700;color:var(--accent);">${volt}</td></tr>
+        <tr style="border-bottom:1px solid var(--border)"><td style="padding:7px 0;color:var(--muted);font-weight:600;">Battery Type</td><td style="padding:7px 0;font-weight:700;">LiFePO4 (80% DoD)</td></tr>
+        <tr style="border-bottom:1px solid var(--border)"><td style="padding:7px 0;color:var(--muted);font-weight:600;">Autonomy</td><td style="padding:7px 0;font-weight:700;">${auto} day${auto>1?'s':''}</td></tr>
+        <tr><td style="padding:7px 0;color:var(--muted);font-weight:600;">Peak Sun Hours</td><td style="padding:7px 0;font-weight:700;">${psh} hrs/day</td></tr>
+      </table>
+      ${bigAC?`<div class="onboard-tip">⚠️ You selected AC loads (aircon/microwave). These need a large inverter and substantial battery bank. The app will flag if your system needs to be 24V or 48V.</div>`:''}
+      <p style="font-size:13px;color:var(--muted);">Click <strong>Apply & Start</strong> to load these settings, then add your appliances. You can change everything at any time.</p>`;
+    },
+    validate(){ return true; }
+  }
+];
+
+let obState={};
+let obStep=0;
+
+function obSelect(el,key,val){
+  document.querySelectorAll(`.onboard-choice[data-key="${key}"]`).forEach(e=>e.classList.remove('selected'));
+  el.classList.add('selected');
+  obState[key]=val;
+}
+function obToggle(el,key,val){
+  if(!obState[key]) obState[key]=[];
+  const i=obState[key].indexOf(val);
+  if(i>=0){ obState[key].splice(i,1); el.classList.remove('selected'); }
+  else { obState[key].push(val); el.classList.add('selected'); }
+}
+
+function renderOnboardStep(){
+  const step=ONBOARD_STEPS[obStep];
+  const body=document.getElementById('onboard-body');
+  const dots=document.getElementById('onboard-dots');
+  const prog=document.getElementById('onboard-prog');
+  const backBtn=document.getElementById('onboard-back');
+  const nextBtn=document.getElementById('onboard-next');
+
+  body.innerHTML=`<div class="onboard-step active"><h3>${step.title}</h3>${step.content(obState)}</div>`;
+  dots.innerHTML=ONBOARD_STEPS.map((_,i)=>`<div class="onboard-step-dot ${i<obStep?'done':i===obStep?'active':''}">${i<obStep?'✓':'Step '+(i+1)}</div>`).join('');
+  prog.textContent=`${obStep+1} of ${ONBOARD_STEPS.length}`;
+  backBtn.style.display=obStep>0?'':'none';
+  nextBtn.textContent=obStep===ONBOARD_STEPS.length-1?'Apply & Start ✓':'Next →';
+
+  // Restore selections for toggle/select steps
+  const key=obStep===2?'loads':['rig','style',null,'region',null][obStep];
+  if(key&&obState[key]){
+    const vals=Array.isArray(obState[key])?obState[key]:[obState[key]];
+    vals.forEach(v=>{
+      const el=document.querySelector(`.onboard-choice[data-key="${key}"][data-val="${v}"]`);
+      if(el) el.classList.add('selected');
+    });
+  }
+}
+
+function onboardNav(dir){
+  if(dir===1){
+    const step=ONBOARD_STEPS[obStep];
+    if(step.validate&&!step.validate(obState)){
+      // shake the next button
+      const nb=document.getElementById('onboard-next');
+      nb.style.animation='none';nb.offsetHeight;
+      nb.style.background='var(--danger)';
+      setTimeout(()=>{nb.style.background='';},600);
+      return;
+    }
+    if(obStep===ONBOARD_STEPS.length-1){ applyOnboard(); return; }
+    obStep++;
+  } else {
+    if(obStep>0) obStep--;
+  }
+  renderOnboardStep();
+}
+
+function applyOnboard(){
+  // Apply settings
+  const voltEl=document.getElementById('sys-voltage');
+  const autoEl=document.getElementById('autonomy-bar');
+  const pshEl=document.getElementById('peak-sun');
+  const battEl=document.getElementById('battery-type-bar');
+  if(voltEl) voltEl.value=parseInt(obState._volt)||12;
+  if(autoEl) autoEl.value=obState._auto||2;
+  if(pshEl)  pshEl.value=obState._psh||5;
+  if(battEl) battEl.value=0.8; // LiFePO4
+  // Trigger voltage change to sync battery-type
+  if(voltEl) voltEl.dispatchEvent(new Event('change'));
+  recalc();
+  closeOnboard();
+  // Load best-match template or suggest it
+  const styleTemplateMap={weekend:0,touring:1,offgrid:8,fulltime:4};
+  const tIdx=styleTemplateMap[obState.style];
+  if(tIdx!==undefined){
+    setTimeout(()=>{
+      const banner=document.getElementById('onboard-template-banner');
+      if(banner){
+        const t=QUICK_TEMPLATES[tIdx];
+        banner.innerHTML=`<div class="alert alert-info" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;">
+          <span>💡 Based on your setup, <strong>${t.name}</strong> is a good starting point for your appliances.</span>
+          <button class="btn btn-primary" style="font-size:12px;padding:6px 14px;" onclick="loadTemplate(${tIdx});this.closest('.alert').remove();">Load Template</button>
+        </div>`;
+        banner.style.display='block';
+      }
+    },300);
+  }
+}
+
+function closeOnboard(){
+  document.getElementById('onboard-overlay').classList.add('hidden');
+  localStorage.setItem('ob-done','1');
+}
+
+function showOnboard(){
+  obStep=0; obState={};
+  document.getElementById('onboard-overlay').classList.remove('hidden');
+  renderOnboardStep();
+}
+
 // ===================== INIT =====================
 renderTable();
 recalc();
@@ -2145,6 +3211,324 @@ drawGauge(0,5000);
 renderSavedList();
 renderDiagram();
 loadSharedConfig();
+// Show onboarding on first visit (not if arriving via shared config)
+if(!localStorage.getItem('ob-done')&&!window.location.search.includes('cfg=')){ showOnboard(); }
+
+// ===================== WEATHER SIMULATION =====================
+
+let simState = null; // cached last simulation result
+
+function simCheckPrereqs(){
+  const loc = document.getElementById('location-pick')?.value;
+  const hasCoords = loc && LOCATION_COORDS[loc];
+  const prereq = document.getElementById('sim-prereq');
+  const controls = document.getElementById('sim-controls');
+  if(!prereq||!controls) return;
+  if(hasCoords){
+    prereq.style.display='none';
+    controls.style.display='block';
+  } else {
+    prereq.style.display='block';
+    controls.style.display='none';
+    document.getElementById('sim-results').style.display='none';
+  }
+}
+
+async function runWeatherSim(){
+  const loc = document.getElementById('location-pick')?.value;
+  const coords = LOCATION_COORDS[loc];
+  if(!coords){ alert('Please select a named location first.'); return; }
+
+  const c = getCalcs();
+  if(c.totalWh < 10){ alert('Add some appliances first so there is a load to simulate against.'); return; }
+
+  const btn = document.getElementById('sim-run-btn');
+  const status = document.getElementById('sim-status');
+  const errEl = document.getElementById('sim-error');
+  const results = document.getElementById('sim-results');
+
+  btn.disabled = true;
+  btn.textContent = '⏳ Fetching data…';
+  status.textContent = 'Contacting Open-Meteo historical archive…';
+  errEl.style.display = 'none';
+  results.style.display = 'none';
+
+  // Date range: last 30 complete days (end = yesterday to ensure data exists)
+  const endDate = new Date();
+  endDate.setDate(endDate.getDate() - 2); // 2 days back to ensure archive is ready
+  const startDate = new Date(endDate);
+  startDate.setDate(startDate.getDate() - 29); // 30 days total
+
+  const fmt = d => d.toISOString().split('T')[0];
+  const url = `https://archive-api.open-meteo.com/v1/archive?latitude=${coords.lat}&longitude=${coords.lng}&start_date=${fmt(startDate)}&end_date=${fmt(endDate)}&daily=shortwave_radiation_sum&timezone=auto`;
+
+  try {
+    status.textContent = 'Downloading solar radiation data…';
+    const resp = await fetch(url);
+    if(!resp.ok) throw new Error(`API error ${resp.status}`);
+    const data = await resp.json();
+
+    if(!data.daily?.shortwave_radiation_sum) throw new Error('Unexpected API response format');
+
+    const radiation = data.daily.shortwave_radiation_sum; // MJ/m² per day
+    const dates = data.daily.time;
+
+    status.textContent = 'Running simulation…';
+    await new Promise(r => setTimeout(r, 50)); // let UI update
+
+    const startSoc = parseFloat(document.getElementById('sim-start-soc').value);
+    const derate = parseFloat(document.getElementById('sim-derate').value);
+
+    simState = runSimulation(c, radiation, dates, startSoc, derate);
+    renderSimResults(simState, c, loc);
+
+    status.textContent = `Simulation complete · data from ${fmt(startDate)} to ${fmt(endDate)}`;
+  } catch(err) {
+    console.error('Sim error:', err);
+    status.textContent = '';
+    errEl.style.display = 'block';
+    errEl.innerHTML = `<div class="alert alert-err">⚠️ Could not fetch weather data: ${err.message}.<br>Check your internet connection or try again. Falling back to PSH estimate is not available in offline mode.</div>`;
+  } finally {
+    btn.disabled = false;
+    btn.textContent = '▶ Run Simulation';
+  }
+}
+
+function runSimulation(c, radiation, dates, startSoc, derate){
+  // Battery capacity in Wh (usable)
+  const battWh = c.recAh * c.voltage * c.dod;
+  const dailyLoadWh = c.totalWh;
+  const solarW = c.solarW;
+
+  let soc = startSoc; // 0.0 – 1.0
+  const days = [];
+  let deficitDays = 0, criticalDays = 0, surplusDays = 0;
+  let totalProduced = 0, totalConsumed = 0;
+  let minSoc = 1, worstDay = null;
+
+  for(let i = 0; i < radiation.length; i++){
+    const rad = radiation[i]; // MJ/m²
+    // Convert to PSH: 1 MJ/m² = 0.2778 kWh/m²; PSH = kWh/m² (1000W/m² reference)
+    const psh = rad * 0.2778;
+    // Panel output today (Wh)
+    const produced = psh * solarW * derate;
+    const net = produced - dailyLoadWh;
+    totalProduced += produced;
+    totalConsumed += dailyLoadWh;
+
+    // Update SoC
+    const prevSoc = soc;
+    if(net >= 0){
+      soc = Math.min(1.0, soc + net / battWh);
+      surplusDays++;
+    } else {
+      soc = Math.max(0, soc + net / battWh);
+      if(soc < 0.20) criticalDays++;
+      else if(net < 0) deficitDays++;
+    }
+
+    if(soc < minSoc){ minSoc = soc; worstDay = dates[i]; }
+
+    days.push({
+      date: dates[i],
+      psh: psh.toFixed(1),
+      produced: Math.round(produced),
+      consumed: Math.round(dailyLoadWh),
+      net: Math.round(net),
+      soc: Math.round(soc * 100),
+      deficit: net < 0
+    });
+  }
+
+  return {
+    days, deficitDays, criticalDays, surplusDays,
+    minSoc: Math.round(minSoc * 100),
+    worstDay,
+    avgProduced: Math.round(totalProduced / radiation.length),
+    avgConsumed: Math.round(totalConsumed / radiation.length),
+    totalDays: radiation.length,
+    battWh: Math.round(battWh)
+  };
+}
+
+function renderSimResults(sim, c, loc){
+  const results = document.getElementById('sim-results');
+  results.style.display = 'block';
+
+  // Verdict banner
+  const verdictEl = document.getElementById('sim-verdict');
+  let verdictHtml = '';
+  const goodDays = sim.totalDays - sim.deficitDays - sim.criticalDays;
+
+  if(sim.criticalDays === 0 && sim.deficitDays <= 2){
+    verdictHtml = `<div style="background:linear-gradient(135deg,#0a7c54,#0d9668);color:#fff;border-radius:10px;padding:14px 18px;display:flex;align-items:center;gap:12px;">
+      <span style="font-size:28px;">✅</span>
+      <div><strong style="font-size:15px;">System would cope well</strong><br>
+      <span style="font-size:13px;opacity:.9;">Only ${sim.deficitDays} deficit day${sim.deficitDays!==1?'s':''} in 30 days. Battery stayed above 20% throughout.</span></div>
+    </div>`;
+  } else if(sim.criticalDays <= 3){
+    verdictHtml = `<div style="background:linear-gradient(135deg,#b45309,#d97706);color:#fff;border-radius:10px;padding:14px 18px;display:flex;align-items:center;gap:12px;">
+      <span style="font-size:28px;">⚠️</span>
+      <div><strong style="font-size:15px;">System would struggle occasionally</strong><br>
+      <span style="font-size:13px;opacity:.9;">${sim.criticalDays} day${sim.criticalDays!==1?'s':''} below 20% SoC. Consider adding ${Math.round(c.solarW * 0.25 / 50)*50}W more solar or a generator for extended cloudy periods.</span></div>
+    </div>`;
+  } else {
+    verdictHtml = `<div style="background:linear-gradient(135deg,#c0392b,#e74c3c);color:#fff;border-radius:10px;padding:14px 18px;display:flex;align-items:center;gap:12px;">
+      <span style="font-size:28px;">🔴</span>
+      <div><strong style="font-size:15px;">System undersized for this location</strong><br>
+      <span style="font-size:13px;opacity:.9;">${sim.criticalDays} critical days (battery &lt;20%) in 30 days. Recommend increasing solar array or battery capacity significantly.</span></div>
+    </div>`;
+  }
+  verdictEl.innerHTML = verdictHtml;
+
+  // Stats chips
+  const statsEl = document.getElementById('sim-stats');
+  const chip = (val, label, col) => `<div style="background:var(--surface2);border:1.5px solid var(--border);border-radius:8px;padding:10px 14px;text-align:center;min-width:90px;">
+    <div style="font-family:var(--mf);font-size:20px;font-weight:700;color:${col};">${val}</div>
+    <div style="font-size:11px;color:var(--muted);margin-top:2px;">${label}</div>
+  </div>`;
+  statsEl.innerHTML =
+    chip(sim.days.filter(d=>!d.deficit).length, 'Surplus days', 'var(--accent2)') +
+    chip(sim.deficitDays, 'Deficit days', 'var(--accent)') +
+    chip(sim.criticalDays, 'Critical days<br><span style="font-size:9px;">SoC&lt;20%</span>', 'var(--danger)') +
+    chip(sim.minSoc+'%', 'Lowest SoC', sim.minSoc < 20 ? 'var(--danger)' : sim.minSoc < 50 ? '#d97706' : 'var(--accent2)') +
+    chip(sim.avgProduced+'Wh', 'Avg daily<br>production', 'var(--accent3)') +
+    chip(sim.avgConsumed+'Wh', 'Daily load', 'var(--muted)');
+
+  // Draw chart
+  drawSimChart(sim);
+
+  // Daily table (last 14 days condensed, full 30 expandable)
+  renderSimTable(sim);
+}
+
+function drawSimChart(sim){
+  const canvas = document.getElementById('sim-chart');
+  if(!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const dpr = window.devicePixelRatio || 1;
+  const rect = canvas.parentElement.getBoundingClientRect();
+  canvas.width = rect.width * dpr;
+  canvas.height = 200 * dpr;
+  canvas.style.width = rect.width + 'px';
+  canvas.style.height = '200px';
+  ctx.scale(dpr, dpr);
+
+  const W = rect.width, H = 200;
+  const pad = {top:16, right:16, bottom:28, left:42};
+  const cw = W - pad.left - pad.right;
+  const ch = H - pad.top - pad.bottom;
+
+  ctx.clearRect(0,0,W,H);
+
+  // Background bands
+  const bands = [{y0:0,y1:20,col:'rgba(192,57,43,.08)'},{y0:20,y1:50,col:'rgba(212,149,0,.07)'},{y0:50,y1:100,col:'rgba(10,124,84,.05)'}];
+  bands.forEach(b=>{
+    const by0 = pad.top + ch * (1 - b.y1/100);
+    const by1 = pad.top + ch * (1 - b.y0/100);
+    ctx.fillStyle = b.col;
+    ctx.fillRect(pad.left, by0, cw, by1-by0);
+  });
+
+  // Grid lines
+  ctx.strokeStyle = '#e2e8f0'; ctx.lineWidth = 0.5;
+  [0,20,50,80,100].forEach(v=>{
+    const y = pad.top + ch * (1 - v/100);
+    ctx.beginPath(); ctx.moveTo(pad.left, y); ctx.lineTo(pad.left+cw, y); ctx.stroke();
+    ctx.fillStyle='#94a3b8'; ctx.font='10px system-ui'; ctx.textAlign='right';
+    ctx.fillText(v+'%', pad.left-4, y+3);
+  });
+
+  // X axis labels (every 5 days)
+  ctx.fillStyle='#94a3b8'; ctx.font='9px system-ui'; ctx.textAlign='center';
+  sim.days.forEach((d,i)=>{
+    if(i%5===0||i===sim.days.length-1){
+      const x = pad.left + (i/(sim.days.length-1))*cw;
+      const label = d.date.slice(5); // MM-DD
+      ctx.fillText(label, x, H-6);
+    }
+  });
+
+  // Filled area under SoC line
+  ctx.beginPath();
+  sim.days.forEach((d,i)=>{
+    const x = pad.left + (i/(sim.days.length-1))*cw;
+    const y = pad.top + ch*(1-d.soc/100);
+    if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+  });
+  // Close path at bottom
+  ctx.lineTo(pad.left+cw, pad.top+ch);
+  ctx.lineTo(pad.left, pad.top+ch);
+  ctx.closePath();
+  const grad = ctx.createLinearGradient(0, pad.top, 0, pad.top+ch);
+  grad.addColorStop(0,'rgba(26,95,191,.25)');
+  grad.addColorStop(1,'rgba(26,95,191,.02)');
+  ctx.fillStyle = grad;
+  ctx.fill();
+
+  // SoC line — colour changes by zone
+  for(let i=1; i<sim.days.length; i++){
+    const x0 = pad.left + ((i-1)/(sim.days.length-1))*cw;
+    const x1 = pad.left + (i/(sim.days.length-1))*cw;
+    const y0 = pad.top + ch*(1-sim.days[i-1].soc/100);
+    const y1 = pad.top + ch*(1-sim.days[i].soc/100);
+    const soc = sim.days[i].soc;
+    ctx.strokeStyle = soc < 20 ? '#e74c3c' : soc < 50 ? '#d97706' : '#1a5fbf';
+    ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.moveTo(x0,y0); ctx.lineTo(x1,y1); ctx.stroke();
+  }
+
+  // Dots for critical days
+  sim.days.forEach((d,i)=>{
+    if(d.soc < 20){
+      const x = pad.left + (i/(sim.days.length-1))*cw;
+      const y = pad.top + ch*(1-d.soc/100);
+      ctx.beginPath(); ctx.arc(x,y,3,0,Math.PI*2);
+      ctx.fillStyle='#e74c3c'; ctx.fill();
+    }
+  });
+}
+
+function renderSimTable(sim){
+  const el = document.getElementById('sim-daily-table');
+  let h = `<details style="margin-top:8px;">
+    <summary style="cursor:pointer;font-size:12px;font-weight:600;color:var(--accent3);padding:6px 0;">📋 View daily breakdown (${sim.totalDays} days)</summary>
+    <div style="overflow-x:auto;margin-top:8px;">
+    <table class="spec-table" style="font-size:11px;">
+      <thead><tr>
+        <th>Date</th><th>PSH</th><th>Produced</th><th>Load</th><th>Net</th><th>SoC</th>
+      </tr></thead><tbody>`;
+  sim.days.forEach(d=>{
+    const socCol = d.soc < 20 ? 'var(--danger)' : d.soc < 50 ? '#d97706' : 'var(--accent2)';
+    const netCol = d.net >= 0 ? 'var(--accent2)' : 'var(--danger)';
+    const rowBg = d.soc < 20 ? 'background:rgba(192,57,43,.06);' : '';
+    h += `<tr style="${rowBg}">
+      <td style="font-family:var(--mf);font-size:10px;">${d.date}</td>
+      <td style="font-family:var(--mf);">${d.psh}h</td>
+      <td style="font-family:var(--mf);color:var(--accent3);">${d.produced}Wh</td>
+      <td style="font-family:var(--mf);color:var(--muted);">${d.consumed}Wh</td>
+      <td style="font-family:var(--mf);color:${netCol};font-weight:600;">${d.net>=0?'+':''}${d.net}Wh</td>
+      <td style="font-family:var(--mf);color:${socCol};font-weight:700;">${d.soc}%</td>
+    </tr>`;
+  });
+  h += '</tbody></table></div></details>';
+  el.innerHTML = h;
+}
+
+// Hook applyLocation to also refresh prereq check
+const _origApplyLocation = applyLocation;
+applyLocation = function(){
+  _origApplyLocation();
+  simCheckPrereqs();
+};
+
+// Hook showTab to trigger prereq check when sizing tab opens
+const _origShowTabSim = showTab;
+showTab = function(name, e){
+  _origShowTabSim(name, e);
+  if(name==='sizing') setTimeout(simCheckPrereqs, 50);
+};
+
 </script>
 </body>
 </html>
