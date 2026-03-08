@@ -20,12 +20,11 @@
   header p{font-size:11px;color:#93afd4;text-transform:uppercase;letter-spacing:1px;margin-top:2px;}
   .back-btn{background:var(--accent);color:#1a1000;font-family:var(--bf);font-size:13px;font-weight:700;padding:9px 20px;border-radius:7px;text-decoration:none;}
   .back-btn:hover{background:#d4900a;}
-  .container{max-width:900px;margin:0 auto;padding:32px 24px 60px;}
+  .container{max-width:920px;margin:0 auto;padding:32px 24px 60px;}
   .toc{background:var(--surface);border:1.5px solid var(--border);border-radius:12px;padding:22px 26px;margin-bottom:36px;}
   .toc h2{font-family:var(--hf);font-size:20px;letter-spacing:1px;color:var(--text);margin-bottom:14px;}
-  .toc ol{padding-left:20px;}
-  .toc li{margin-bottom:6px;}
-  .toc a{color:var(--accent3);text-decoration:none;font-size:14px;font-weight:500;}
+  .toc-grid{display:grid;grid-template-columns:1fr 1fr;gap:4px 24px;}
+  .toc a{color:var(--accent3);text-decoration:none;font-size:14px;font-weight:500;display:block;padding:3px 0;}
   .toc a:hover{text-decoration:underline;}
   .section{background:var(--surface);border:1.5px solid var(--border);border-radius:12px;padding:28px 30px;margin-bottom:28px;scroll-margin-top:24px;}
   .section h2{font-family:var(--hf);font-size:24px;letter-spacing:1.5px;color:var(--text);margin-bottom:16px;padding-bottom:10px;border-bottom:2px solid var(--border);}
@@ -46,6 +45,10 @@
   .formula{font-family:var(--mf);background:var(--surface2);border:1.5px solid var(--border);border-radius:6px;padding:11px 14px;font-size:12px;color:var(--accent2);font-weight:600;margin:10px 0;}
   .badge{display:inline-block;font-size:10px;padding:2px 7px;border-radius:4px;font-weight:700;margin:0 3px;font-family:var(--mf);}
   .badge.new{background:var(--accent2-bg);color:var(--accent2);border:1px solid #3bb389;}
+  .badge.upd{background:var(--accent-bg);color:var(--accent);border:1px solid #c47f00;}
+  .step-list{counter-reset:steps;padding:0;list-style:none;}
+  .step-list li{counter-increment:steps;display:flex;gap:14px;margin-bottom:14px;align-items:flex-start;}
+  .step-list li::before{content:counter(steps);background:var(--accent3);color:#fff;border-radius:50%;width:26px;height:26px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px;flex-shrink:0;margin-top:1px;}
   footer{text-align:center;padding:28px;font-size:12px;color:var(--muted);border-top:1px solid var(--border);}
 </style>
 </head>
@@ -53,7 +56,7 @@
 <header>
   <div>
     <h1>RV Power Designer</h1>
-    <p>Complete Help Guide &mdash; System Sizing &amp; Build Planner</p>
+    <p>Complete Help Guide &mdash; System Sizing, Wiring &amp; Build Planner</p>
   </div>
   <a href="https://kbcianfa.github.io/RVPowerSystems/index.html" class="back-btn">&larr; Back to App</a>
 </header>
@@ -61,276 +64,401 @@
 
 <div class="toc">
   <h2>&#128203; Contents</h2>
-  <ol>
-    <li><a href="#s1">Getting Started</a></li>
-    <li><a href="#s2">System Settings Bar</a></li>
-    <li><a href="#s3">Quick Templates</a></li>
-    <li><a href="#s4">Adding Appliances</a></li>
-    <li><a href="#s5">Advanced Preferences &mdash; Location, Roof Space &amp; Charging Sources</a></li>
-    <li><a href="#s6">Understanding Sizing Results</a></li>
-    <li><a href="#s7">Simulation &mdash; Recharge, SoC &amp; Cloudy Days</a></li>
-    <li><a href="#s8">Component Selector &amp; Shopping List</a></li>
-    <li><a href="#s9">Build System &mdash; Auto-Suggest</a></li>
-    <li><a href="#s10">Wiring Guide</a></li>
-    <li><a href="#s11">Saving, Exporting &amp; Sharing</a></li>
-    <li><a href="#s12">Accuracy &amp; Limitations</a></li>
-    <li><a href="#s13">FAQ</a></li>
-  </ol>
+  <div class="toc-grid">
+    <div>
+      <a href="#s1">1 &mdash; Getting Started (Setup Guide)</a>
+      <a href="#s2">2 &mdash; System Settings Bar</a>
+      <a href="#s3">3 &mdash; Quick Templates</a>
+      <a href="#s4">4 &mdash; Adding Appliances</a>
+      <a href="#s5">5 &mdash; Location &amp; Seasonal Sun Hours</a>
+      <a href="#s6">6 &mdash; Understanding Sizing Results</a>
+      <a href="#s7">7 &mdash; 30-Day Weather Simulation</a>
+      <a href="#s9">9 &mdash; Compatibility Validation</a>
+    </div>
+    <div>
+      <a href="#s8">8 &mdash; ABYC Wire Sizing Calculator</a>
+      <a href="#s10">10 &mdash; Solar Generator Finder</a>
+      <a href="#s11">11 &mdash; Component Selector &amp; Shopping List</a>
+      <a href="#s12">12 &mdash; Build System &mdash; Auto-Suggest</a>
+      <a href="#s13">13 &mdash; Wiring Guide &amp; System Diagram</a>
+      <a href="#s14">14 &mdash; Saving, Exporting &amp; Sharing</a>
+      <a href="#s15">15 &mdash; Accuracy &amp; Limitations</a>
+      <a href="#s15">15 &mdash; Accuracy &amp; Limitations</a>
+      <a href="#s16">16 &mdash; FAQ</a>
+    </div>
+  </div>
 </div>
 
 <div class="section" id="s1">
-  <h2>1 &mdash; Getting Started</h2>
-  <p>RV Power Designer helps you size a complete off-grid power system for a caravan, motorhome, van, or boat. The workflow is:</p>
-  <ol>
-    <li><strong>Set system voltage and battery type</strong> in the Settings Bar (always visible below the tabs).</li>
-    <li><strong>Load a Quick Template</strong> or add your own appliances in the Loads tab.</li>
-    <li><strong>Check Sizing Results</strong> &mdash; battery Ah, solar W, inverter VA, recharge time, SoC, and cloudy-day simulation.</li>
-    <li><strong>Pick components</strong> in the Component Selector, or click <strong>&#128296; Build System</strong> to auto-select.</li>
-    <li><strong>Export or share</strong> your design from the Saved tab.</li>
+  <h2>1 &mdash; Getting Started <span class="badge new">NEW</span></h2>
+  <p>When you open RV Power Designer for the first time, the <strong>Setup Guide</strong> walks you through five quick questions to configure your system correctly from the start. You can relaunch it any time using the <strong>&#x1F9ED; Setup Guide</strong> button in the settings bar.</p>
+  <h3>The 5-Step Setup Guide</h3>
+  <ol class="step-list">
+    <li><strong>Rig type</strong> &mdash; van, caravan, motorhome, or boat. Informs the voltage recommendation.</li>
+    <li><strong>Camping style</strong> &mdash; weekends, extended touring, off-grid boondocking, or full-time living. Sets autonomy days.</li>
+    <li><strong>Key loads</strong> &mdash; tick everything you plan to run (fridge, aircon, laptop, TV, Starlink, microwave). Multi-select, optional.</li>
+    <li><strong>Travel region</strong> &mdash; sets peak sun hours. Six regions covering Australia, NZ, USA, and Europe.</li>
+    <li><strong>Review &amp; apply</strong> &mdash; shows recommended voltage, battery type, autonomy, and sun hours. Click <em>Apply &amp; Start</em>.</li>
   </ol>
-  <div class="callout tip">All calculations update live &mdash; every change immediately recalculates every result across all tabs.</div>
+  <div class="callout tip">After applying, a banner in the Loads tab suggests the closest Quick Template to your setup. Load it as a starting point, then adjust individual appliances to match your actual gear.</div>
+  <h3>Recommended Workflow</h3>
+  <ol class="step-list">
+    <li>Run the <strong>Setup Guide</strong> or set voltage and battery type manually in the Settings Bar.</li>
+    <li>Load a <strong>Quick Template</strong> or add your own appliances in the Loads tab.</li>
+    <li>Review <strong>Sizing Results</strong> &mdash; battery Ah, solar W, inverter VA, recharge time, SoC.</li>
+    <li>Check <strong>Compatibility Validation</strong> alerts in the Sizing tab for wiring or voltage issues.</li>
+    <li>Open the <strong>Wiring tab</strong> and enter cable run lengths to get ABYC-compliant wire sizes.</li>
+    <li>Use <strong>&#x1F528; Build System</strong> to auto-select components, then review the Shopping List.</li>
+    <li><strong>Save</strong> your design, or <strong>Share</strong> it via URL.</li>
+  </ol>
+  <div class="callout info">All calculations update live &mdash; every change immediately recalculates every result across all tabs.</div>
 </div>
 
 <div class="section" id="s2">
   <h2>2 &mdash; System Settings Bar</h2>
-  <p>The dark navy bar below the tabs is always visible. It contains the four most-used settings:</p>
+  <p>The dark navy bar below the tabs is always visible. It contains the four core settings plus action buttons.</p>
   <table>
     <tr><th>Setting</th><th>Options</th><th>Notes</th></tr>
     <tr><td><strong>DC Voltage</strong></td><td>12V / 24V / 48V</td><td>Most caravans are 12V. 24V suits larger rigs. 48V for high-power full-time systems.</td></tr>
-    <tr><td><strong>AC Mains</strong></td><td>240V / 120V</td><td>240V = Australia, NZ, UK, Europe. 120V = North America, Japan.</td></tr>
-    <tr><td><strong>Battery Type</strong></td><td>AGM (50%) &middot; Gel (40%) &middot; Flooded LA (50%) &middot; LiFePO4 (80%) &middot; LiFePO4 Premium (90%)</td><td>Percentage = Depth of Discharge used in calculations.</td></tr>
-    <tr><td><strong>Autonomy</strong></td><td>1&ndash;5 days</td><td>Days the battery must run without any charge input.</td></tr>
+    <tr><td><strong>AC Mains</strong></td><td>240V / 120V</td><td>240V = Australia, NZ, UK, Europe. 120V = North America.</td></tr>
+    <tr><td><strong>Battery Type</strong></td><td>AGM (50%) &middot; Gel (40%) &middot; Flooded LA (50%) &middot; LiFePO4 (80%) &middot; LiFePO4 Premium (90%)</td><td>Percentage = Depth of Discharge used in all calculations.</td></tr>
+    <tr><td><strong>Autonomy</strong></td><td>1&ndash;5 days</td><td>Days the battery bank must run without any solar or charge input.</td></tr>
+    <tr><td><strong>&#x1F9ED; Setup Guide</strong></td><td>Button</td><td>Relaunches the onboarding wizard at any time.</td></tr>
+    <tr><td><strong>&#x1F528; Build System</strong></td><td>Button</td><td>Auto-selects recommended components based on your sizing results.</td></tr>
   </table>
-  <div class="callout info">A yellow tip appears when you select 24V or 48V, noting the wiring implications.</div>
   <h3>Which voltage should I choose?</h3>
   <table>
-    <tr><th>Voltage</th><th>Best For</th><th>Advantage</th></tr>
-    <tr><td>12V</td><td>Vans, small caravans, systems under ~200Ah / 400W solar</td><td>Widest component availability</td></tr>
-    <tr><td>24V</td><td>Mid-size rigs, 200&ndash;600Ah banks, 400&ndash;1500W solar</td><td>Half the current of 12V &mdash; lighter wiring</td></tr>
-    <tr><td>48V</td><td>Full-time living, large AC loads, coaches</td><td>Quarter the current &mdash; highest efficiency</td></tr>
+    <tr><th>Voltage</th><th>Best For</th><th>Key Advantage</th><th>Watch Out For</th></tr>
+    <tr><td><strong>12V</strong></td><td>Vans, small caravans, &lt;200Ah / &lt;400W solar</td><td>Widest component availability, native RV compatibility</td><td>High current = heavy cables above 400W</td></tr>
+    <tr><td><strong>24V</strong></td><td>Mid-size rigs, 200&ndash;600Ah, 400&ndash;1500W solar</td><td>Half the current of 12V &mdash; lighter wiring</td><td>Requires DC-DC converter for 12V RV loads</td></tr>
+    <tr><td><strong>48V</strong></td><td>Full-time living, large AC loads, coaches</td><td>Quarter the current &mdash; highest efficiency</td><td>Requires DC-DC for all 12V loads; fewer DC appliances available</td></tr>
   </table>
+  <div class="callout warn">24V and 48V systems require a DC-DC step-down converter (e.g. Victron Orion-Tr) between the battery bank and your RV's native 12V circuits. The app will flag this in Compatibility alerts.</div>
 </div>
 
 <div class="section" id="s3">
-  <h2>3 &mdash; Quick Templates <span class="badge new">NEW</span></h2>
-  <p>Click <strong>&#9889; Quick Templates</strong> in the Loads tab toolbar to open a grid of 10 pre-built caravan setups. Each card loads all appliances and sets voltage, battery type, autonomy, sun hours, and derate automatically.</p>
+  <h2>3 &mdash; Quick Templates</h2>
+  <p>Click <strong>&#x26A1; Quick Templates</strong> in the Loads tab toolbar to open a grid of 10 pre-built RV setups. Each loads all appliances and configures voltage, battery type, autonomy, and sun hours automatically.</p>
   <table>
-    <tr><th>Template</th><th>Voltage</th><th>Battery</th><th>Solar</th><th>Use Case</th></tr>
-    <tr><td>&#127957; Weekend Warrior</td><td>12V</td><td>100Ah LiFePO4</td><td>200W</td><td>Couple, 2-night trips, basic loads</td></tr>
-    <tr><td>&#128656; Off-Grid Family Tourer</td><td>12V</td><td>200Ah LiFePO4</td><td>400W</td><td>Family of 4, week-long trips</td></tr>
-    <tr><td>&#128188; Starlink + Work Rig</td><td>12V</td><td>200Ah LiFePO4</td><td>400W</td><td>Remote work, video calls, Starlink</td></tr>
-    <tr><td>&#128176; Budget AGM Setup</td><td>12V</td><td>200Ah AGM</td><td>200W</td><td>Budget-first build, simple loads</td></tr>
-    <tr><td>&#128652; Full-Time Liveaboard</td><td>24V</td><td>400Ah LiFePO4</td><td>800W</td><td>Full-time, CPAP, full kitchen</td></tr>
-    <tr><td>&#128656; Van Build (Stealth)</td><td>12V</td><td>100Ah LiFePO4</td><td>200W</td><td>Minimalist van life, low profile</td></tr>
-    <tr><td>&#128052; Horse Float / Toy Hauler</td><td>12V</td><td>100Ah LiFePO4</td><td>200W</td><td>Lighting, water, accessories only</td></tr>
-    <tr><td>&#127968; Luxury Coach (48V)</td><td>48V</td><td>600Ah LiFePO4</td><td>2000W</td><td>Full-time, aircon, all appliances</td></tr>
-    <tr><td>&#9728; Solar Only (Boondocking)</td><td>24V</td><td>300Ah LiFePO4</td><td>600W</td><td>No shore power, solar-maximised</td></tr>
-    <tr><td>&#127957; Hybrid Shore + Solar</td><td>12V</td><td>200Ah LiFePO4</td><td>400W</td><td>Campground + occasional off-grid</td></tr>
+    <tr><th>Template</th><th>Voltage</th><th>Battery</th><th>Typical Solar</th><th>Use Case</th></tr>
+    <tr><td>&#x1F3D5;&#xFE0F; Weekend Warrior</td><td>12V</td><td>LiFePO4</td><td>~200W</td><td>Couple, 2-night trips, basic loads</td></tr>
+    <tr><td>&#x1F690; Off-Grid Family Tourer</td><td>12V</td><td>LiFePO4</td><td>~400W</td><td>Family of 4, week-long trips</td></tr>
+    <tr><td>&#x1F4BC; Starlink + Work Rig</td><td>12V</td><td>LiFePO4</td><td>~400W</td><td>Remote work, Starlink, video calls</td></tr>
+    <tr><td>&#x1F4B0; Budget AGM Setup</td><td>12V</td><td>AGM</td><td>~200W</td><td>Cost-conscious build, entry-level</td></tr>
+    <tr><td>&#x1F68C; Full-Time Liveaboard</td><td>24V</td><td>LiFePO4</td><td>~600W</td><td>Full-time motorhome, all comforts</td></tr>
+    <tr><td>&#x1F690; Van Build (Stealth)</td><td>12V</td><td>LiFePO4</td><td>~300W</td><td>Urban stealth camping, minimal profile</td></tr>
+    <tr><td>&#x1F434; Horse Float / Toy Hauler</td><td>12V</td><td>LiFePO4</td><td>~200W</td><td>Basic lighting, water pump, charging</td></tr>
+    <tr><td>&#x1F3E0; Luxury Coach</td><td>48V</td><td>LiFePO4</td><td>~1200W</td><td>High-end build, aircon, full kitchen</td></tr>
+    <tr><td>&#x2600;&#xFE0F; Solar Only (Boondocking)</td><td>24V</td><td>LiFePO4</td><td>~600W</td><td>Remote bush camping, no shore power</td></tr>
+    <tr><td>&#x1F3D5;&#xFE0F; Hybrid Shore + Solar</td><td>12V</td><td>LiFePO4</td><td>~300W</td><td>Mix of powered sites and free camps</td></tr>
   </table>
-  <div class="callout tip">Templates are a starting point. After loading, add, remove or edit any appliance and adjust any setting freely.</div>
+  <div class="callout tip">Templates are starting points &mdash; add, remove, or adjust appliances freely after loading.</div>
 </div>
 
 <div class="section" id="s4">
   <h2>4 &mdash; Adding Appliances</h2>
-  <p>Each appliance needs: <strong>name</strong>, <strong>watts</strong>, <strong>hours per day</strong>, and <strong>type</strong> (AC or DC). AC loads are divided by inverter efficiency before being added to the battery total.</p>
-  <div class="callout info">A 100W AC appliance at 90% inverter efficiency draws ~111W from the battery. DC loads are used directly with no conversion loss.</div>
-  <h3>Common appliance wattages</h3>
+  <p>The Loads tab is where you build your appliance list. Each appliance has <strong>Name</strong>, <strong>Watts</strong>, and <strong>Hours/day</strong>. The type (AC or DC) determines how the load is calculated.</p>
+  <h3>AC vs DC loads</h3>
   <table>
-    <tr><th>Appliance</th><th>Typical Watts</th><th>Type</th><th>Notes</th></tr>
-    <tr><td>LED Lighting (full rig)</td><td>20&ndash;60W</td><td>DC</td><td>Run natively at 12/24V</td></tr>
-    <tr><td>12V Compressor Fridge 40&ndash;80L</td><td>30&ndash;60W</td><td>DC</td><td>Average draw over ~12&ndash;16 hrs/day</td></tr>
-    <tr><td>Water Pump</td><td>50&ndash;80W</td><td>DC</td><td>Typically 0.3&ndash;1 hr/day</td></tr>
-    <tr><td>12V Roof Vent Fan</td><td>15&ndash;35W</td><td>DC</td><td></td></tr>
-    <tr><td>Starlink Standard</td><td>50&ndash;90W</td><td>DC</td><td>Higher during acquisition</td></tr>
-    <tr><td>Laptop</td><td>45&ndash;90W</td><td>AC</td><td>Varies with CPU load</td></tr>
-    <tr><td>TV 32&ndash;43"</td><td>50&ndash;100W</td><td>AC</td><td></td></tr>
-    <tr><td>TV 55&ndash;65"</td><td>100&ndash;160W</td><td>AC</td><td></td></tr>
-    <tr><td>Microwave (800W rated)</td><td>900&ndash;1100W</td><td>AC</td><td>Rated output &ne; input draw</td></tr>
-    <tr><td>Coffee Maker</td><td>800&ndash;1200W</td><td>AC</td><td>Short runtime &mdash; 0.1&ndash;0.3 hrs/day</td></tr>
-    <tr><td>CPAP (no humidifier)</td><td>30&ndash;40W</td><td>AC</td><td>Use DC converter for efficiency</td></tr>
-    <tr><td>CPAP (with humidifier)</td><td>45&ndash;60W</td><td>AC</td><td></td></tr>
-    <tr><td>Air Conditioner 2.0kW</td><td>700&ndash;1000W</td><td>AC</td><td>Inverter type varies at part load</td></tr>
-    <tr><td>Air Conditioner 3.5kW</td><td>1200&ndash;1800W</td><td>AC</td><td>Measure actual draw if possible</td></tr>
-    <tr><td>Portable Washer</td><td>400&ndash;600W</td><td>AC</td><td></td></tr>
-    <tr><td>Phone charging x1</td><td>10&ndash;18W</td><td>DC</td><td>USB-C fast charge up to 20W</td></tr>
-    <tr><td>WiFi router</td><td>8&ndash;15W</td><td>DC</td><td>Runs 24 hrs typically</td></tr>
+    <tr><th>Type</th><th>Examples</th><th>Effect on battery</th></tr>
+    <tr><td><strong>DC</strong></td><td>12V fridge, LED lights, water pump, fan, USB charging</td><td>Direct draw &mdash; most efficient</td></tr>
+    <tr><td><strong>AC</strong></td><td>Microwave, TV, laptop charger, hair dryer, air conditioning</td><td>Divided by inverter efficiency (~90%) &mdash; slightly more battery draw</td></tr>
   </table>
-  <div class="callout warn">Motor loads (fridge compressor, air conditioner, pump) draw 2&ndash;7&times; their running watts at startup. The app estimates surge at 2.5&times; peak AC load &mdash; verify each motor's LRA spec against your inverter's surge rating.</div>
+  <div class="callout info">Where possible, use native DC appliances instead of AC equivalents. This reduces inverter losses and lowers your total battery requirement.</div>
+  <h3>Advanced preferences</h3>
+  <p>Expand <strong>Advanced Preferences</strong> below the appliance table to set roof space, solar/inverter efficiency, and charge source contributions (alternator, shore power, generator).</p>
 </div>
 
 <div class="section" id="s5">
-  <h2>5 &mdash; Advanced Preferences <span class="badge new">UPDATED</span></h2>
-  <p>Below the appliance list in the Loads tab. These settings refine calculations beyond the Settings Bar.</p>
-  <h3>Location / Peak Sun Hours</h3>
-  <p>Select a location and peak sun hours are filled automatically. Peak sun hours are <em>not</em> hours of daylight &mdash; they represent equivalent hours at full rated panel output (1,000 W/m&sup2;).</p>
+  <h2>5 &mdash; Location &amp; Seasonal Sun Hours <span class="badge new">NEW</span></h2>
+  <p>Peak sun hours (PSH) is the single biggest variable in solar sizing. The location picker provides <strong>annual average, summer, and winter</strong> values for 25+ locations.</p>
+  <h3>Using the picker</h3>
+  <ol class="step-list">
+    <li>Select your region from the <strong>Location / Sun Hours</strong> dropdown in the Loads tab.</li>
+    <li>The annual average PSH is applied to the Peak Sun Hours field automatically.</li>
+    <li>A panel shows summer and winter values with a plain-language seasonal note.</li>
+    <li>An orange warning appears if winter solar is more than 40% below the annual average.</li>
+  </ol>
   <table>
-    <tr><th>Location</th><th>Peak Sun Hrs</th></tr>
-    <tr><td>Darwin / Alice Springs, NT</td><td>6.2&ndash;6.5</td></tr>
-    <tr><td>Perth, WA</td><td>6.0</td></tr>
-    <tr><td>Brisbane, QLD</td><td>5.8</td></tr>
-    <tr><td>Adelaide / Sydney</td><td>5.2&ndash;5.5</td></tr>
-    <tr><td>Melbourne, VIC</td><td>4.8</td></tr>
-    <tr><td>Hobart, TAS</td><td>4.5</td></tr>
-    <tr><td>Phoenix AZ / Desert SW USA</td><td>6.5</td></tr>
-    <tr><td>Southern Spain</td><td>4.5</td></tr>
-    <tr><td>UK South / UK North</td><td>2.5 / 2.0</td></tr>
+    <tr><th>Location</th><th>Annual Avg</th><th>Summer</th><th>Winter</th><th>Seasonal Risk</th></tr>
+    <tr><td>Darwin, NT</td><td>6.5</td><td>7.2</td><td>5.8</td><td>Low</td></tr>
+    <tr><td>Perth, WA</td><td>6.0</td><td>7.5</td><td>4.5</td><td>Medium</td></tr>
+    <tr><td>Sydney, NSW</td><td>5.2</td><td>6.2</td><td>4.0</td><td>Medium</td></tr>
+    <tr><td>Melbourne, VIC</td><td>4.8</td><td>6.5</td><td>2.8</td><td>High</td></tr>
+    <tr><td>Hobart, TAS</td><td>4.5</td><td>6.0</td><td>2.5</td><td>High</td></tr>
+    <tr><td>Phoenix, AZ</td><td>6.5</td><td>7.5</td><td>5.5</td><td>Low</td></tr>
+    <tr><td>Seattle, WA</td><td>4.0</td><td>6.0</td><td>1.5</td><td>Very High</td></tr>
+    <tr><td>UK &mdash; South</td><td>2.5</td><td>4.5</td><td>1.0</td><td>Very High</td></tr>
+    <tr><td>Scandinavia</td><td>2.0</td><td>5.5</td><td>0.5</td><td>Extreme</td></tr>
   </table>
-  <h3>Roof Space</h3>
-  <p>Enter available roof area in square feet. The Sizing tab shows the maximum panels that fit vs the recommended array, and raises an alert if your roof is insufficient.</p>
-  <div class="callout info">A 200W rigid panel is approximately 17&ndash;20 sq ft. Allow extra for mounting rails and edge clearance.</div>
-  <h3>Charging Sources <span class="badge new">NEW</span></h3>
-  <p>Add any charge inputs beyond solar. All contributions flow into the Sizing tab's recharge time, net surplus/deficit, and SoC calculations.</p>
-  <table>
-    <tr><th>Source</th><th>Fields</th><th>Calculation</th></tr>
-    <tr><td>Alternator / DC-DC Charger</td><td>Output amps + driving hrs/day</td><td>Amps &times; Voltage &times; Hours = Wh/day</td></tr>
-    <tr><td>Shore Power Charger</td><td>Charger output amps + connected hrs/day</td><td>Amps &times; Voltage &times; Hours = Wh/day</td></tr>
-    <tr><td>Generator</td><td>Generator kW + run hrs/day</td><td>kW &times; 1000 &times; Hours &times; 50% = Wh/day</td></tr>
-  </table>
-  <div class="callout tip">Generator contribution is estimated at 50% efficiency to battery. Reduce run hours if the generator is mainly powering AC loads directly rather than charging.</div>
+  <div class="callout warn">If you travel in winter in a high-risk region (Melbourne, Tasmania, UK, Scandinavia, Pacific Northwest), size your system for the <em>winter</em> PSH value, not the annual average.</div>
 </div>
 
 <div class="section" id="s6">
   <h2>6 &mdash; Understanding Sizing Results</h2>
-  <p>The Sizing tab shows six headline numbers then detailed cards. All values are minimums &mdash; always round up when buying components.</p>
+  <p>The Sizing tab shows every calculated result with full detail. All values update live.</p>
+  <h3>Core formulas</h3>
+  <div class="formula">Battery (Ah) = (Daily Wh &times; Autonomy) &divide; Voltage &divide; DoD &times; 1.2 &nbsp;(20% buffer)</div>
+  <div class="formula">Solar (W) = (Daily Wh &divide; Peak Sun Hours &divide; Solar Efficiency) &times; 1.25 &nbsp;(25% buffer)</div>
+  <div class="formula">Charge Controller (A) = Solar W &divide; Voltage &rarr; round up to next 10A</div>
+  <div class="formula">Inverter Continuous (VA) = Peak AC Watts &times; 1.25</div>
+  <div class="formula">Inverter Surge (VA) = Peak AC Watts &times; 2.5</div>
+  <h3>Key results explained</h3>
   <table>
-    <tr><th>Metric</th><th>What It Means</th></tr>
-    <tr><td>Daily Load (Wh)</td><td>Total energy per day after inverter losses</td></tr>
-    <tr><td>Peak Load (W)</td><td>Maximum instantaneous draw &mdash; sizes the inverter</td></tr>
-    <tr><td>Battery (Ah)</td><td>Recommended bank with autonomy days and 20% buffer</td></tr>
-    <tr><td>Solar (W)</td><td>Array to replenish battery in available sun hours</td></tr>
-    <tr><td>Inverter (VA)</td><td>Continuous rating &mdash; 125% of peak AC load</td></tr>
-    <tr><td>Controller (A)</td><td>MPPT charge output current, rounded to next 10A</td></tr>
+    <tr><th>Result</th><th>What it means</th></tr>
+    <tr><td><strong>Recommended Ah</strong></td><td>Battery bank size including 20% safety buffer over the calculated minimum.</td></tr>
+    <tr><td><strong>Usable Ah</strong></td><td>Ah available within DoD limit. E.g. 200Ah LiFePO4 at 80% DoD = 160Ah usable.</td></tr>
+    <tr><td><strong>Net daily balance</strong></td><td>Surplus (+) or deficit (&minus;) Wh/day across all charge sources. Negative means undersized.</td></tr>
+    <tr><td><strong>Cloudy day SoC</strong></td><td>Estimated battery state of charge after one overcast day (50% solar output).</td></tr>
+    <tr><td><strong>Battery weight</strong></td><td>LiFePO4 ~5.5 kg/100Ah at 12V &middot; AGM ~12 kg/100Ah at 12V.</td></tr>
   </table>
-  <h3>Key formulas</h3>
-  <div class="formula">Battery Ah = (Daily Wh &times; Autonomy) &divide; Voltage &divide; DoD &times; 1.20</div>
-  <div class="formula">Solar W = (Daily Wh &divide; Peak Sun Hours &divide; Derate) &times; 1.25</div>
-  <div class="formula">Inverter continuous = Peak AC W &times; 1.25 &nbsp;|&nbsp; Surge = Peak AC W &times; 2.5</div>
-  <div class="formula">CC output amps = Solar W &divide; System Voltage &rarr; round up to next 10A</div>
-  <div class="callout info">The charge controller is sized by battery-side output current. The PV input voltage rating is a fixed controller spec &mdash; verify your panel string Voc does not exceed it.</div>
 </div>
 
 <div class="section" id="s7">
-  <h2>7 &mdash; Simulation &mdash; Recharge, SoC &amp; Cloudy Days <span class="badge new">NEW</span></h2>
-  <h3>Recharge Time</h3>
-  <p>Two figures are shown in the Battery Bank card:</p>
-  <ul>
-    <li><strong>Solar only</strong> &mdash; sun hours to fully recharge a depleted bank from solar alone.</li>
-    <li><strong>All sources</strong> &mdash; equivalent time when alternator, shore, and generator are included.</li>
-  </ul>
-  <div class="formula">Recharge hrs = Usable Wh &divide; Daily Charge Input (Wh)</div>
-  <h3>Cloudy Day Scenario</h3>
-  <p>Assumes 50% of normal solar production. Shows whether that reduced input covers your loads, and the resulting battery SoC after one full cloudy day starting from 100%.</p>
-  <div class="callout warn">If SoC drops below 20% after one cloudy day, the system is undersized for reliable off-grid use. Increase bank size, add an alternator charger, or plan to run a generator on poor solar days.</div>
-  <h3>Net Daily Surplus / Deficit</h3>
-  <p>Total charge from all sources minus daily load. Positive = self-sufficient. Negative = battery is drawn down each day and will eventually deplete without intervention.</p>
-  <h3>Battery Weight</h3>
-  <p>Estimated weight using typical values: LiFePO4 ~5.5 kg/100Ah at 12V equivalent; AGM/Lead ~12 kg/100Ah. Actual weight varies by brand &mdash; always check the datasheet before purchase.</p>
+  <h2>7 &mdash; 30-Day Weather Simulation <span class="badge new">NEW</span></h2>
+  <p>The <strong>30-Day Weather Simulation</strong> runs your designed system against real historical solar radiation data and shows day-by-day how your battery state-of-charge would have held up. It lives at the bottom of the <strong>Sizing tab</strong>.</p>
+
+  <h3>How to use it</h3>
+  <p>Select any named location in the Loads tab first — the simulation requires coordinates to fetch data, so the "custom" entry keeps it locked. Once a named location is selected, open the Sizing tab and scroll to the simulation card. Choose your starting SoC and derate factor, then click <strong>▶ Run Simulation</strong>. The app fetches the last 30 days of actual shortwave radiation from the Open-Meteo free historical archive and runs the simulation immediately.</p>
+
+  <h3>Options</h3>
+  <table>
+    <tr><th>Option</th><th>Values</th><th>When to use</th></tr>
+    <tr><td>Start from SoC</td><td>100% / 80% / 50%</td><td>Use 100% for best-case; use 50% to stress-test arriving at a site already partially depleted</td></tr>
+    <tr><td>Panel derate factor</td><td>0.75 / 0.80 / 0.85</td><td>0.80 is typical; 0.75 for older or frequently dirty panels; 0.85 for new, well-aimed panels</td></tr>
+  </table>
+
+  <h3>Understanding the output</h3>
+  <table>
+    <tr><th>Output</th><th>What it means</th></tr>
+    <tr><td>Surplus days</td><td>Solar production exceeded load — battery charged or stayed full</td></tr>
+    <tr><td>Deficit days</td><td>Solar fell short of load — battery discharged but stayed above 20% SoC</td></tr>
+    <tr><td>Critical days</td><td>Battery dropped below 20% SoC — risk of full depletion</td></tr>
+    <tr><td>Lowest SoC</td><td>The single lowest point the battery reached across the 30 days</td></tr>
+    <tr><td>Avg daily production</td><td>Mean Wh produced per day from your solar array over the period</td></tr>
+    <tr><td>Daily load</td><td>Your constant daily Wh consumption from the Loads tab</td></tr>
+  </table>
+
+  <h3>Verdict banners</h3>
+  <table>
+    <tr><th>Verdict</th><th>Condition</th><th>Suggested action</th></tr>
+    <tr><td>✅ System would cope well</td><td>0 critical days, ≤2 deficit days</td><td>System well sized for this location and recent conditions</td></tr>
+    <tr><td>⚠️ Would struggle occasionally</td><td>1–3 critical days</td><td>Consider adding ~25% more solar or a generator for extended cloudy periods</td></tr>
+    <tr><td>🔴 Undersized for this location</td><td>4+ critical days</td><td>System needs significantly more solar or battery capacity</td></tr>
+  </table>
+
+  <h3>The chart</h3>
+  <p>The canvas line chart shows battery SoC % across all 30 days. The line colour changes by zone — blue above 50%, amber between 20–50%, red below 20%. Background colour bands mark the same zones. Red dots highlight individual critical days. An expandable daily breakdown table below the chart shows every day's PSH, Wh produced, Wh consumed, net Wh, and closing SoC.</p>
+
+  <h3>How it compares to other tools</h3>
+  <p>Most competing tools use a randomly generated 7-day weather model — clicking "generate new weather" produces a different answer each time, which limits its usefulness for real planning. This simulation uses 30 days of actual recorded shortwave radiation data from the Open-Meteo historical archive for your specific location. The result is more trustworthy and grounded in real conditions rather than a synthetic model.</p>
+
+  <div class="callout warn">The simulation models a constant daily load and does not account for alternator or shore power top-ups, temperature derating of panels, or partial-day effects. It reflects the last 30 days of available data, which may not represent worst-case seasonal conditions. Run it alongside the seasonal PSH section (section 5) for a fuller picture.</div>
 </div>
 
 <div class="section" id="s8">
-  <h2>8 &mdash; Component Selector &amp; Shopping List</h2>
-  <p>Seven categories in the Components tab. Select one product per category to build your Shopping List at the bottom of the page.</p>
+  <h2>8 &mdash; Compatibility Validation <span class="badge new">NEW</span></h2>
+  <p>Below the sizing alerts, the app automatically checks your system for electrical compatibility issues on every recalculation.</p>
   <table>
-    <tr><th>Category</th><th>Required?</th><th>Notes</th></tr>
-    <tr><td>Battery</td><td>Yes</td><td>Qty = recommended Ah &divide; product Ah</td></tr>
-    <tr><td>Solar Panels</td><td>Yes</td><td>Qty = required W &divide; panel W</td></tr>
-    <tr><td>Charge Controller</td><td>Yes</td><td>Auto-sized to calculated output amps</td></tr>
-    <tr><td>Inverter / Inverter-Charger</td><td>Yes (if AC loads)</td><td>Shows continuous and surge ratings</td></tr>
-    <tr><td>DC-DC Charger (B2B)</td><td>Optional</td><td>Click "None / Not Required" to skip</td></tr>
-    <tr><td>Battery Monitor / Shunt</td><td>Recommended</td><td>Essential for LiFePO4 SoC tracking</td></tr>
-    <tr><td>Transfer Switch / ATS</td><td>Optional</td><td>Required if combining inverter with shore/generator</td></tr>
+    <tr><th>Check</th><th>What it validates</th></tr>
+    <tr><td><strong>CC Voltage (Voc)</strong></td><td>Estimates string Voc with 20% cold-temperature correction. Flags if it exceeds CC input rating (100V for &le;30A, 150V for larger). Shows &check; or &#x1F6AB;.</td></tr>
+    <tr><td><strong>High DC Current</strong></td><td>On 12V systems &gt;600W solar, warns that cables carry very high current requiring heavy gauge wiring.</td></tr>
+    <tr><td><strong>Wire Sizing &mdash; CC</strong></td><td>Minimum AWG for PV side and battery side of the charge controller.</td></tr>
+    <tr><td><strong>Wire Sizing &mdash; Inverter</strong></td><td>Minimum AWG and ANL fuse size for inverter cables.</td></tr>
+    <tr><td><strong>48V / 24V DC-DC</strong></td><td>Reminds that 12V RV loads must run through a DC-DC converter.</td></tr>
+    <tr><td><strong>AC Voltage</strong></td><td>Confirms inverter output matches configured mains voltage.</td></tr>
   </table>
-  <p>Each category supports: hiding built-in products, adding custom products (name, spec, price, URL), and restoring hidden products.</p>
-  <div class="callout tip">Also budget for ancillaries: ANL fuse holder, DC breakers, bus bars, MC4 connectors, cable entry glands, and mounting hardware (~$200&ndash;$600 depending on system size).</div>
+  <div class="callout warn">The Voc check uses estimated panel voltages. Always verify against your exact panel datasheet &mdash; particularly for 24V and 48V series strings where Voc multiplies.</div>
 </div>
 
 <div class="section" id="s9">
-  <h2>9 &mdash; Build System &mdash; Auto-Suggest <span class="badge new">NEW</span></h2>
-  <p>Click <strong>&#128296; Build System</strong> in the Settings Bar. The tool reads all appliances and settings and selects best-fit components for every category, flags warnings, and provides an itemised cost estimate.</p>
-  <p>Click <strong>&#9989; Apply Build &amp; View Shopping List</strong> to commit all selections, navigate to the Components tab, and scroll the shopping list into view. Selected products are highlighted in blue with a green banner at the top.</p>
-  <div class="callout warn">At least one appliance must be entered before Build System will run.</div>
-  <p>After applying, you can click any component card to swap the selection &mdash; the shopping list and quantities update instantly.</p>
+  <h2>9 &mdash; ABYC Wire Sizing Calculator <span class="badge new">NEW</span></h2>
+  <p>At the top of the Wiring tab, this calculator sizes each cable segment to <strong>ABYC E-11</strong> standard &mdash; the specification used by marine and professional RV electricians. It accounts for both ampacity and voltage drop.</p>
+  <h3>How to use it</h3>
+  <ol class="step-list">
+    <li>Add your appliances so the calculator knows the amps for each circuit.</li>
+    <li>Open the <strong>Wiring tab</strong>.</li>
+    <li>Tick applicable <strong>derating conditions</strong> (bundled, hot area, continuous load).</li>
+    <li>Enter the <strong>one-way run length</strong> for each segment in feet or metres.</li>
+    <li>Recommended AWG, constraining factor, and fuse size appear immediately.</li>
+  </ol>
+  <h3>Derating conditions</h3>
+  <table>
+    <tr><th>Condition</th><th>Effect</th><th>Apply when</th></tr>
+    <tr><td>Bundled / in conduit</td><td>Ampacity &times; 0.70</td><td>Wire runs in conduit or bundled with 2+ other wires</td></tr>
+    <tr><td>Hot area &ge; 50&deg;C</td><td>Ampacity &times; 0.85</td><td>Engine bay, roof cavity in hot climates</td></tr>
+    <tr><td>Continuous load &gt; 20 min</td><td>Design current &times; 1.25 for VDrop</td><td>Fridge, inverter, Starlink &mdash; anything running long periods</td></tr>
+  </table>
+  <h3>Reading the results</h3>
+  <ul>
+    <li><strong>Ampacity AWG</strong> &mdash; minimum to carry the current without overheating</li>
+    <li><strong>VDrop AWG</strong> &mdash; minimum to keep voltage loss within target</li>
+    <li><strong>Use AWG &check;</strong> &mdash; the larger of the two (labelled VD&uarr; or A&uarr; to show which limits)</li>
+    <li><strong>Fuse</strong> &mdash; next standard ANL/MIDI size above 125% of load amps (ABYC E-11)</li>
+  </ul>
+  <div class="formula">VDrop % = (2 &times; I &times; R/m &times; length) &divide; Voltage &times; 100</div>
+  <div class="formula">Fuse = next standard size above (Load Amps &times; 1.25)</div>
+  <div class="callout tip">Use 105&deg;C rated, tinned, marine-grade stranded copper throughout. Standard 80&deg;C automotive wire is inadequate for RV applications.</div>
+  <div class="callout danger">Wire sizing calculators are guidance only. All high-current DC and all 240V/120V AC wiring should be verified by a qualified electrician before commissioning.</div>
 </div>
 
+
 <div class="section" id="s10">
-  <h2>10 &mdash; Wiring Guide</h2>
-  <h3>Wire sizing table</h3>
-  <p>Shows AWG gauge, max one-way run at 3% voltage drop (12V DC), and typical use cases. For 24V: double all distances. For 48V: quadruple all distances.</p>
-  <h3>Installation sequence</h3>
-  <p>A dynamic checklist adjusted for your voltage and AC mains. Always install battery isolation switch and main ANL fuse first, before any other connections.</p>
-  <h3>Safety rules</h3>
-  <ul>
-    <li>Fuse every positive cable within 150mm (6") of the battery.</li>
-    <li>ANL/Class T fuse sized to cable ampacity, not load ampacity.</li>
-    <li>Inverter cables as short as possible &mdash; under 1.5m is ideal.</li>
-    <li>All DC negatives through a shunt if using a battery monitor.</li>
-    <li>240V AC wiring requires a licensed electrician in Australia. 120V in North America requires permits in most states/provinces.</li>
-    <li>LiFePO4 cells must always have a compatible BMS &mdash; never connect bare cells.</li>
-    <li>Cover solar panels before working on wiring &mdash; they produce voltage in any daylight.</li>
-  </ul>
+  <h2>10 &mdash; Solar Generator Finder <span class="badge new">NEW</span></h2>
+  <p>The <strong>&#x1F50B; Solar Generator</strong> tab answers the question most people ask before committing to a DIY build: <em>"Should I just buy a solar generator instead?"</em> It uses your actual load profile to give a data-driven answer and compare both paths.</p>
+
+  <h3>How it works</h3>
+  <ol class="step-list">
+    <li>Add your appliances in the Loads tab so the tool knows your daily Wh requirement and peak AC load.</li>
+    <li>Open the <strong>&#x1F50B; Solar Generator</strong> tab.</li>
+    <li>A recommendation banner appears immediately: solar generator is a good fit, you're in the crossover zone, or DIY wins.</li>
+    <li>Scroll down for ranked product cards and the side-by-side comparison table.</li>
+  </ol>
+
+  <h3>The recommendation thresholds</h3>
+  <table>
+    <tr><th>Daily Usage</th><th>Recommendation</th><th>Reason</th></tr>
+    <tr><td><strong>&lt; 1,200 Wh/day</strong></td><td>&#x2705; Solar generator is a great fit</td><td>All-in-one units cover needs with minimal wiring and fast setup</td></tr>
+    <tr><td><strong>1,200 &ndash; 2,200 Wh/day</strong></td><td>&#x1F914; Crossover zone &mdash; either works</td><td>Mid-size expandable generators vs DIY are comparable on cost</td></tr>
+    <tr><td><strong>&gt; 2,200 Wh/day</strong></td><td>&#x26A1; DIY custom system wins</td><td>Cost per Wh and flexibility strongly favours a built system</td></tr>
+  </table>
+
+  <h3>Scoring and ranking</h3>
+  <p>Each product is scored against your specific load on four factors: capacity fit vs your daily Wh &times; autonomy days, inverter power vs your peak AC load, solar input vs your required array size, and value (Wh per dollar). The best match is highlighted and shown first.</p>
+  <div class="callout warn">A &#x1F534; red fit indicator means the generator's inverter is too small for your peak AC appliances (e.g. microwave, aircon). Even if capacity is sufficient, the inverter will trip under load.</div>
+
+  <h3>Products covered</h3>
+  <table>
+    <tr><th>Brand</th><th>Models</th><th>Capacity Range</th><th>Expandable</th></tr>
+    <tr><td>EcoFlow</td><td>RIVER 2, DELTA 2, DELTA 2 Max, DELTA Pro</td><td>256Wh &ndash; 3,600Wh (up to 25kWh)</td><td>DELTA 2+ yes</td></tr>
+    <tr><td>Jackery</td><td>Explorer 300 Plus, Explorer 1000 Plus</td><td>288Wh &ndash; 1,264Wh (up to 5kWh)</td><td>1000 Plus yes</td></tr>
+    <tr><td>Bluetti</td><td>EB3A, AC200P, AC300 + B300</td><td>268Wh &ndash; 3,072Wh (up to 12kWh)</td><td>AC300 yes</td></tr>
+    <tr><td>Anker</td><td>SOLIX C1000</td><td>1,056Wh (up to 2kWh)</td><td>Yes</td></tr>
+  </table>
+
+  <h3>DIY vs Solar Generator comparison table</h3>
+  <p>The comparison table at the bottom of the tab is generated live from your sizing. It compares the best-matched generator against your DIY build estimate on upfront cost, capacity, setup time, portability, repairability, expandability, inverter power, lifespan, and best use case. Green highlights indicate the winner on each row.</p>
+  <div class="callout info">Product links are affiliate links to manufacturer websites. Clicking them and purchasing helps support this free tool at no extra cost to you.</div>
 </div>
 
 <div class="section" id="s11">
-  <h2>11 &mdash; Saving, Exporting &amp; Sharing <span class="badge new">NEW</span></h2>
-  <p>All options are in the <strong>Saved</strong> tab toolbar.</p>
-  <h3>&#128190; Save Current</h3>
-  <p>Saves appliances, settings, selections, and results to an in-memory list. <strong>Lost on page refresh</strong> &mdash; use Export JSON to persist your work.</p>
-  <h3>&#128229; Export JSON</h3>
-  <p>Downloads a <code>.json</code> file with your complete system &mdash; appliances, all preferences, component selections, and calculated results. Store to reload later.</p>
-  <h3>&#128228; Import JSON</h3>
-  <p>Opens a file picker. Select a previously exported <code>.json</code> to restore the complete system including all appliances, settings, and component selections.</p>
-  <h3>&#128279; Share Link</h3>
-  <p>Encodes your entire system (appliances + all settings) into a URL. Send it to anyone &mdash; when they open the link your system loads automatically. Does not include component selections or saved system names.</p>
-  <h3>&#9878; Compare Systems</h3>
-  <p>Check two or more saved systems and click Compare for a side-by-side modal showing 15+ specs. Green = higher value.</p>
+  <h2>11 &mdash; Component Selector &amp; Shopping List <span class="badge upd">UPDATED</span></h2>
+  <p>The Components tab lets you build a complete shopping list by selecting from built-in products or adding your own. <strong>Battery, Solar Panels, and Inverter categories support multi-select</strong> — you can choose multiple products in each. All other categories (Charge Controller, DC-DC, Monitor, ATS) remain single-select.</p>
+
+  <h3>Selection modes by category</h3>
+  <table>
+    <tr><th>Category</th><th>Selection</th><th>Products available</th></tr>
+    <tr><td><strong>Battery</strong></td><td>Multi-select</td><td>Battle Born 100Ah, Renogy LiFePO4, Ampere Time 200Ah, Mighty Max AGM + custom</td></tr>
+    <tr><td><strong>Solar Panels</strong></td><td>Multi-select</td><td>200W and 400W monocrystalline options + custom</td></tr>
+    <tr><td><strong>Inverter / Charger</strong></td><td>Multi-select</td><td>Victron MultiPlus (with ATS), Renogy 2000W + custom</td></tr>
+    <tr><td>Charge Controller</td><td>Single-select</td><td>Victron SmartSolar MPPT 30A/50A, Renogy Rover 60A</td></tr>
+    <tr><td>DC-DC Charger</td><td>Single-select</td><td>Victron Orion-Tr isolated</td></tr>
+    <tr><td>Battery Monitor</td><td>Single-select</td><td>Victron BMV-712, Renogy monitor options</td></tr>
+    <tr><td>Transfer Switch</td><td>Single-select</td><td>Included in Victron MultiPlus, or Powertech separate unit</td></tr>
+  </table>
+
+  <h3>Quantity stepper</h3>
+  <p>When you select a Battery, Solar Panel, or Inverter card, a <strong>&minus; qty +</strong> stepper appears on the card. For batteries and panels, the quantity is floored at the calculated minimum from your sizing results — you can increase it but not go below what the system needs. For inverters, quantity is free-set.</p>
+  <div class="callout info">The quantity you set overrides the auto-calculated minimum for display purposes, but the shopping list always shows a note if your selected quantity is below the calculated requirement.</div>
+
+  <h3>Dual (or multiple) inverter setups</h3>
+  <p>Select both inverter cards — for example a 1,200W and a 3,000W unit. Both appear in the shopping list as separate line items. A blue notice automatically appears showing the combined continuous wattage and reminding you that each inverter needs its own dedicated battery cabling, appropriately sized fusing, and a transfer switch or manual changeover to select between them.</p>
+  <div class="callout warn">Running two inverters in parallel is not supported unless the inverters are specifically designed for it (e.g. Victron MultiPlus units in parallel mode). The dual-inverter note assumes they are used on separate circuits — for example a small inverter for everyday use and a large inverter for high-load appliances like air conditioning.</div>
+
+  <h3>Mixing battery types or panel sizes</h3>
+  <p>You can select, for example, two different battery models to build a mixed bank. The shopping list calculates line totals for each. However, mixing battery chemistries or capacities in a single bank is not recommended without specific BMS support — always consult a qualified installer if doing this.</p>
+
+  <h3>Shopping list</h3>
+  <p>The Shopping List at the bottom of the Components tab updates live. It shows Component, Product, Qty, Unit Price, Line Total, and a Buy link for each selected item. A running total appears at the bottom, with an ancillaries estimate (~$350 for fuses, bus bars, wiring, connectors, mounting hardware). Prices from custom products are included if you enter them as <code>$xxx</code>.</p>
+
+  <h3>Adding custom products</h3>
+  <p>Click <strong>+ Add Custom [Category]</strong> to open the add form. Enter the product name, spec, price, and a URL from any retailer. Custom products appear as selectable cards in the same grid, marked with a purple "Custom" badge, and can be deleted with the ✕ button.</p>
 </div>
 
 <div class="section" id="s12">
-  <h2>12 &mdash; Accuracy &amp; Limitations</h2>
-  <div class="callout danger">This tool provides <strong>estimates for planning purposes only</strong>. Have your final design reviewed by a qualified electrical installer before purchasing components or commencing installation.</div>
-  <h3>Key assumptions</h3>
-  <ul>
-    <li>Solar uses a fixed derate &mdash; actual output varies with panel angle, temperature, shading, and season.</li>
-    <li>Inverter surge estimated at 2.5&times; peak AC &mdash; motor LRA varies by equipment.</li>
-    <li>Generator battery contribution estimated at 50% &mdash; varies by charger efficiency.</li>
-    <li>Recharge times assume constant charge rate &mdash; real charging slows near full (CC/CV curve).</li>
-    <li>Cloudy day assumes exactly 50% solar &mdash; real conditions vary widely.</li>
-    <li>Battery weight estimates are typical values &mdash; always check the datasheet.</li>
-    <li>All prices are indicative estimates and will vary by region, retailer, and over time.</li>
-  </ul>
-  <h3>Sizing buffers built in</h3>
-  <ul>
-    <li>Battery Ah: 20% buffer above calculated minimum.</li>
-    <li>Solar W: 25% buffer above calculated minimum.</li>
-    <li>Charge controller: rounded up to next 10A increment.</li>
-  </ul>
+  <h2>12 &mdash; Build System &mdash; Auto-Suggest</h2>
+  <p>Click <strong>&#x1F528; Build System</strong> to automatically select best-matched components based on your sizing. The modal shows reasoning flags, component recommendations with quantities, and an estimated cost range including ancillaries and installation.</p>
+  <table>
+    <tr><th>Component</th><th>Selection logic</th></tr>
+    <tr><td>Battery</td><td>LiFePO4 if DoD &ge; 0.8; prefers 200Ah units when fewer units needed; AGM otherwise</td></tr>
+    <tr><td>Solar Panels</td><td>200W panels for &le;400W array; 400W panels for larger</td></tr>
+    <tr><td>Charge Controller</td><td>Victron SmartSolar for &le;50A; Renogy Rover 60A for larger</td></tr>
+    <tr><td>Inverter</td><td>Victron MultiPlus (with ATS) for large builds; Renogy 2000W for small</td></tr>
+    <tr><td>DC-DC / Monitor / ATS</td><td>Victron Orion-Tr always; BMV-712 for LiFePO4; Renogy for AGM</td></tr>
+  </table>
 </div>
 
 <div class="section" id="s13">
-  <h2>13 &mdash; FAQ</h2>
-  <h3>Why is my solar array so large?</h3>
-  <p>Low sun hours (e.g. UK winter = 2 hrs) or large loads push the required array up quickly. Consider reducing AC loads, adding a DC-DC alternator charger, or accepting that a generator is needed in winter.</p>
-  <h3>Can I use this for a boat or off-grid cabin?</h3>
-  <p>Yes &mdash; the calculations are identical. For boats, 12V or 24V are most common. For cabins, 48V is often preferred for larger arrays.</p>
-  <h3>What is a DC-DC (B2B) charger?</h3>
-  <p>It converts the vehicle alternator output to the correct charge profile for your house battery. Required with all modern Euro 6 / smart-alternator vehicles to prevent undercharging LiFePO4 or overcharging AGM.</p>
-  <h3>Do I need a transfer switch?</h3>
-  <p>Yes, if connecting both an inverter and shore power (or generator) to the same AC circuit. Many inverter-chargers (e.g. Victron MultiPlus) include a built-in ATS &mdash; the app marks this where applicable.</p>
-  <h3>My SoC drops too much on a cloudy day &mdash; what do I do?</h3>
-  <p>Increase battery bank, add alternator or shore charging, reduce loads, or accept running a generator on poor solar days.</p>
-  <h3>My roof space is too small for the recommended array &mdash; what now?</h3>
-  <p>Options: use higher-efficiency panels (more W per sq ft), add a ground-deploy panel, add an alternator DC-DC charger, increase battery bank for more autonomy, or reduce loads.</p>
-  <h3>Can I share my design with an installer?</h3>
-  <p>Yes &mdash; use Share Link to generate a URL, or Export JSON to download a file. Either can be forwarded to an installer or electrician for review.</p>
-  <h3>Why does the battery type affect the bank size so much?</h3>
-  <p>DoD directly scales the bank size. AGM at 50% DoD requires twice as many Ah as LiFePO4 at 80% DoD for the same usable energy. Gel at 40% DoD requires even more. LiFePO4 also weighs less than half as much per Ah and lasts 4&ndash;10&times; as many cycles.</p>
+  <h2>13 &mdash; Wiring Guide &amp; System Diagram <span class="badge upd">UPDATED</span></h2>
+  <p>The Wiring tab includes the ABYC calculator (section 8), a nine-step <strong>Installation Sequence</strong> with component-specific values, and <strong>Safety Rules</strong>.</p>
+  <p>The <strong>Diagram tab</strong> shows a live schematic that changes based on system voltage:</p>
+  <table>
+    <tr><th>Variant</th><th>When shown</th><th>Key feature</th></tr>
+    <tr><td>12V Simple</td><td>12V, &le;600W solar</td><td>Standard parallel layout</td></tr>
+    <tr><td>12V High-Current</td><td>12V, &gt;600W solar</td><td>Banner warning about heavy cable requirements</td></tr>
+    <tr><td>24V</td><td>24V system</td><td>Teal DC-DC block; series panel string label</td></tr>
+    <tr><td>48V</td><td>48V system</td><td>DC-DC block plus prominent 12V load isolation warning</td></tr>
+  </table>
+</div>
+
+<div class="section" id="s14">
+  <h2>14 &mdash; Saving, Exporting &amp; Sharing</h2>
+  <table>
+    <tr><th>Feature</th><th>How to use</th><th>Notes</th></tr>
+    <tr><td><strong>Save system</strong></td><td>&#x1F4BE; Save Current System button &rarr; enter name</td><td>Stored in browser local storage. Three demo systems always available.</td></tr>
+    <tr><td><strong>Compare</strong></td><td>Tick checkboxes on saved cards &rarr; Compare Selected</td><td>Side-by-side table of all sizing results, costs, weights</td></tr>
+    <tr><td><strong>Export JSON</strong></td><td>Export button in Saved tab</td><td>Downloads full design as .json file for backup or transfer</td></tr>
+    <tr><td><strong>Import JSON</strong></td><td>Import button &rarr; select file</td><td>Restores all appliances and preferences exactly</td></tr>
+    <tr><td><strong>Share via URL</strong></td><td>Share button &rarr; copy link</td><td>Encodes design into URL. Recipient opens link to see your exact config.</td></tr>
+  </table>
+</div>
+
+<div class="section" id="s15">
+  <h2>15 &mdash; Accuracy &amp; Limitations</h2>
+  <div class="callout warn">RV Power Designer is a planning and estimation tool. Results are reasonable first-pass sizing &mdash; not precision-engineered specifications. Always have final designs reviewed by a qualified electrician before purchasing or installing equipment.</div>
+  <h3>What the calculations do well</h3>
+  <ul>
+    <li>Internally consistent &mdash; every formula is tested against known values (103 unit tests)</li>
+    <li>Industry-standard rule-of-thumb sizing used by professional installers</li>
+    <li>Conservative buffers (20% battery, 25% solar) provide real-world margin</li>
+    <li>ABYC E-11 wire sizing is the correct professional standard for marine/RV DC systems</li>
+  </ul>
+  <h3>Limitations to be aware of</h3>
+  <ul>
+    <li><strong>Temperature derating</strong> &mdash; cold reduces LiFePO4 capacity; heat reduces panel output. Not modelled.</li>
+    <li><strong>Panel Voc check</strong> &mdash; uses estimated values. Always verify against your exact panel datasheet.</li>
+    <li><strong>Surge currents</strong> &mdash; motor loads draw 2&ndash;5&times; running current at startup. Inverter surge estimate is a guide only.</li>
+    <li><strong>Parallel battery strings</strong> &mdash; the calculator sizes a single bank. Parallel strings have additional balancing considerations.</li>
+    <li><strong>AC wiring</strong> &mdash; all 240V/120V AC wiring must be performed by a licensed electrician. The app sizes AC loads but does not size AC cables.</li>
+    <li><strong>Wire run lengths</strong> &mdash; the ABYC calculator needs accurate run lengths. Underestimating produces undersized cable recommendations.</li>
+  </ul>
+</div>
+
+<div class="section" id="s16">
+  <h2>16 &mdash; FAQ</h2>
+  <h3>Why is my recommended battery so large?</h3>
+  <p>Check your autonomy setting. 3-day autonomy triples the battery requirement compared to 1-day. Also verify that appliance hours/day are realistic rather than worst-case.</p>
+  <h3>The ABYC calculator recommends a very large wire. Is that right?</h3>
+  <p>Likely yes. Voltage drop is the limiting factor on long runs at low voltage &mdash; a 12V system with a 10-metre inverter cable needs very heavy wire to keep VDrop under 1%. Check that you've only ticked derating conditions that actually apply to your installation.</p>
+  <h3>My solar array is bigger than my roof can fit. What do I do?</h3>
+  <p>Switch to higher-wattage panels (400W instead of 200W), reduce loads, add alternator or shore charging to supplement solar, or accept that you'll need shore power or a generator on high-load days.</p>
+  <h3>When should I use 24V or 48V instead of 12V?</h3>
+  <p>Upgrade to 24V when solar exceeds 600W or battery bank exceeds 400Ah at 12V. Upgrade to 48V when daily load exceeds 4,000Wh or you need a large inverter-charger. The app flags both in Build System warnings and Compatibility alerts.</p>
+  <h3>What does VD&uarr; mean in the wire sizing table?</h3>
+  <p>The wire size is limited by voltage drop, not ampacity. The wire can carry the current safely, but a smaller size would cause unacceptable voltage loss over the run length. Common on long runs at low voltage (12V).</p>
+  <h3>Why does the Compatibility check show a Voc warning for my 48V system?</h3>
+  <p>On a 48V system, four 400W panels in series gives ~160V Voc &mdash; which exceeds most 150V-rated MPPT controllers. Use a higher-rated controller (200V+ input) or adjust your panel string configuration to stay within limits.</p>
+  <h3>Can I run air conditioning on solar?</h3>
+  <p>Yes, but it requires a large system: typically 48V, 300&ndash;400Ah+ LiFePO4, and 2,000W+ solar. At 12V the cable requirements become impractical. The Build System will flag this automatically.</p>
+
+  <h3>Can I select two inverters — like a 1,200W and a 3,000W?</h3>
+  <p>Yes. In the Inverter category, click both cards to select them. The shopping list shows them as separate line items with a combined wattage note. The intended use case is two inverters on separate circuits — a small, efficient inverter for everyday loads (fridge, laptop, lights) and a large inverter that you switch on for high-demand appliances like air conditioning or a microwave. This avoids running a 3,000W inverter at 5% load all day, which is inefficient and stresses the unit. Each inverter needs its own battery cable, inline fuse within 45cm of the battery, and either a manual changeover switch or separate AC circuits.</p>
+
+  <h3>Can I select two different battery models?</h3>
+  <p>Yes — select as many battery cards as you like. The shopping list totals them separately. In practice, mixing different battery models in a single bank is only advisable if they share the same chemistry, voltage, and ideally the same capacity. Mismatched batteries can cause uneven charging and premature failure. The safer approach is to use multiples of one model (e.g. 3× 100Ah LiFePO4) rather than mixing sizes.</p>
 </div>
 
 </div>
-<footer>
-  RV Power Designer &mdash; Help Guide &nbsp;|&nbsp;
-  <a href="https://kbcianfa.github.io/RVPowerSystems/index.html" style="color:var(--accent3);">&larr; Back to App</a>
-  &nbsp;|&nbsp; All calculations are estimates for planning purposes only. Consult a qualified installer before purchase or installation.
-</footer>
+<footer>RV Power Designer &mdash; Help Guide &mdash; For informational purposes only. Consult a qualified electrician before installation. &mdash; <a href="https://kbcianfa.github.io/RVPowerSystems/index.html" style="color:var(--accent3);">Back to App</a></footer>
 </body>
 </html>
