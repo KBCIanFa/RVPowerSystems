@@ -1063,19 +1063,86 @@ function onRegionChange(val) {
 }
 
 // ===================== BUILT-IN PRODUCTS =====================
+// Products keyed by region where they differ meaningfully
+const PRODUCTS = {
+  battery: {
+    AU: (v) => [
+      {name:`Enerdrive ePOWER 100Ah ${v}V LiFePO4`,     spec:`100Ah | 4,000+ cycles | Aussie brand | BMS included`,            price:'$799', tag:'AU Popular', url:'https://www.enerdrive.com.au', ah:100},
+      {name:`Baintech 100Ah ${v}V Slimline LiFePO4`,    spec:`100Ah | Slimline design | Heated option | BMS included`,          price:'$649', tag:'AU Value',   url:'https://www.baintech.com.au', ah:100},
+      {name:`Renogy 200Ah ${v}V LiFePO4`,               spec:`200Ah | 4,000 cycles | BMS included | Lower weight/Ah`,           price:'$999', tag:'Capacity',   url:'https://www.renogy.com', ah:200},
+      {name:`Century Yuasa AGM 100Ah 12V`,              spec:`100Ah 12V | Deep cycle AGM | ~500 cycles @50% DoD`,               price:'$249', tag:'Budget AGM', url:'https://www.yuasa.com.au', ah:100},
+    ],
+    US: (v) => [
+      {name:`Battle Born 100Ah ${v}V LiFePO4`,          spec:`100Ah | 3,000–5,000 cycles | Heated option`,                     price:'$899', tag:'Premium',   url:'https://battlebornbatteries.com', ah:100},
+      {name:`Renogy 100Ah ${v}V LiFePO4`,               spec:`100Ah | BMS included | 2,000+ cycles`,                           price:'$499', tag:'Value',     url:'https://www.renogy.com', ah:100},
+      {name:`Ampere Time 200Ah ${v}V LiFePO4`,          spec:`200Ah | 4,000 cycles | Lower weight/Ah`,                         price:'$749', tag:'Capacity',  url:'https://www.litime.com', ah:200},
+      {name:`Mighty Max AGM 100Ah 12V`,                 spec:`100Ah 12V | Sealed AGM | ~500 cycles @50% DoD`,                  price:'$189', tag:'Budget AGM',url:'https://www.mightymaxbattery.com', ah:100},
+    ],
+    UK: (v) => [
+      {name:`Fogstar Drift 100Ah ${v}V LiFePO4`,        spec:`100Ah | UK brand | 3,000+ cycles | BMS included`,                price:'£399', tag:'UK Popular', url:'https://www.fogstar.co.uk', ah:100},
+      {name:`Renogy 100Ah ${v}V LiFePO4`,               spec:`100Ah | BMS included | 2,000+ cycles`,                           price:'£349', tag:'Value',      url:'https://uk.renogy.com', ah:100},
+      {name:`Ampere Time 200Ah ${v}V LiFePO4`,          spec:`200Ah | 4,000 cycles | Lower weight/Ah`,                         price:'£499', tag:'Capacity',   url:'https://uk.litime.com', ah:200},
+      {name:`Trojan T-105 AGM 100Ah 12V`,               spec:`100Ah 12V | Deep cycle AGM | ~500 cycles @50% DoD`,              price:'£189', tag:'Budget AGM', url:'https://www.trojanbattery.com', ah:100},
+    ],
+    _default: (v) => [
+      {name:`Renogy 100Ah ${v}V LiFePO4`,               spec:`100Ah | BMS included | 2,000+ cycles`,                           price:'$499', tag:'Value',     url:'https://www.renogy.com', ah:100},
+      {name:`Ampere Time 200Ah ${v}V LiFePO4`,          spec:`200Ah | 4,000 cycles | Lower weight/Ah`,                         price:'$749', tag:'Capacity',  url:'https://www.litime.com', ah:200},
+      {name:`Victron LiFePO4 100Ah Smart`,              spec:`100Ah | Bluetooth | VE.Bus | 3,000+ cycles`,                     price:'$699', tag:'Premium',   url:'https://www.victronenergy.com', ah:100},
+      {name:`AGM Deep Cycle 100Ah 12V`,                 spec:`100Ah 12V | Sealed AGM | ~500 cycles @50% DoD`,                  price:'$189', tag:'Budget AGM',url:'https://www.victronenergy.com', ah:100},
+    ],
+  },
+  solar: {
+    AU: () => [
+      {name:'Enerdrive 200W Mono Rigid',      spec:'200W | 22% panel eff. | 41.2V Voc | AU warranty',  price:'$199', tag:'AU Brand',  url:'https://www.enerdrive.com.au', watts:200},
+      {name:'Renogy 200W Rigid Mono',         spec:'200W | 22% panel eff. | 58.8V Voc',                price:'$199', tag:'Popular',   url:'https://www.renogy.com', watts:200},
+      {name:'Renogy 400W Rigid Mono',         spec:'400W | 21.3% panel eff. | 49.9V Voc',              price:'$349', tag:'Efficient', url:'https://www.renogy.com', watts:400},
+      {name:'Sunman 100W eArc Flexible',      spec:'100W | 23% panel eff. | Curved roofs | AU made',   price:'$249', tag:'Flexible',  url:'https://www.sunman-energy.com', watts:100},
+    ],
+    US: () => [
+      {name:'Renogy 200W Rigid Mono',         spec:'200W | 22% panel eff. | 58.8V Voc',                price:'$149', tag:'Popular',   url:'https://www.renogy.com', watts:200},
+      {name:'Renogy 400W Rigid Mono',         spec:'400W | 21.3% panel eff. | 49.9V Voc',              price:'$259', tag:'Efficient', url:'https://www.renogy.com', watts:400},
+      {name:'SunPower 100W Flexible',         spec:'100W | 23% panel eff. | Curved roofs',             price:'$199', tag:'Flexible',  url:'https://us.sunpower.com', watts:100},
+      {name:'Newpowa 175W Semi-Flex',         spec:'175W | 20% panel eff. | Lightweight',              price:'$139', tag:'Slim',      url:'https://www.newpowa.com', watts:175},
+    ],
+    _default: () => [
+      {name:'Renogy 200W Rigid Mono',         spec:'200W | 22% panel eff. | 58.8V Voc',                price:'$149', tag:'Popular',   url:'https://www.renogy.com', watts:200},
+      {name:'Renogy 400W Rigid Mono',         spec:'400W | 21.3% panel eff. | 49.9V Voc',              price:'$259', tag:'Efficient', url:'https://www.renogy.com', watts:400},
+      {name:'Victron 215W Mono',              spec:'215W | 20.5% panel eff. | MC4 connectors',         price:'$199', tag:'Brand',     url:'https://www.victronenergy.com', watts:215},
+      {name:'Generic 175W Semi-Flex',         spec:'175W | 20% panel eff. | Lightweight',              price:'$139', tag:'Slim',      url:'https://www.newpowa.com', watts:175},
+    ],
+  },
+  inv: {
+    AU: (iv, acv, v) => [
+      {name:`Victron MultiPlus ${v}/${iv}`,       spec:`${iv}W cont. | ${+iv*2}W surge | Inverter-Charger | Transfer Switch`,  price:+iv<=1200?'$649':+iv<=2000?'$1,099':'$1,599', tag:'All-in-One', url:'https://www.victronenergy.com'},
+      {name:`Enerdrive ePOWER 2000W ${acv}V`,     spec:`2000W cont. | 4000W surge | ${acv}V AC out | AU brand`,               price:'$549', tag:'AU Popular', url:'https://www.enerdrive.com.au'},
+      {name:`Giandel 3000W Pure Sine ${acv}V`,    spec:`3000W cont. | 6000W surge | ${acv}V AC out`,                          price:'$299', tag:'Budget',     url:'https://www.giandelinverter.com'},
+      {name:`Baintech 2000W Pure Sine ${acv}V`,   spec:`2000W cont. | 4000W surge | ${acv}V AC out | AU brand`,               price:'$399', tag:'AU Value',   url:'https://www.baintech.com.au'},
+    ],
+    US: (iv, acv, v) => [
+      {name:`Victron MultiPlus ${v}/${iv}`,       spec:`${iv}W cont. | ${+iv*2}W surge | Inverter-Charger | Transfer Switch`,  price:+iv<=1200?'$449':+iv<=2000?'$799':'$1,199', tag:'All-in-One', url:'https://www.victronenergy.com'},
+      {name:`Renogy 2000W Pure Sine ${acv}V`,     spec:`2000W cont. | 4000W surge | ${acv}V AC out`,                          price:'$249', tag:'Popular',    url:'https://www.renogy.com'},
+      {name:`Giandel 3000W Pure Sine ${acv}V`,    spec:`3000W cont. | 6000W surge | ${acv}V AC out`,                          price:'$199', tag:'Budget',     url:'https://www.giandelinverter.com'},
+      {name:`Aims Power 1500W PSW ${acv}V`,       spec:`1500W cont. | 3000W surge | ${acv}V AC out`,                          price:'$179', tag:'Compact',    url:'https://www.aimscorp.net'},
+    ],
+    _default: (iv, acv, v) => [
+      {name:`Victron MultiPlus ${v}/${iv}`,       spec:`${iv}W cont. | ${+iv*2}W surge | Inverter-Charger | Transfer Switch`,  price:+iv<=1200?'$449':+iv<=2000?'$799':'$1,199', tag:'All-in-One', url:'https://www.victronenergy.com'},
+      {name:`Renogy 2000W Pure Sine ${acv}V`,     spec:`2000W cont. | 4000W surge | ${acv}V AC out`,                          price:'$249', tag:'Popular',    url:'https://www.renogy.com'},
+      {name:`Giandel 3000W Pure Sine ${acv}V`,    spec:`3000W cont. | 6000W surge | ${acv}V AC out`,                          price:'$199', tag:'Budget',     url:'https://www.giandelinverter.com'},
+      {name:`Victron Phoenix ${v}/${iv}`,         spec:`${iv}W cont. | Pure Sine | VE.Direct`,                                price:'$349', tag:'Pro',        url:'https://www.victronenergy.com'},
+    ],
+  },
+};
+
 function builtIn(cat,c){
-  if(cat==='battery') return [
-    {name:`Battle Born 100Ah ${c.voltage}V LiFePO4`,spec:`100Ah | 3,000–5,000 cycles | Heated option`,price:'$899',tag:'Premium',url:'https://battlebornbatteries.com',ah:100},
-    {name:`Renogy 100Ah ${c.voltage}V LiFePO4`,spec:`100Ah | BMS included | 2,000+ cycles`,price:'$499',tag:'Value',url:'https://www.renogy.com',ah:100},
-    {name:`Ampere Time 200Ah ${c.voltage}V LiFePO4`,spec:`200Ah | 4,000 cycles | Lower weight/Ah`,price:'$749',tag:'Capacity',url:'https://www.litime.com',ah:200},
-    {name:'Mighty Max AGM 100Ah 12V',spec:'100Ah 12V | Sealed AGM | ~500 cycles @50% DoD',price:'$189',tag:'Budget AGM',url:'https://www.mightymaxbattery.com',ah:100},
-  ];
-  if(cat==='solar') return [
-    {name:'Renogy 200W Rigid Mono',spec:'200W | 22% panel eff. | 58.8V Voc',price:'$149',tag:'Popular',url:'https://www.renogy.com',watts:200},
-    {name:'Renogy 400W Rigid Mono',spec:'400W | 21.3% panel eff. | 49.9V Voc',price:'$259',tag:'Efficient',url:'https://www.renogy.com',watts:400},
-    {name:'SunPower 100W Flexible',spec:'100W | 23% panel eff. | Curved roofs',price:'$199',tag:'Flexible',url:'https://us.sunpower.com',watts:100},
-    {name:'Newpowa 175W Semi-Flex',spec:'175W | 20% panel eff. | Lightweight',price:'$139',tag:'Slim',url:'https://www.newpowa.com',watts:175},
-  ];
+  const region = shopRegion || 'AU';
+  if(cat==='battery'){
+    const fn = (PRODUCTS.battery[region] || PRODUCTS.battery._default);
+    return fn(c.voltage);
+  }
+  if(cat==='solar'){
+    const fn = (PRODUCTS.solar[region] || PRODUCTS.solar._default);
+    return fn();
+  }
   if(cat==='cc'){
     const sz=c.ccSize<=30?'30A':c.ccSize<=50?'50A':'100A';
     const sz2=c.ccSize<=40?'40A':'60A';
@@ -1089,12 +1156,8 @@ function builtIn(cat,c){
   if(cat==='inv'){
     const iv=c.invCont<=1200?'1200':c.invCont<=2400?'2000':'3000';
     const acv=c.acVoltage||240;
-    return [
-      {name:`Victron MultiPlus ${c.voltage}/${iv}`,spec:`${iv}W cont. | ${+iv*2}W surge | Inverter-Charger | Transfer Switch`,price:c.invCont<=1200?'$449':c.invCont<=2400?'$799':'$1,199',tag:'All-in-One',url:'https://www.victronenergy.com'},
-      {name:`Renogy 2000W Pure Sine ${acv}V`,spec:`2000W cont. | 4000W surge | ${acv}V AC out`,price:'$249',tag:'Popular',url:'https://www.renogy.com'},
-      {name:`Giandel 3000W Pure Sine ${acv}V`,spec:`3000W cont. | 6000W surge | ${acv}V AC out`,price:'$199',tag:'Budget',url:'https://www.giandelinverter.com'},
-      {name:`Aims Power 1500W PSW ${acv}V`,spec:`1500W cont. | 3000W surge | ${acv}V AC out`,price:'$179',tag:'Compact',url:'https://www.aimscorp.net'},
-    ];
+    const fn = (PRODUCTS.inv[region] || PRODUCTS.inv._default);
+    return fn(iv, acv, c.voltage);
   }
   if(cat==='dc2dc') return [
     {name:`Victron Orion-Tr Smart ${c.voltage}/${c.voltage}-30A`,spec:`30A | ${c.voltage}V in → ${c.voltage}V out | Bluetooth | Isolated | Engine detect`,price:'$189',tag:'Best',url:'https://www.victronenergy.com'},
