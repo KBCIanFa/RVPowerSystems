@@ -1886,6 +1886,7 @@ function confirmSave(){
     appliances:JSON.parse(JSON.stringify(appliances)),
     prefs:{voltage:+document.getElementById('sys-voltage').value,acVoltage:getAcVoltage(),autonomy:+document.getElementById('autonomy').value,dod:+document.getElementById('battery-type').value,peakSun:+document.getElementById('peak-sun').value,solEff:+document.getElementById('sol-eff').value,invEff:+document.getElementById('inv-eff').value},
     calcs:c,selections:JSON.parse(JSON.stringify(selections)),
+    selQty:JSON.parse(JSON.stringify(selQty)),
     userProducts:JSON.parse(JSON.stringify(userProducts))
   });
   closeSaveModal();renderSavedList();
@@ -1901,6 +1902,7 @@ function loadSystem(id){
   appliances=JSON.parse(JSON.stringify(sys.appliances));
   nextId=Math.max(0,...appliances.map(a=>a.id))+1;
   selections=JSON.parse(JSON.stringify(sys.selections));
+  selQty=JSON.parse(JSON.stringify(sys.selQty||{}));
   // Migrate old single-value selections to arrays for multi-select cats
   ['battery','solar','inv'].forEach(cat=>{
     if(!Array.isArray(selections[cat])) selections[cat]=selections[cat]?[selections[cat]]:[];
@@ -2651,6 +2653,7 @@ function importJSONPrompt(){
         if(p.roofSpace!=null&&document.getElementById('roof-space'))document.getElementById('roof-space').value=p.roofSpace;
         if(d.selections){
           Object.assign(selections,d.selections);
+          if(d.selQty) Object.assign(selQty,d.selQty);
           ['battery','solar','inv'].forEach(cat=>{
             if(!Array.isArray(selections[cat])) selections[cat]=selections[cat]?[selections[cat]]:[];
           });
