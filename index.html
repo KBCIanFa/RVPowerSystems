@@ -345,6 +345,25 @@
   </div>
 </div>
 
+<!-- APPLIANCE LOOKUP MODAL -->
+<div class="modal-overlay hidden" id="appliance-lookup-overlay" role="dialog" aria-modal="true" aria-labelledby="lookup-title">
+  <div class="modal" style="max-width:860px;max-height:85vh;display:flex;flex-direction:column;">
+    <div class="modal-header" style="flex-shrink:0;">
+      <h2 id="lookup-title">📋 Common Appliance Reference</h2>
+      <button class="modal-close" onclick="closeApplianceLookup()" aria-label="Close">✕</button>
+    </div>
+    <div style="padding:10px 20px 6px;flex-shrink:0;background:var(--accent3-bg);border-bottom:1px solid var(--border);font-size:12px;color:var(--muted);">
+      Click any card to add it to your list. Values are typical <strong>running watts</strong> — not startup surge. Edit after adding.
+    </div>
+    <div style="padding:10px 20px 8px;flex-shrink:0;border-bottom:1px solid var(--border);">
+      <input type="search" id="lookup-search" placeholder="Filter appliances… e.g. fridge, laptop, CPAP" 
+        style="width:100%;padding:7px 12px;border:1.5px solid var(--border);border-radius:7px;font-size:13px;background:var(--surface);color:var(--text);"
+        oninput="filterLookup(this.value)">
+    </div>
+    <div class="modal-body" id="appliance-lookup-body" style="overflow-y:auto;flex:1;"></div>
+  </div>
+</div>
+
 <!-- BUILD SYSTEM MODAL -->
 <div class="modal-overlay hidden" id="build-overlay" role="dialog" aria-modal="true" aria-labelledby="build-modal-title">
   <div class="modal build-modal">
@@ -489,6 +508,7 @@
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:8px;">
         <div class="card-title" style="margin:0">Your Appliances</div>
         <div style="display:flex;gap:6px;flex-wrap:wrap;">
+          <button class="btn btn-secondary btn-sm" onclick="openApplianceLookup()" title="Browse 40+ common appliances with typical wattages">📋 Browse Appliances</button>
           <button class="btn btn-secondary btn-sm" onclick="loadPreset('basic')">Basic Preset</button>
           <button class="btn btn-secondary btn-sm" onclick="loadPreset('full')">Full RV Preset</button>
           <button class="btn btn-primary btn-sm" onclick="openTemplates()">⚡ Quick Templates</button>
@@ -1346,19 +1366,76 @@ function renderTable(){
     tb.innerHTML=`<tr><td colspan="6" style="text-align:center;color:var(--muted);padding:20px;font-size:13px;">No appliances yet — add one or load a preset.</td></tr>`;
     return;
   }
-  tb.innerHTML=appliances.map(a=>`<tr>
-    <td><input type="text" value="${a.name.replace(/"/g,'&quot;')}" style="width:150px;" aria-label="Appliance name" oninput="updateApp(${a.id},'name',this.value)"></td>
-    <td><input type="number" value="${a.watts}" min="1" max="10000" aria-label="Watts" oninput="updateApp(${a.id},'watts',+this.value)"></td>
-    <td><input type="number" value="${a.hours}" min="0.1" max="24" step="0.5" aria-label="Hours per day" oninput="updateApp(${a.id},'hours',+this.value)"></td>
-    <td><select aria-label="Load type" onchange="updateApp(${a.id},'type',this.value)">
+  tb.innerHTML=appliances.map(a=>{
+    const wh=(a.watts*a.hours);
+    const whColor=wh>2000?'var(--accent-err,#dc2626)':wh>800?'var(--accent-warn,#b45309)':'inherit';
+    return `<tr data-appid="${a.id}">
+    <td><input type="text" value="${a.name.replace(/"/g,'&quot;')}" style="width:150px;" aria-label="Appliance name" oninput="updateApp(${a.id},'name',this.value)" placeholder="e.g. LED Lighting"></td>
+    <td>
+      <input type="number" value="${a.watts}" min="1" max="10000" aria-label="Running watts — not startup surge" oninput="updateApp(${a.id},'watts',+this.value)" style="width:70px;" title="Running watts (continuous draw). Check appliance label or spec sheet. Do NOT use startup surge watts.">
+      <div style="font-size:9px;color:var(--muted);margin-top:2px;line-height:1.3;">running W</div>
+    </td>
+    <td>
+      <input type="number" value="${a.hours}" min="0" max="24" step="0.5" aria-label="Hours used per day" oninput="updateApp(${a.id},'hours',+this.value)" style="width:55px;" title="Average hours of use per day. Use 0.5 for 30 min, 0.25 for 15 min.">
+      <div style="font-size:9px;color:var(--muted);margin-top:2px;line-height:1.3;">hrs/day</div>
+    </td>
+    <td><select aria-label="Load type" onchange="updateApp(${a.id},'type',this.value)" title="AC = runs via inverter (240V outlets). DC = runs directly from battery (12/24/48V).">
       <option value="ac" ${a.type==='ac'?'selected':''}>AC ${acV}V</option>
       <option value="dc" ${a.type==='dc'?'selected':''}>DC ${document.getElementById('sys-voltage')?document.getElementById('sys-voltage').value:12}V</option>
     </select></td>
-    <td class="wh-cell">${(a.watts*a.hours).toFixed(0)} Wh</td>
+    <td class="wh-cell" style="color:${whColor};font-weight:${wh>800?'700':'400'};" title="${wh>2000?'Very high load — check wattage':''}">
+      ${wh.toFixed(0)} Wh
+      ${wh>2000?'<span title="Very high load">⚠️</span>':''}
+    </td>
     <td><button class="btn btn-danger btn-sm" onclick="removeAppliance(${a.id})" aria-label="Remove ${a.name}">✕</button></td>
-  </tr>`).join('');
+  </tr>`;}).join('');
 }
-function updateApp(id,f,v){const a=appliances.find(x=>x.id===id);if(a){a[f]=v;recalc();if(f==='type'||f==='name')renderTable();}}
+function validateAppInput(id, f, v) {
+  // Returns {valid, value, warning} 
+  if (f === 'watts') {
+    const n = parseFloat(v);
+    if (isNaN(n) || n <= 0) return {valid:false, warning:'Watts must be a positive number.'};
+    if (n > 5000) return {valid:true, value:n, warning:`⚠️ ${n}W is very high — double-check this is the running wattage, not startup surge.`};
+    if (n < 1)   return {valid:false, warning:'Watts must be at least 1W.'};
+    return {valid:true, value:n};
+  }
+  if (f === 'hours') {
+    const n = parseFloat(v);
+    if (isNaN(n) || n < 0) return {valid:false, warning:'Hours must be 0 or more.'};
+    if (n > 24) return {valid:false, warning:'Hours per day cannot exceed 24.'};
+    if (n === 0) return {valid:true, value:n, warning:'ℹ️ 0 hours — this appliance contributes nothing. Remove it or set hours > 0.'};
+    return {valid:true, value:n};
+  }
+  if (f === 'name') {
+    const s = String(v).trim();
+    if (!s) return {valid:false, warning:'Appliance name cannot be empty.'};
+    return {valid:true, value:s};
+  }
+  return {valid:true, value:v};
+}
+
+function showRowWarning(id, msg) {
+  const existing = document.getElementById('warn-'+id);
+  if (!msg) { if(existing) existing.remove(); return; }
+  if (existing) { existing.innerHTML = msg; return; }
+  const row = document.querySelector('#appliance-tbody tr[data-appid="'+id+'"]');
+  if (!row) return;
+  const warnRow = document.createElement('tr');
+  warnRow.id = 'warn-'+id;
+  warnRow.innerHTML = `<td colspan="6" style="padding:2px 8px 6px;font-size:11px;color:var(--accent-warn,#b45309);background:var(--warn-bg,#fffbeb);border-bottom:1px solid var(--border);">${msg}</td>`;
+  row.after(warnRow);
+}
+
+function updateApp(id,f,v){
+  const a=appliances.find(x=>x.id===id);
+  if(!a) return;
+  const res = validateAppInput(id, f, v);
+  if (!res.valid) { showRowWarning(id, '❌ ' + res.warning); return; }
+  showRowWarning(id, res.warning || null);
+  a[f] = res.value !== undefined ? res.value : v;
+  recalc();
+  if(f==='type'||f==='name') renderTable();
+}
 
 // ===================== CALCULATIONS =====================
 function getCalcs(){
@@ -1366,7 +1443,10 @@ function getCalcs(){
   const acVoltage=getAcVoltage();
   const autonomy=getAutonomy();
   const dod=getBattDod();
-  const peakSun=+document.getElementById('peak-sun').value;
+  // Validate + clamp numeric inputs
+  const peakSunRaw=+document.getElementById('peak-sun').value;
+  const peakSun=Math.max(0.5,Math.min(12,isNaN(peakSunRaw)?5:peakSunRaw));
+  if(document.getElementById('peak-sun')&&peakSunRaw!==peakSun) document.getElementById('peak-sun').value=peakSun;
   const solEff=+document.getElementById('sol-eff').value;
   const invEff=+document.getElementById('inv-eff').value;
   const roofSpace=+(document.getElementById('roof-space')?.value||60);
@@ -1463,6 +1543,28 @@ function renderSizingNumbers(c){
   s('det-volt',c.voltage+'V');
   s('det-ah',Math.round(c.minAh)+' Ah (minimum)');
   s('det-ah-rec',Math.round(c.recAh)+' Ah (recommended)');
+
+  // Contextual warnings and guidance
+  const alerts = [];
+  if (c.totalWh > 0) {
+    // Very high daily load
+    if (c.totalWh > 6000) alerts.push({type:'err', msg:`🔴 <strong>Very heavy system (${Math.round(c.totalWh)} Wh/day).</strong> Review all AC loads — air conditioning and heating dominate. Consider a 48V system and generator backup.`});
+    else if (c.totalWh > 3000) alerts.push({type:'warn', msg:`🟡 <strong>Heavy system (${Math.round(c.totalWh)} Wh/day).</strong> A 24V or 48V system is strongly recommended over 12V at this load level.`});
+    // 12V high current warning
+    if (c.voltage === 12 && c.solarW > 800) alerts.push({type:'warn', msg:`⚡ <strong>High solar current at 12V:</strong> ${Math.round(c.solarW)}W ÷ 12V = ~${Math.round(c.solarW/12)}A. Wiring runs must be kept very short and use 2/0 AWG or heavier cable. Consider 24V instead.`});
+    // Roof space constraint
+    if (c.solarW > c.maxRoofW && c.maxRoofW > 0) alerts.push({type:'warn', msg:`🏠 <strong>Roof space constraint:</strong> You need ${Math.round(c.solarW)}W but your ${c.roofSpace} sq ft roof fits ~${c.maxRoofW}W max. Consider increasing roof space, adding a generator, or reducing loads.`});
+    // Battery too large relative to solar
+    if (c.rechargeHrsSolar && c.rechargeHrsSolar > 24) alerts.push({type:'info', msg:`☀️ <strong>Slow recharge:</strong> From flat via solar alone takes ~${Math.ceil(c.rechargeHrsSolar/24)} days. Consider adding alternator or shore charging.`});
+    // No inverter but has AC loads
+    if (c.acLoad > 0 && c.invCont === 0) alerts.push({type:'err', msg:`🔌 <strong>AC loads detected but no inverter sized.</strong> Add AC appliances to trigger inverter sizing.`});
+    // Net daily deficit
+    if (c.netDaily < -c.totalWh * 0.2) alerts.push({type:'warn', msg:`📉 <strong>Energy deficit:</strong> Your system produces less than it consumes on an average day. Add solar, a DC-DC charger, or shore power to balance.`});
+  }
+  const alertEl = document.getElementById('sizing-alerts');
+  if (alertEl) {
+    alertEl.innerHTML = alerts.map(a => `<div class="alert alert-${a.type==='err'?'err':a.type==='warn'?'warn':'info'}" style="margin-top:6px;font-size:12px;">${a.msg}</div>`).join('');
+  }
   s('det-usable',Math.round(c.recAh*c.dod)+' Ah usable');
   const rt=c.totalWh>0?((c.recAh*c.voltage*c.dod)/(c.totalWh)).toFixed(1):'—';
   s('det-runtime',rt !== '—' ? rt+' days' : '—');
@@ -2709,6 +2811,114 @@ const QUICK_TEMPLATES=[
     ]
   },
 ];
+
+
+// ===================== COMMON APPLIANCE REFERENCE =====================
+const APPLIANCE_LOOKUP = [
+  // Lighting
+  {cat:'💡 Lighting', name:'LED Strip Lights',         watts:15,  hours:6,  type:'dc', note:'Per metre, typical van/caravan interior'},
+  {cat:'💡 Lighting', name:'LED Downlights ×4',        watts:24,  hours:5,  type:'dc', note:'4× 6W LED downlights'},
+  {cat:'💡 Lighting', name:'Fluorescent Strip (old)',   watts:40,  hours:5,  type:'ac', note:'Replace with LED to save 60%+'},
+  // Fridges
+  {cat:'🧊 Fridges',  name:'12V Compressor Fridge 40L', watts:35, hours:12, type:'dc', note:'Engel, ARB, Waeco. Duty cycle ~50%'},
+  {cat:'🧊 Fridges',  name:'12V Compressor Fridge 60L', watts:45, hours:12, type:'dc', note:'Medium family fridge'},
+  {cat:'🧊 Fridges',  name:'12V Compressor Fridge 80L', watts:60, hours:14, type:'dc', note:'Large fridge, higher duty in summer'},
+  {cat:'🧊 Fridges',  name:'Fridge + Freezer Combo',    watts:80, hours:16, type:'dc', note:'Dual zone, high summer draw'},
+  {cat:'🧊 Fridges',  name:'3-Way Absorption Fridge',   watts:150,hours:24, type:'ac', note:'Runs on gas, 12V or 240V — inefficient on 12V'},
+  // Kitchen
+  {cat:'🍳 Kitchen',  name:'Microwave (800W)',           watts:1100,hours:0.2,type:'ac', note:'Running watts higher than rated — use 1.1× nameplate'},
+  {cat:'🍳 Kitchen',  name:'Coffee Maker (drip)',        watts:900, hours:0.2,type:'ac', note:'12 min brew cycle'},
+  {cat:'🍳 Kitchen',  name:'Coffee Maker (espresso)',    watts:1200,hours:0.1,type:'ac', note:'Short cycle, very high draw'},
+  {cat:'🍳 Kitchen',  name:'Kettle',                    watts:2400,hours:0.1,type:'ac', note:'Very short use — check inverter surge rating'},
+  {cat:'🍳 Kitchen',  name:'Induction Cooktop (small)', watts:1200,hours:0.5,type:'ac', note:'Single burner; needs 2000W+ inverter'},
+  {cat:'🍳 Kitchen',  name:'Blender',                   watts:300, hours:0.1,type:'ac', note:'Smoothies, short bursts'},
+  // Climate
+  {cat:'🌡️ Climate',  name:'12V Fan (single)',           watts:20,  hours:8,  type:'dc', note:'Box or tower fan, low draw'},
+  {cat:'🌡️ Climate',  name:'12V Fan (dual)',             watts:40,  hours:8,  type:'dc', note:'Two fans running overnight'},
+  {cat:'🌡️ Climate',  name:'Diesel Heater (Webasto)',   watts:10,  hours:8,  type:'dc', note:'Ignition/fan only — fuel provides heat'},
+  {cat:'🌡️ Climate',  name:'Air Con 2.5kW (RV rooftop)',watts:900, hours:4,  type:'ac', note:'Running draw — startup surge ~3× nameplate'},
+  {cat:'🌡️ Climate',  name:'Air Con 3.5kW (RV rooftop)',watts:1400,hours:4,  type:'ac', note:'Large unit — needs 3000W+ inverter'},
+  {cat:'🌡️ Climate',  name:'Evaporative Cooler (12V)',  watts:80,  hours:6,  type:'dc', note:'Low draw, effective in dry climates'},
+  // Tech / Work
+  {cat:'💻 Tech',     name:'Laptop (13–15")',            watts:50,  hours:6,  type:'ac', note:'Varies widely — check charger wattage'},
+  {cat:'💻 Tech',     name:'Laptop (16" gaming/pro)',    watts:100, hours:6,  type:'ac', note:'High-performance, check charger label'},
+  {cat:'💻 Tech',     name:'External Monitor (24")',     watts:25,  hours:6,  type:'ac', note:'LED IPS panel'},
+  {cat:'💻 Tech',     name:'Starlink (Gen 2)',           watts:75,  hours:10, type:'dc', note:'Average; peaks higher during acquisition'},
+  {cat:'💻 Tech',     name:'WiFi Router',                watts:12,  hours:24, type:'dc', note:'4G/5G router; typically 10–15W'},
+  {cat:'💻 Tech',     name:'Phone Charging',             watts:10,  hours:3,  type:'dc', note:'Per phone via USB'},
+  {cat:'💻 Tech',     name:'Tablet Charging',            watts:15,  hours:3,  type:'dc', note:'iPad / Android tablet'},
+  {cat:'💻 Tech',     name:'TV 32"',                    watts:55,  hours:3,  type:'ac', note:'Modern LED/LCD TV'},
+  {cat:'💻 Tech',     name:'TV 50"',                    watts:90,  hours:3,  type:'ac', note:'Modern LED/LCD TV'},
+  {cat:'💻 Tech',     name:'TV 65"',                    watts:130, hours:3,  type:'ac', note:'Large screen'},
+  // Medical
+  {cat:'🏥 Medical',  name:'CPAP (no humidifier)',       watts:30,  hours:8,  type:'dc', note:'Varies by pressure setting — check your unit'},
+  {cat:'🏥 Medical',  name:'CPAP (with humidifier)',     watts:50,  hours:8,  type:'dc', note:'Humidifier adds ~20W. Use DC adapter if available'},
+  {cat:'🏥 Medical',  name:'Nebuliser',                  watts:60,  hours:0.5,type:'ac', note:'Asthma/respiratory treatment'},
+  // Water
+  {cat:'💧 Water',    name:'Water Pump (12V)',           watts:60,  hours:0.3,type:'dc', note:'Typical RV/caravan demand pump; ~18 min/day'},
+  {cat:'💧 Water',    name:'Water Pump (high flow)',     watts:100, hours:0.3,type:'dc', note:'Larger system, multiple outlets'},
+  {cat:'💧 Water',    name:'Instant Hot Water (DC)',     watts:120, hours:0.2,type:'dc', note:'DC tankless water heater'},
+  // Other
+  {cat:'🔌 Other',    name:'USB Chargers ×2',            watts:20,  hours:4,  type:'dc', note:'2× 10W USB-C fast chargers'},
+  {cat:'🔌 Other',    name:'Washing Machine (portable)', watts:500, hours:1,  type:'ac', note:'Cold wash; needs 1500W+ inverter'},
+  {cat:'🔌 Other',    name:'Hair Dryer (low)',           watts:1200,hours:0.1,type:'ac', note:'Low heat setting; very brief use'},
+  {cat:'🔌 Other',    name:'Drone / Camera Charger',     watts:60,  hours:1,  type:'ac', note:'DJI and similar — check charger label'},
+  {cat:'🔌 Other',    name:'12V Tyre Inflator',          watts:120, hours:0.1,type:'dc', note:'Short burst use only'},
+  {cat:'🔌 Other',    name:'Electric Blanket',           watts:60,  hours:6,  type:'ac', note:'Low setting; significantly reduces heating need'},
+];
+
+function renderLookupBody(filter=''){
+  const cats=[...new Set(APPLIANCE_LOOKUP.map(a=>a.cat))];
+  const q=filter.toLowerCase().trim();
+  let html='';
+  cats.forEach(cat=>{
+    const items=APPLIANCE_LOOKUP.filter(a=>a.cat===cat && (!q || a.name.toLowerCase().includes(q) || a.note.toLowerCase().includes(q) || cat.toLowerCase().includes(q)));
+    if(!items.length) return;
+    html+=`<div style="margin-bottom:14px;">
+      <div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px;padding-bottom:4px;border-bottom:1px solid var(--border);">${cat}</div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:6px;">`;
+    items.forEach(a=>{
+      const idx=APPLIANCE_LOOKUP.indexOf(a);
+      html+=`<div style="border:1.5px solid var(--border);border-radius:8px;padding:8px 10px;background:var(--surface);cursor:pointer;transition:all .15s;"
+        onclick="addFromLookup(${idx},this)"
+        onmouseenter="this.style.borderColor='var(--accent3)';this.style.background='var(--surface2,#f0f4ff)'"
+        onmouseleave="this.style.borderColor='var(--border)';this.style.background='var(--surface)'">
+        <div style="display:flex;justify-content:space-between;align-items:baseline;gap:6px;">
+          <span style="font-size:12px;font-weight:600;color:var(--text);">${a.name}</span>
+          <span style="font-size:11px;font-weight:700;color:var(--accent3);white-space:nowrap;">${a.watts}W</span>
+        </div>
+        <div style="font-size:10px;color:var(--muted);margin-top:2px;">${a.hours}h/day · ${a.type.toUpperCase()} · ${(a.watts*a.hours).toFixed(0)} Wh/day</div>
+        <div style="font-size:10px;color:var(--muted);margin-top:2px;font-style:italic;line-height:1.4;">${a.note}</div>
+      </div>`;
+    });
+    html+='</div></div>';
+  });
+  if(!html) html='<div style="padding:20px;color:var(--muted);font-size:13px;">No appliances match "'+filter+'"</div>';
+  document.getElementById('appliance-lookup-body').innerHTML=html;
+}
+
+function filterLookup(q){ renderLookupBody(q); }
+
+function openApplianceLookup(){
+  const s=document.getElementById('lookup-search');
+  if(s) s.value='';
+  renderLookupBody();
+  document.getElementById('appliance-lookup-overlay').classList.remove('hidden');
+  if(s) setTimeout(()=>s.focus(),100);
+}
+
+function closeApplianceLookup(){ document.getElementById('appliance-lookup-overlay').classList.add('hidden'); }
+
+function addFromLookup(idx, el){
+  const a=APPLIANCE_LOOKUP[idx];
+  addAppliance({name:a.name, watts:a.watts, hours:a.hours, type:a.type});
+  // Flash the card green
+  if(el){
+    el.style.background='var(--accent2-bg)';
+    el.style.borderColor='var(--accent2)';
+    setTimeout(()=>{el.style.background='var(--surface)';el.style.borderColor='var(--border)';},600);
+  }
+}
 
 function openTemplates(){
   const grid=document.getElementById('template-grid');
