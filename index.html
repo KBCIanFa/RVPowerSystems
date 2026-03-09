@@ -458,6 +458,17 @@
       <option value="5">5 days</option>
     </select>
   </div>
+  <div class="settings-divider" aria-hidden="true"></div>
+  <div class="settings-group">
+    <label for="shop-region">🛒 Shop</label>
+    <select id="shop-region" onchange="onRegionChange(this.value)" aria-label="Shopping region for product links" title="Sets the country for all Buy links">
+      <option value="AU" selected>🇦🇺 Australia</option>
+      <option value="US">🇺🇸 United States</option>
+      <option value="UK">🇬🇧 United Kingdom</option>
+      <option value="CA">🇨🇦 Canada</option>
+      <option value="EU">🇪🇺 Europe</option>
+    </select>
+  </div>
   <span class="settings-tip" id="settings-tip" aria-live="polite"></span>
   <button class="btn btn-secondary" onclick="showOnboard()" style="margin-left:auto;font-size:12px;padding:7px 14px;" aria-label="Relaunch setup guide">🧭 Setup Guide</button>
   <button class="btn-build" onclick="buildSystem()" aria-label="Auto-build suggested system from your inputs">🔨 Build System</button>
@@ -1007,9 +1018,49 @@
 <script>
 // ===================== STATE =====================
 let appliances=[],selections={battery:[],solar:[],inv:[],cc:null,dc2dc:null,monitor:null,ats:null},selQty={},nextId=1;
+let shopRegion='AU'; // default Australia
 let savedSystems=[],compareSet=new Set();
 let userProducts={battery:[],solar:[],cc:[],inv:[],dc2dc:[],monitor:[],ats:[]};
 let hiddenBuiltIns={battery:new Set(),solar:new Set(),cc:new Set(),inv:new Set(),dc2dc:new Set(),monitor:new Set(),ats:new Set()};
+
+
+// ===================== REGIONAL LINKS =====================
+const REGION_URLS = {
+  // vendor base → { AU, US, UK, CA, EU }
+  'battlebornbatteries.com':  { AU:'https://www.battlebornbatteries.com', US:'https://www.battlebornbatteries.com', UK:'https://www.battlebornbatteries.com', CA:'https://www.battlebornbatteries.com', EU:'https://www.battlebornbatteries.com' },
+  'renogy.com':               { AU:'https://www.renogy.com/au', US:'https://www.renogy.com', UK:'https://uk.renogy.com', CA:'https://ca.renogy.com', EU:'https://www.renogy.com' },
+  'litime.com':               { AU:'https://au.litime.com', US:'https://www.litime.com', UK:'https://uk.litime.com', CA:'https://www.litime.com', EU:'https://eu.litime.com' },
+  'mightymaxbattery.com':     { AU:'https://www.mightymaxbattery.com', US:'https://www.mightymaxbattery.com', UK:'https://www.mightymaxbattery.com', CA:'https://www.mightymaxbattery.com', EU:'https://www.mightymaxbattery.com' },
+  'us.sunpower.com':          { AU:'https://sunpower.com.au', US:'https://us.sunpower.com', UK:'https://us.sunpower.com', CA:'https://us.sunpower.com', EU:'https://us.sunpower.com' },
+  'newpowa.com':              { AU:'https://www.newpowa.com', US:'https://www.newpowa.com', UK:'https://www.newpowa.com', CA:'https://www.newpowa.com', EU:'https://www.newpowa.com' },
+  'victronenergy.com':        { AU:'https://www.victronenergy.com', US:'https://www.victronenergy.com', UK:'https://www.victronenergy.com', CA:'https://www.victronenergy.com', EU:'https://www.victronenergy.com' },
+  'epever.com':               { AU:'https://www.epever.com', US:'https://www.epever.com', UK:'https://www.epever.com', CA:'https://www.epever.com', EU:'https://www.epever.com' },
+  'giandelinverter.com':      { AU:'https://www.giandelinverter.com', US:'https://www.giandelinverter.com', UK:'https://www.giandelinverter.com', CA:'https://www.giandelinverter.com', EU:'https://www.giandelinverter.com' },
+  'redarc.com.au':            { AU:'https://www.redarc.com.au', US:'https://www.redarc.com.au', UK:'https://www.redarc.com.au', CA:'https://www.redarc.com.au', EU:'https://www.redarc.com.au' },
+  'sterling-power.com':       { AU:'https://www.sterling-power.com', US:'https://www.sterling-power.com', UK:'https://www.sterling-power.com', CA:'https://www.sterling-power.com', EU:'https://www.sterling-power.com' },
+  'powertechsupply.com.au':   { AU:'https://www.powertechsupply.com.au', US:'https://www.powertechsupply.com.au', UK:'https://www.powertechsupply.com.au', CA:'https://www.powertechsupply.com.au', EU:'https://www.powertechsupply.com.au' },
+  'camsco.com.tw':            { AU:'https://www.camsco.com.tw', US:'https://www.camsco.com.tw', UK:'https://www.camsco.com.tw', CA:'https://www.camsco.com.tw', EU:'https://www.camsco.com.tw' },
+  'jaycar.com.au':            { AU:'https://www.jaycar.com.au', US:'https://www.jaycar.com.au', UK:'https://www.jaycar.com.au', CA:'https://www.jaycar.com.au', EU:'https://www.jaycar.com.au' },
+  'ecoflow.com':              { AU:'https://www.ecoflow.com/au', US:'https://www.ecoflow.com', UK:'https://www.ecoflow.com/uk', CA:'https://www.ecoflow.com/ca', EU:'https://www.ecoflow.com/eu' },
+  'jackery.com':              { AU:'https://www.jackery.com/au', US:'https://www.jackery.com', UK:'https://www.jackery.co.uk', CA:'https://www.jackery.com/ca', EU:'https://www.jackery.com/eu' },
+  'bluettipower.com':         { AU:'https://www.bluettipower.com.au', US:'https://www.bluettipower.com', UK:'https://www.bluettipower.co.uk', CA:'https://www.bluettipower.com', EU:'https://www.bluettipower.eu' },
+  'anker.com':                { AU:'https://www.anker.com/au', US:'https://www.anker.com', UK:'https://www.anker.com/uk', CA:'https://www.anker.com', EU:'https://www.anker.com/eu' },
+};
+
+function regionalUrl(url) {
+  if (!url) return url;
+  try {
+    const host = new URL(url).hostname.replace(/^www\./, '');
+    const map = REGION_URLS[host];
+    if (map && map[shopRegion]) return map[shopRegion];
+  } catch(e) {}
+  return url; // fallback: return original
+}
+
+function onRegionChange(val) {
+  shopRegion = val;
+  renderComponents();
+}
 
 // ===================== BUILT-IN PRODUCTS =====================
 function builtIn(cat,c){
@@ -1473,7 +1524,7 @@ function isSelected(cat,key){
 function mkCard(cat,key,o,isUser,qty){
   const sel=isSelected(cat,key);
   const idx=parseInt(key.slice(1));
-  const linkHTML=o.url?`<a class="comp-link" href="${o.url}" target="_blank" rel="noopener" onclick="event.stopPropagation()">🔗 Buy</a>`:'';
+  const linkHTML=o.url?`<a class="comp-link" href="${regionalUrl(o.url)}" target="_blank" rel="noopener" onclick="event.stopPropagation()">🔗 Buy</a>`:'';
   const delHTML=isUser
     ?`<button class="btn btn-danger btn-sm" style="padding:3px 8px;font-size:10px;" onclick="event.stopPropagation();delUserProd('${cat}',${idx})" aria-label="Remove ${o.name}">✕</button>`
     :`<button class="btn btn-secondary btn-sm" style="padding:3px 8px;font-size:10px;" onclick="event.stopPropagation();hideBuiltIn('${cat}',${idx})" aria-label="Hide ${o.name}">Hide</button>`;
@@ -1671,7 +1722,7 @@ function renderShoppingList(){
     const unitPrice=parsePrice(prod.price);
     const lineTotal=unitPrice*qty;
     if(unitPrice) { totalLow+=lineTotal; totalHigh+=lineTotal; }
-    const lnk=prod.url?`<a href="${prod.url}" target="_blank" rel="noopener" style="color:var(--accent3);font-weight:600;font-size:12px;">🔗 Buy</a>`:'—';
+    const lnk=prod.url?`<a href="${regionalUrl(prod.url)}" target="_blank" rel="noopener" style="color:var(--accent3);font-weight:600;font-size:12px;">🔗 Buy</a>`:'—';
     const totalStr=unitPrice&&qty>0?`<strong style="color:var(--accent2);">$${lineTotal.toLocaleString()}</strong>`:'—';
     h+=`<tr>
       <td style="font-size:12px;color:var(--muted);font-weight:600;">${label}</td>
@@ -1925,6 +1976,7 @@ function confirmSave(){
     prefs:{voltage:+document.getElementById('sys-voltage').value,acVoltage:getAcVoltage(),autonomy:+document.getElementById('autonomy').value,dod:+document.getElementById('battery-type').value,peakSun:+document.getElementById('peak-sun').value,solEff:+document.getElementById('sol-eff').value,invEff:+document.getElementById('inv-eff').value},
     calcs:c,selections:JSON.parse(JSON.stringify(selections)),
     selQty:JSON.parse(JSON.stringify(selQty)),
+    shopRegion,
     userProducts:JSON.parse(JSON.stringify(userProducts))
   });
   closeSaveModal();renderSavedList();
@@ -1941,6 +1993,7 @@ function loadSystem(id){
   nextId=Math.max(0,...appliances.map(a=>a.id))+1;
   selections=JSON.parse(JSON.stringify(sys.selections));
   selQty=JSON.parse(JSON.stringify(sys.selQty||{}));
+  if(sys.shopRegion){ shopRegion=sys.shopRegion; const el=document.getElementById('shop-region'); if(el) el.value=shopRegion; }
   // Migrate old single-value selections to arrays for multi-select cats
   ['battery','solar','inv'].forEach(cat=>{
     if(!Array.isArray(selections[cat])) selections[cat]=selections[cat]?[selections[cat]]:[];
@@ -2655,6 +2708,7 @@ function exportJSON(){
     },
     selections,
     selQty,
+    shopRegion,
     userProducts,
     calcs:getCalcs()
   };
@@ -2697,6 +2751,7 @@ function importJSONPrompt(){
         if(d.selections){
           Object.assign(selections,d.selections);
           if(d.selQty) Object.assign(selQty,d.selQty);
+          if(d.shopRegion){ shopRegion=d.shopRegion; const el=document.getElementById('shop-region'); if(el) el.value=shopRegion; }
           ['battery','solar','inv'].forEach(cat=>{
             if(!Array.isArray(selections[cat])) selections[cat]=selections[cat]?[selections[cat]]:[];
             selections[cat].forEach(key=>{ if(!selQty[cat+'_'+key]) selQty[cat+'_'+key]=1; });
@@ -2999,7 +3054,7 @@ function renderSolarGenerator(){
           ${g.cons.map(p=>`<div style="font-size:12px;color:var(--text-secondary);margin-bottom:2px;">✗ ${p}</div>`).join('')}
         </div>
       </div>
-      <a href="${g.affiliateUrl}" target="_blank" rel="noopener" style="display:inline-block;background:var(--accent);color:#1a1000;font-weight:700;font-size:13px;padding:8px 18px;border-radius:7px;text-decoration:none;margin-top:4px;">View ${g.brand} ${g.name} →</a>
+      <a href="${regionalUrl(g.affiliateUrl)}" target="_blank" rel="noopener" style="display:inline-block;background:var(--accent);color:#1a1000;font-weight:700;font-size:13px;padding:8px 18px;border-radius:7px;text-decoration:none;margin-top:4px;">View ${g.brand} ${g.name} →</a>
       <span style="font-size:10px;color:var(--muted);margin-left:8px;">Affiliate link — helps support this free tool</span>
     </div>`;
   }).join('');
