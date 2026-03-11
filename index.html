@@ -487,6 +487,7 @@
       <option value="CA">🇨🇦 Canada</option>
       <option value="EU">🇪🇺 Europe</option>
     </select>
+    <span id="currency-label" style="font-size:11px;color:var(--muted);margin-left:2px;">AUD</span>
   </div>
   <span class="settings-tip" id="settings-tip" aria-live="polite"></span>
   <button class="btn btn-secondary" onclick="showOnboard()" style="margin-left:auto;font-size:12px;padding:7px 14px;" aria-label="Relaunch setup guide">🧭 Setup Guide</button>
@@ -758,7 +759,7 @@
       <span id="build-banner-text">Build System has selected recommended components below — highlighted in blue. Adjust any selection, then scroll down for your Shopping List.</span>
       <button onclick="document.getElementById('build-applied-banner').style.display='none'" style="margin-left:auto;background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.4);color:#fff;border-radius:5px;padding:4px 10px;font-size:11px;cursor:pointer;font-weight:700;flex-shrink:0;">✕ Dismiss</button>
     </div>
-    <div class="section-sub">Select components to build your shopping list. Hide options you don't want. Add custom products with a link from any retailer.</div>
+    <div class="section-sub">Select components to build your shopping list. Prices shown are <strong>approximate retail estimates</strong> in the currency of your selected region (🛒 Shop in the bar above) — verify with the retailer before purchase. Hide options you don't want. Add custom products with a link from any retailer.</div>
     <div class="card">
       <div class="card-title">🔋 Battery Options <span class="badge badge-green">Select One or More</span></div>
       <div class="comp-grid" id="battery-options" role="group" aria-label="Battery options"></div>
@@ -1078,8 +1079,12 @@ function regionalUrl(url) {
   return url; // fallback: return original
 }
 
+const CURRENCY_LABELS = {AU:'AUD',US:'USD',UK:'GBP',CA:'CAD',EU:'EUR'};
+
 function onRegionChange(val) {
   shopRegion = val;
+  const cl = document.getElementById('currency-label');
+  if(cl) cl.textContent = CURRENCY_LABELS[val] || val;
   renderComponents();
 }
 
@@ -1088,10 +1093,10 @@ function onRegionChange(val) {
 const PRODUCTS = {
   battery: {
     AU: (v) => [
-      {name:`Enerdrive ePOWER 100Ah ${v}V LiFePO4`,     spec:`100Ah | 4,000+ cycles | Aussie brand | BMS included`,            price:'$799', tag:'AU Popular', url:'https://www.enerdrive.com.au', ah:100},
-      {name:`Baintech 100Ah ${v}V Slimline LiFePO4`,    spec:`100Ah | Slimline design | Heated option | BMS included`,          price:'$649', tag:'AU Value',   url:'https://www.baintech.com.au', ah:100},
-      {name:`Renogy 200Ah ${v}V LiFePO4`,               spec:`200Ah | 4,000 cycles | BMS included | Lower weight/Ah`,           price:'$999', tag:'Capacity',   url:'https://www.renogy.com', ah:200},
-      {name:`Century Yuasa AGM 100Ah 12V`,              spec:`100Ah 12V | Deep cycle AGM | ~500 cycles @50% DoD`,               price:'$249', tag:'Budget AGM', url:'https://www.yuasabatteries.com.au/products/deep-cycle-batteries', ah:100},
+      {name:`Enerdrive ePOWER 100Ah ${v}V LiFePO4`,     spec:`100Ah | 4,000+ cycles | Aussie brand | BMS included`,            price:'A$799', tag:'AU Popular', url:'https://www.enerdrive.com.au', ah:100},
+      {name:`Baintech 100Ah ${v}V Slimline LiFePO4`,    spec:`100Ah | Slimline design | Heated option | BMS included`,          price:'A$649', tag:'AU Value',   url:'https://www.baintech.com.au', ah:100},
+      {name:`Renogy 200Ah ${v}V LiFePO4`,               spec:`200Ah | 4,000 cycles | BMS included | Lower weight/Ah`,           price:'A$999', tag:'Capacity',   url:'https://www.renogy.com', ah:200},
+      {name:`Century Yuasa AGM 100Ah 12V`,              spec:`100Ah 12V | Deep cycle AGM | ~500 cycles @50% DoD`,               price:'A$299', tag:'Budget AGM', url:'https://www.yuasabatteries.com.au/products/deep-cycle-batteries', ah:100},
     ],
     US: (v) => [
       {name:`Battle Born 100Ah ${v}V LiFePO4`,          spec:`100Ah | 3,000–5,000 cycles | Heated option`,                     price:'$899', tag:'Premium',   url:'https://battlebornbatteries.com', ah:100},
@@ -1114,10 +1119,10 @@ const PRODUCTS = {
   },
   solar: {
     AU: () => [
-      {name:'Enerdrive 200W Mono Rigid',      spec:'200W | 22% panel eff. | 41.2V Voc | AU warranty',  price:'$199', tag:'AU Brand',  url:'https://www.enerdrive.com.au', watts:200},
-      {name:'Renogy 200W Rigid Mono',         spec:'200W | 22% panel eff. | 58.8V Voc',                price:'$199', tag:'Popular',   url:'https://www.renogy.com', watts:200},
-      {name:'Renogy 400W Rigid Mono',         spec:'400W | 21.3% panel eff. | 49.9V Voc',              price:'$349', tag:'Efficient', url:'https://www.renogy.com', watts:400},
-      {name:'Sunman 100W eArc Flexible',      spec:'100W | 23% panel eff. | Curved roofs | AU made',   price:'$249', tag:'Flexible',  url:'https://www.sunman-energy.com', watts:100},
+      {name:'Enerdrive 200W Mono Rigid',      spec:'200W | 22% panel eff. | 41.2V Voc | AU warranty',  price:'A$269', tag:'AU Brand',  url:'https://www.enerdrive.com.au', watts:200},
+      {name:'Renogy 200W Rigid Mono',         spec:'200W | 22% panel eff. | 58.8V Voc',                price:'A$299', tag:'Popular',   url:'https://www.renogy.com', watts:200},
+      {name:'Renogy 400W Rigid Mono',         spec:'400W | 21.3% panel eff. | 49.9V Voc',              price:'A$499', tag:'Efficient', url:'https://www.renogy.com', watts:400},
+      {name:'Sunman 100W eArc Flexible',      spec:'100W | 23% panel eff. | Curved roofs | AU made',   price:'A$229', tag:'Flexible',  url:'https://www.sunman-energy.com', watts:100},
     ],
     US: () => [
       {name:'Renogy 200W Rigid Mono',         spec:'200W | 22% panel eff. | 58.8V Voc',                price:'$149', tag:'Popular',   url:'https://www.renogy.com', watts:200},
@@ -1134,10 +1139,10 @@ const PRODUCTS = {
   },
   inv: {
     AU: (iv, acv, v) => [
-      {name:`Victron MultiPlus ${v}/${iv}`,       spec:`${iv}W cont. | ${+iv*2}W surge | Inverter-Charger | Transfer Switch`,  price:+iv<=1200?'$649':+iv<=2000?'$1,099':'$1,599', tag:'All-in-One', url:'https://www.victronenergy.com'},
-      {name:`Enerdrive ePOWER 2000W ${acv}V`,     spec:`2000W cont. | 4000W surge | ${acv}V AC out | AU brand`,               price:'$549', tag:'AU Popular', url:'https://www.enerdrive.com.au'},
-      {name:`Giandel 3000W Pure Sine ${acv}V`,    spec:`3000W cont. | 6000W surge | ${acv}V AC out`,                          price:'$299', tag:'Budget',     url:'https://www.giandelinverter.com'},
-      {name:`Baintech 2000W Pure Sine ${acv}V`,   spec:`2000W cont. | 4000W surge | ${acv}V AC out | AU brand`,               price:'$399', tag:'AU Value',   url:'https://www.baintech.com.au'},
+      {name:`Victron MultiPlus ${v}/${iv}`,       spec:`${iv}W cont. | ${+iv*2}W surge | Inverter-Charger | Transfer Switch`,  price:+iv<=1200?'A$1,171':+iv<=2000?'A$1,469':'A$1,899', tag:'All-in-One', url:'https://www.victronenergy.com'},
+      {name:`Enerdrive ePOWER 2000W ${acv}V`,     spec:`2000W cont. | 4000W surge | ${acv}V AC out | AU brand`,               price:'A$849', tag:'AU Popular', url:'https://www.enerdrive.com.au'},
+      {name:`Giandel 3000W Pure Sine ${acv}V`,    spec:`3000W cont. | 6000W surge | ${acv}V AC out`,                          price:'A$449', tag:'Budget',     url:'https://www.giandelinverter.com'},
+      {name:`Baintech 2000W Pure Sine ${acv}V`,   spec:`2000W cont. | 4000W surge | ${acv}V AC out | AU brand`,               price:'A$599', tag:'AU Value',   url:'https://www.baintech.com.au'},
     ],
     US: (iv, acv, v) => [
       {name:`Victron MultiPlus ${v}/${iv}`,       spec:`${iv}W cont. | ${+iv*2}W surge | Inverter-Charger | Transfer Switch`,  price:+iv<=1200?'$449':+iv<=2000?'$799':'$1,199', tag:'All-in-One', url:'https://www.victronenergy.com'},
@@ -1181,24 +1186,24 @@ function builtIn(cat,c){
     return fn(iv, acv, c.voltage);
   }
   if(cat==='dc2dc') return [
-    {name:`Victron Orion-Tr Smart ${c.voltage}/${c.voltage}-30A`,spec:`30A | ${c.voltage}V in → ${c.voltage}V out | Bluetooth | Isolated | Engine detect`,price:'$189',tag:'Best',url:'https://www.victronenergy.com'},
-    {name:`Redarc BCDC1225D ${c.voltage}V`,spec:`25A | ${c.voltage}V | MPPT solar input | Dual-stage | DIP switch profiles`,price:'$299',tag:'Premium',url:'https://www.redarc.com.au'},
-    {name:`Renogy DCC50S ${c.voltage}V`,spec:`50A | ${c.voltage}V | Dual-input: alternator + solar | MPPT built-in`,price:'$199',tag:'High Output',url:'https://www.renogy.com'},
-    {name:`Sterling Power BB1260 ${c.voltage}V`,spec:`60A | ${c.voltage}V | Isolated | Fast charge | UK-made`,price:'$249',tag:'Heavy Duty',url:'https://www.sterling-power.com'},
+    {name:`Victron Orion-Tr Smart ${c.voltage}/${c.voltage}-30A`,spec:`30A | ${c.voltage}V in → ${c.voltage}V out | Bluetooth | Isolated | Engine detect`,price:'A$349',tag:'Best',url:'https://www.victronenergy.com'},
+    {name:`Redarc BCDC1225D ${c.voltage}V`,spec:`25A | ${c.voltage}V | MPPT solar input | Dual-stage | DIP switch profiles`,price:'A$599',tag:'AU Premium',url:'https://www.redarc.com.au'},
+    {name:`Renogy DCC50S ${c.voltage}V`,spec:`50A | ${c.voltage}V | Dual-input: alternator + solar | MPPT built-in`,price:'A$349',tag:'High Output',url:'https://www.renogy.com'},
+    {name:`Sterling Power BB1260 ${c.voltage}V`,spec:`60A | ${c.voltage}V | Isolated | Fast charge | UK-made`,price:'A$499',tag:'Heavy Duty',url:'https://www.sterling-power.com'},
   ];
   if(cat==='monitor') return [
-    {name:'Victron BMV-712 Smart',spec:'500A shunt | Bluetooth | SOC, voltage, current, power | Alarm relay',price:'$149',tag:'Best',url:'https://www.victronenergy.com'},
-    {name:'Victron SmartShunt 500A',spec:'500A shunt | Bluetooth | No display — pairs to VictronConnect app',price:'$99',tag:'App-Based',url:'https://www.victronenergy.com'},
-    {name:'Renogy 500A Battery Monitor',spec:'500A shunt | LCD display | SOC, voltage, current, time remaining',price:'$49',tag:'Value',url:'https://www.renogy.com'},
-    {name:'Victron BMV-700',spec:'500A shunt | Built-in display | SOC, voltage, current | No Bluetooth',price:'$109',tag:'Classic',url:'https://www.victronenergy.com'},
+    {name:'Victron BMV-712 Smart',spec:'500A shunt | Bluetooth | SOC, voltage, current, power | Alarm relay',price:'A$270',tag:'Best',url:'https://www.victronenergy.com'},
+    {name:'Victron SmartShunt 500A',spec:'500A shunt | Bluetooth | No display — pairs to VictronConnect app',price:'A$135',tag:'App-Based',url:'https://www.victronenergy.com'},
+    {name:'Renogy 500A Battery Monitor',spec:'500A shunt | LCD display | SOC, voltage, current, time remaining',price:'A$79',tag:'Value',url:'https://www.renogy.com'},
+    {name:'Victron BMV-700',spec:'500A shunt | Built-in display | SOC, voltage, current | No Bluetooth',price:'A$190',tag:'Classic',url:'https://www.victronenergy.com'},
   ];
   if(cat==='ats'){
     const acv=c.acVoltage||240;
     return [
       {name:`Victron MultiPlus (built-in ATS)`,spec:`Auto transfer switch included | <20ms switchover | Works with MultiPlus inverter-charger only`,price:'Included',tag:'Integrated',url:'https://www.victronenergy.com'},
-      {name:`Powertech ${acv}V Auto Transfer Switch`,spec:`${acv}V | 30A | Auto switching: shore → inverter | LED indicators`,price:'$89',tag:'Standalone',url:'https://www.powertechsupply.com.au'},
-      {name:`Camsco ${acv}V ATS 63A`,spec:`${acv}V | 63A | Dual supply | DIN rail mount | Manual override`,price:'$129',tag:'Heavy Duty',url:'https://www.camsco.com.tw'},
-      {name:`Manual Transfer Switch ${acv}V`,spec:`${acv}V | 30A | Manual selector: shore / off / inverter | Budget option`,price:'$39',tag:'Manual',url:'https://www.jaycar.com.au'},
+      {name:`Powertech ${acv}V Auto Transfer Switch`,spec:`${acv}V | 30A | Auto switching: shore → inverter | LED indicators`,price:'A$99',tag:'Standalone',url:'https://www.powertechsupply.com.au'},
+      {name:`Camsco ${acv}V ATS 63A`,spec:`${acv}V | 63A | Dual supply | DIN rail mount | Manual override`,price:'A$149',tag:'Heavy Duty',url:'https://www.camsco.com.tw'},
+      {name:`Manual Transfer Switch ${acv}V`,spec:`${acv}V | 30A | Manual selector: shore / off / inverter | Budget option`,price:'A$49',tag:'Manual',url:'https://www.jaycar.com.au'},
     ];
   }
   return [];
@@ -1696,7 +1701,7 @@ function mkCard(cat,key,o,isUser,qty){
     :`<button class="btn btn-secondary btn-sm" style="padding:3px 8px;font-size:10px;" onclick="event.stopPropagation();hideBuiltIn('${cat}',${idx})" aria-label="Hide ${o.name}">Hide</button>`;
   const qtyHTML=qty?`<div class="comp-spec" style="color:var(--accent2);font-weight:600;">${qty}</div>`:'';
   return `<div class="comp-card${sel?' selected':''}${isUser?' user-card':''}" data-selcat="${cat}" data-selkey="${key}" tabindex="0" role="option" aria-selected="${sel}" onkeydown="if(event.key==='Enter'||event.key===' ')selectComp('${cat}','${key}')">
-    <div class="comp-card-header comp-clickzone"><div class="comp-name">${o.name}</div><div class="comp-price">${o.price||'—'}</div></div>
+    <div class="comp-card-header comp-clickzone"><div class="comp-name">${o.name}</div><div class="comp-price" title="Approximate retail price — verify with retailer before purchase">${o.price||'—'}<span style="font-size:9px;color:var(--muted);font-weight:400;margin-left:2px;">est.</span></div></div>
     <div class="comp-spec comp-clickzone">${o.spec}</div>
     ${qtyHTML}
     ${sel&&['battery','solar','inv'].includes(cat)?`<div class="comp-qty-row" style="display:flex;align-items:center;gap:6px;margin-top:6px;">
