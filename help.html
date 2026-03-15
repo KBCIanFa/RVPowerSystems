@@ -70,6 +70,7 @@
       <a href="#s2">2 &mdash; System Settings Bar</a>
       <a href="#s3">3 &mdash; Quick Templates</a>
       <a href="#s4">4 &mdash; Adding Appliances</a>
+      <a href="#s4b">4b &mdash; Appliance Reference Lookup</a>
       <a href="#s5">5 &mdash; Location &amp; Seasonal Sun Hours</a>
       <a href="#s6">6 &mdash; Understanding Sizing Results</a>
       <a href="#s7">7 &mdash; 30-Day Weather Simulation</a>
@@ -82,7 +83,6 @@
       <a href="#s12">12 &mdash; Build System &mdash; Auto-Suggest</a>
       <a href="#s13">13 &mdash; Wiring Guide &amp; System Diagram</a>
       <a href="#s14">14 &mdash; Saving, Exporting &amp; Sharing</a>
-      <a href="#s15">15 &mdash; Accuracy &amp; Limitations</a>
       <a href="#s15">15 &mdash; Accuracy &amp; Limitations</a>
       <a href="#s16">16 &mdash; FAQ</a>
     </div>
@@ -123,6 +123,7 @@
     <tr><td><strong>AC Mains</strong></td><td>240V / 120V</td><td>240V = Australia, NZ, UK, Europe. 120V = North America.</td></tr>
     <tr><td><strong>Battery Type</strong></td><td>AGM (50%) &middot; Gel (40%) &middot; Flooded LA (50%) &middot; LiFePO4 (80%) &middot; LiFePO4 Premium (90%)</td><td>Percentage = Depth of Discharge used in all calculations.</td></tr>
     <tr><td><strong>Autonomy</strong></td><td>1&ndash;5 days</td><td>Days the battery bank must run without any solar or charge input.</td></tr>
+    <tr><td><strong>&#x1F6D2; Shop</strong></td><td>AU / US / UK / CA / EU</td><td>Sets the region for component product links and prices. Defaults to AU.</td></tr>
     <tr><td><strong>&#x1F9ED; Setup Guide</strong></td><td>Button</td><td>Relaunches the onboarding wizard at any time.</td></tr>
     <tr><td><strong>&#x1F528; Build System</strong></td><td>Button</td><td>Auto-selects recommended components based on your sizing results.</td></tr>
   </table>
@@ -165,8 +166,24 @@
     <tr><td><strong>AC</strong></td><td>Microwave, TV, laptop charger, hair dryer, air conditioning</td><td>Divided by inverter efficiency (~90%) &mdash; slightly more battery draw</td></tr>
   </table>
   <div class="callout info">Where possible, use native DC appliances instead of AC equivalents. This reduces inverter losses and lowers your total battery requirement.</div>
+  <h3>Input validation</h3>
+  <p>Appliance entries are validated as you type. Watts must be a positive number — negative values and zero are blocked with an inline warning. Hours must be between 0 and 24. Entries above 5,000W are allowed but flagged with a caution, since that figure is likely a surge rating rather than a running wattage.</p>
   <h3>Advanced preferences</h3>
   <p>Expand <strong>Advanced Preferences</strong> below the appliance table to set roof space, solar/inverter efficiency, and charge source contributions (alternator, shore power, generator).</p>
+</div>
+
+<div class="section" id="s4b">
+  <h2>4b &mdash; Appliance Reference Lookup <span class="badge new">NEW</span></h2>
+  <p>Not sure how many watts your fridge draws, or how long a water pump runs per day? Click <strong>&#x1F4CB; Browse Appliances</strong> in the Loads tab toolbar to open the reference library.</p>
+  <p>The library contains <strong>42 common RV appliances</strong> across seven categories: Lighting, Fridges, Kitchen, Climate, Tech, Medical, and Water. Each entry shows a typical wattage, daily hours, and a brief note on the figure (e.g. running watts vs. startup surge).</p>
+  <h3>Using the lookup</h3>
+  <ol class="step-list">
+    <li>Click <strong>&#x1F4CB; Browse Appliances</strong> to open the panel.</li>
+    <li>Type in the search box to filter by appliance name or category.</li>
+    <li>Click <strong>+ Add</strong> on any row to add it directly to your appliance list.</li>
+    <li>Adjust watts or hours after adding to match your specific gear.</li>
+  </ol>
+  <div class="callout tip">The figures in the lookup are typical values — your actual appliance may differ. Always check the nameplate or spec sheet for the real running wattage, especially for fridges, pumps, and motors.</div>
 </div>
 
 <div class="section" id="s5">
@@ -343,6 +360,8 @@
 
 <div class="section" id="s11">
   <h2>11 &mdash; Component Selector &amp; Shopping List <span class="badge upd">UPDATED</span></h2>
+  <h3>Regional pricing</h3>
+  <p>Product prices and buy links are region-aware. Use the <strong>&#x1F6D2; Shop</strong> selector in the Settings Bar to switch between AU, US, UK, CA, and EU. The currency label in the bar updates to match (AUD, USD, GBP, CAD, EUR). All prices are approximate retail estimates — verify with the retailer before purchasing.</p>
   <p>The Components tab lets you build a complete shopping list by selecting from built-in products or adding your own. <strong>Battery, Solar Panels, and Inverter categories support multi-select</strong> — you can choose multiple products in each. All other categories (Charge Controller, DC-DC, Monitor, ATS) remain single-select.</p>
 
   <h3>Selection modes by category</h3>
