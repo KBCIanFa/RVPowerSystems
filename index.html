@@ -1452,8 +1452,8 @@ function getCalcs(){
   const peakSunRaw=+document.getElementById('peak-sun').value;
   const peakSun=Math.max(0.5,Math.min(12,isNaN(peakSunRaw)?5:peakSunRaw));
   if(document.getElementById('peak-sun')&&peakSunRaw!==peakSun) document.getElementById('peak-sun').value=peakSun;
-  const solEff=+document.getElementById('sol-eff').value;
-  const invEff=+document.getElementById('inv-eff').value;
+  const solEff=Math.max(0.1,+document.getElementById('sol-eff').value||0.8);
+  const invEff=Math.max(0.1,+document.getElementById('inv-eff').value||0.9);
   const roofSpace=+(document.getElementById('roof-space')?.value||60);
   // Charge sources
   const altAmps=+(document.getElementById('alt-amps')?.value||0);
