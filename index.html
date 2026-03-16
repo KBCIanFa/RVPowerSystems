@@ -660,6 +660,7 @@
   <div id="tab-sizing" class="section" role="tabpanel">
     <div class="section-title">System Sizing Results</div>
     <div class="section-sub">Calculated minimums based on your loads and preferences. Always verify with a qualified installer before purchasing.</div>
+    <div id="system-checks-label" style="display:none;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--muted);margin:12px 0 4px;">⚡ System Checks &amp; Compatibility</div>
     <div id="sizing-alerts" aria-live="polite"></div>
     <div class="result-grid" aria-label="Key sizing results">
       <div class="result-box"><div class="result-val" id="res-daily" style="color:var(--accent)">0</div><div class="result-label">Wh / Day</div></div>
@@ -1749,6 +1750,8 @@ function renderSizingNumbers(c){
   if(c.peakAc>0&&c.invSurge>3000) h+=`<div class="alert alert-warn">⚠️ Surge est. ~${Math.round(c.invSurge)}W. Verify each motor load's startup current (LRA) individually.</div>`;
   h+=getCompatibilityAlerts(c);
   ad.innerHTML=h;
+  const lbl=document.getElementById('system-checks-label');
+  if(lbl) lbl.style.display=h?'block':'none';
 }
 
 // ===================== COMPATIBILITY VALIDATION =====================
