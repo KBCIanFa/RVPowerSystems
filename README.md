@@ -34,3 +34,12 @@ All component prices are now labelled as estimated (est.) with a tooltip noting 
 - 62-test suite (unit, functional, regression, production readiness) — all passing
 - No debug output in production build
 - File size 239KB
+
+### Updates 16/03/2026
+
+App — added an ⚡ System Checks & Compatibility label directly above the alerts area in the Sizing tab. It's hidden when there are no alerts, visible when checks fire — so it only appears when it's relevant and gives users the exact label to look for.
+Help file — three places updated to match:
+
+TOC entry: 9 — System Checks & Compatibility
+Recommended workflow step: now references the label by exact name and says it's at the top of the Sizing tab
+Section 8 heading and intro: updated to match the app label and tells users exactly where to look for it
