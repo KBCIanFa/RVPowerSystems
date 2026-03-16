@@ -43,3 +43,9 @@ Help file — three places updated to match:
 TOC entry: 9 — System Checks & Compatibility
 Recommended workflow step: now references the label by exact name and says it's at the top of the Sizing tab
 Section 8 heading and intro: updated to match the app label and tells users exactly where to look for it
+
+### Updates 17/03/2026
+
+Done. Two changes:
+Help file — new 💡 AC low-wattage inverter hint subsection in Section 4, explaining why the hint appears, the real-world reason it matters (inverter overhead at low load), and that it clears automatically when you switch to DC or raise watts above 100W.
+Landing page — feature card title updated from "Compatibility Validation" to "System Checks & Compatibility" to match the app label exactly.
