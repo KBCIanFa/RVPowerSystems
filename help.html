@@ -168,6 +168,9 @@
   <div class="callout info">Where possible, use native DC appliances instead of AC equivalents. This reduces inverter losses and lowers your total battery requirement.</div>
   <h3>Input validation</h3>
   <p>Appliance entries are validated as you type. Watts must be a positive number — negative values and zero are blocked with an inline warning. Hours must be between 0 and 24. Entries above 5,000W are allowed but flagged with a caution, since that figure is likely a surge rating rather than a running wattage.</p>
+  <h3>&#x1F4A1; AC low-wattage inverter hint</h3>
+  <p>If you set an appliance to type <strong>AC</strong> with watts under 100W, a yellow hint appears below the row: <em>&ldquo;Under 100W via inverter. If this has a 12V DC adapter, set type to DC for a more accurate figure.&rdquo;</em></p>
+  <p>This matters because inverters are significantly less efficient at very low loads — a 30W CPAP running through a 2000W inverter may draw 50&ndash;60W from the battery once inverter overhead is included. The same CPAP with a native 12V DC adapter draws close to 30W. Setting the type to DC gives a more accurate battery sizing result. The hint clears automatically if you switch the type to DC or raise the wattage above 100W.</p>
   <h3>Advanced preferences</h3>
   <p>Expand <strong>Advanced Preferences</strong> below the appliance table to set roof space, solar/inverter efficiency, and charge source contributions (alternator, shore power, generator).</p>
 </div>
@@ -378,15 +381,25 @@
 
   <h3>Selection modes by category</h3>
   <table>
-    <tr><th>Category</th><th>Selection</th><th>Products available</th></tr>
-    <tr><td><strong>Battery</strong></td><td>Multi-select</td><td>Battle Born 100Ah, Renogy LiFePO4, Ampere Time 200Ah, Mighty Max AGM + custom</td></tr>
-    <tr><td><strong>Solar Panels</strong></td><td>Multi-select</td><td>200W and 400W monocrystalline options + custom</td></tr>
-    <tr><td><strong>Inverter / Charger</strong></td><td>Multi-select</td><td>Victron MultiPlus (with ATS), Renogy 2000W + custom</td></tr>
-    <tr><td>Charge Controller</td><td>Single-select</td><td>Victron SmartSolar MPPT 30A/50A, Renogy Rover 60A</td></tr>
-    <tr><td>DC-DC Charger</td><td>Single-select</td><td>Victron Orion-Tr isolated</td></tr>
-    <tr><td>Battery Monitor</td><td>Single-select</td><td>Victron BMV-712, Renogy monitor options</td></tr>
-    <tr><td>Transfer Switch</td><td>Single-select</td><td>Included in Victron MultiPlus, or Powertech separate unit</td></tr>
+    <tr><th>Category</th><th>Selection</th><th>Built-in brands</th></tr>
+    <tr><td><strong>Battery</strong></td><td>Multi-select</td><td>Renogy, Enerdrive, Baintech, LiTime, Victron, iTechworld, Invicta, Century Yuasa AGM</td></tr>
+    <tr><td><strong>Solar Panels</strong></td><td>Multi-select</td><td>Renogy, Enerdrive, Sunman flexible</td></tr>
+    <tr><td><strong>Inverter / Charger</strong></td><td>Multi-select</td><td>Renogy (inverter + inverter-charger range), Victron MultiPlus, Enerdrive ePOWER, Projecta Intelli-Wave, Baintech</td></tr>
+    <tr><td>Charge Controller</td><td>Single-select</td><td>Victron SmartSolar, Renogy Rover, Enerdrive MPPT, EPever</td></tr>
+    <tr><td>DC-DC Charger</td><td>Single-select</td><td>Victron Orion-Tr, Redarc BCDC, Enerdrive DC2DC+, BMPRO ProBoost, Renogy DCC50S, iTechworld, Sterling</td></tr>
+    <tr><td>Battery Monitor</td><td>Single-select</td><td>Victron BMV-712 / SmartShunt, Renogy, Enerdrive, BMPRO BatteryCheckPRO, Projecta, iTechworld</td></tr>
+    <tr><td>Transfer Switch</td><td>Single-select</td><td>Included in inverter-charger units, or standalone Powertech unit</td></tr>
   </table>
+
+  <h3>&#x1F50D; Product quick search</h3>
+  <p>When you click <strong>+ Add Custom [Category]</strong>, a quick search field appears at the top of the form for Battery, Charge Controller, Inverter, DC-DC Charger, and Battery Monitor categories. Type a brand or model name and matching products appear immediately — click one to add it directly to your component list without filling in the manual form.</p>
+  <table>
+    <tr><th>If you type&hellip;</th><th>You&rsquo;ll find&hellip;</th></tr>
+    <tr><td>renogy, victron, enerdrive, redarc, bmpro, projecta, itech, invicta</td><td>All products from that brand in that category</td></tr>
+    <tr><td>300ah, 2000w, 40a</td><td>Products matching that spec</td></tr>
+    <tr><td>charger, hf, bluetooth</td><td>Products with that feature in the spec</td></tr>
+  </table>
+  <div class="callout tip">The quick search covers popular Australian brands. If your product isn&rsquo;t listed, fill in the manual form below the search — name, spec, price, and a URL from any retailer.</div>
 
   <h3>Quantity stepper</h3>
   <p>When you select a Battery, Solar Panel, or Inverter card, a <strong>&minus; qty +</strong> stepper appears on the card. For batteries and panels, the quantity is floored at the calculated minimum from your sizing results — you can increase it but not go below what the system needs. For inverters, quantity is free-set.</p>
@@ -430,6 +443,18 @@
     <tr><td>24V</td><td>24V system</td><td>Teal DC-DC block; series panel string label</td></tr>
     <tr><td>48V</td><td>48V system</td><td>DC-DC block plus prominent 12V load isolation warning</td></tr>
   </table>
+
+  <h3>Component-aware diagram</h3>
+  <p>When you select products in the Components tab, the diagram updates to reflect your actual choices rather than just calculated values:</p>
+  <table>
+    <tr><th>When you select&hellip;</th><th>Diagram shows&hellip;</th></tr>
+    <tr><td>A battery product</td><td>Actual product Ah (e.g. 300Ah from Renogy 300Ah). Multiple units: <em>3&times; 100Ah = 300Ah</em></td></tr>
+    <tr><td>A charge controller</td><td>Actual product amps (e.g. 50A from Victron 100/50) and product name</td></tr>
+    <tr><td>An inverter</td><td>Actual product watts (e.g. 3000W cont from Renogy Pro) and product name</td></tr>
+    <tr><td>Nothing selected</td><td>Calculated sizing values as before</td></tr>
+    <tr><td>Deselect a component</td><td>Reverts to calculated value immediately</td></tr>
+  </table>
+  <div class="callout tip">Select your components first, then open the Diagram tab to see a schematic that reflects your actual build — not just the sizing estimate.</div>
 </div>
 
 <div class="section" id="s14">
