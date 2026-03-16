@@ -324,6 +324,40 @@
   margin-top: 2px;
   line-height: 1.3;
 }
+
+/* ── Component product lookup dropdown ── */
+.prod-lookup-wrap {
+  position: relative;
+  margin-bottom: 10px;
+}
+.prod-lookup-wrap input {
+  width: 100%;
+  box-sizing: border-box;
+}
+#prod-lookup-results-battery,
+#prod-lookup-results-cc,
+#prod-lookup-results-inv,
+#prod-lookup-results-dc2dc,
+#prod-lookup-results-monitor {
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: var(--card-bg, #fff);
+  border: 1.5px solid var(--accent3);
+  border-top: none;
+  border-radius: 0 0 6px 6px;
+  z-index: 200;
+  max-height: 260px;
+  overflow-y: auto;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+}
+.prod-lookup-item:hover,
+.prod-lookup-item:focus {
+  background: var(--accent3-bg, #ecfdf5);
+  outline: none;
+}
 </style>
 </head>
 <body>
@@ -1866,6 +1900,10 @@ function renderComponents(){
       ?`<button class="btn btn-secondary btn-sm" style="margin-bottom:10px;" onclick="restoreBuiltIns('${cat}')">↩ Restore ${hidden.size} hidden option${hidden.size>1?'s':''}</button>`:'';
   });
   renderShoppingList();
+  // Update diagram if visible
+  if(document.getElementById('tab-diagram')&&!document.getElementById('tab-diagram').classList.contains('hidden')){
+    renderDiagram();
+  }
 }
 
 function hideBuiltIn(cat,idx){hiddenBuiltIns[cat].add(idx);if(['battery','solar','inv'].includes(cat)){selections[cat]=selections[cat].filter(k=>k!=='b'+idx);}else if(selections[cat]==='b'+idx){selections[cat]=null;}renderComponents();}
@@ -1937,7 +1975,16 @@ function toggleAddForm(cat){
   const el=document.getElementById(`add-${cat}-form`);
   if(el.style.display==='none'||!el.style.display){
     el.style.display='block';el.className='add-product-form';
+    const hasLookup = ['battery', 'cc', 'inv', 'dc2dc', 'monitor'].includes(cat);
     el.innerHTML=`<div class="form-title">➕ Add Custom Product</div>
+      ${hasLookup ? `<div class="prod-lookup-wrap">
+        <label style="font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:0.06em;display:block;margin-bottom:4px;">🔍 Quick Search (type to find a known product)</label>
+        <input type="text" id="prod-lookup-input-${cat}" placeholder="e.g. Renogy 300Ah, Victron BMV, Redarc..." autocomplete="off"
+          oninput="prodLookupDebounced('${cat}', this.value)"
+          style="border-color:var(--accent3);">
+        <div id="prod-lookup-results-${cat}"></div>
+      </div>
+      <div style="font-size:10px;color:var(--muted);margin-bottom:8px;">— or fill in manually below —</div>` : ''}
       <div class="form-row">
         <div class="form-group"><label>Product Name *</label><input type="text" id="fp-name-${cat}" placeholder="e.g. Battle Born 200Ah LiFePO4"></div>
         <div class="form-group"><label>Price</label><input type="text" id="fp-price-${cat}" placeholder="e.g. $799"></div>
@@ -1960,6 +2007,165 @@ function saveCustomProduct(cat){
   if(!name||!spec){alert('Name and Spec are required.');return;}
   userProducts[cat].push({name,spec,price:price||'—',url:url||null});
   hideAddForm(cat);renderComponents();
+}
+
+
+// ===================== PRODUCT LOOKUP DATABASE =====================
+const PRODUCT_LOOKUP = {
+  battery: [
+    {name:'Renogy 100Ah 12V LiFePO4',       spec:'100Ah | 12V | 4,000 cycles | BMS included | 11.4kg',          price:'A$399', url:'https://www.renogy.com/au', ah:100,  tag:'Renogy'},
+    {name:'Renogy 200Ah 12V LiFePO4',       spec:'200Ah | 12V | 4,000 cycles | BMS included',                   price:'A$999', url:'https://www.renogy.com/au', ah:200,  tag:'Renogy'},
+    {name:'Renogy 300Ah 12V LiFePO4',       spec:'300Ah | 12V | 4,000 cycles | BMS included | 31kg',            price:'A$1299',url:'https://www.renogy.com/au', ah:300,  tag:'Renogy'},
+    {name:'Enerdrive ePOWER 100Ah LiFePO4', spec:'100Ah | 12V | 4,000+ cycles | Aussie brand | BMS included',   price:'A$799', url:'https://www.enerdrive.com.au', ah:100, tag:'Enerdrive'},
+    {name:'Enerdrive ePOWER 200Ah LiFePO4', spec:'200Ah | 12V | 4,000+ cycles | BMS included',                  price:'A$1399',url:'https://www.enerdrive.com.au', ah:200, tag:'Enerdrive'},
+    {name:'Baintech 100Ah Slimline LiFePO4',spec:'100Ah | 12V | Slimline design | BMS included',                price:'A$649', url:'https://www.baintech.com.au', ah:100, tag:'Baintech'},
+    {name:'Baintech 200Ah LiFePO4',         spec:'200Ah | 12V | BMS included | Aussie support',                 price:'A$1199',url:'https://www.baintech.com.au', ah:200, tag:'Baintech'},
+    {name:'LiTime 100Ah 12V LiFePO4',       spec:'100Ah | 12V | 4,000+ cycles | Built-in BMS | 10.4kg',        price:'A$349', url:'https://au.litime.com', ah:100, tag:'LiTime'},
+    {name:'LiTime 200Ah 12V LiFePO4',       spec:'200Ah | 12V | 4,000+ cycles | BMS included',                 price:'A$699', url:'https://au.litime.com', ah:200, tag:'LiTime'},
+    {name:'Century Yuasa AGM 100Ah 12V',    spec:'100Ah | 12V | Deep cycle AGM | ~500 cycles @50% DoD',         price:'A$299', url:'https://www.yuasabatteries.com.au', ah:100, tag:'AGM'},
+    {name:'Victron 330Ah 24V LiFePO4',      spec:'330Ah | 24V | Smart BMS | Victron ecosystem compatible',      price:'A$3499',url:'https://www.victronenergy.com', ah:330, tag:'Victron'},
+    // ── iTechworld ──
+    {name:'iTechworld 120Ah LiFePO4',       spec:'120Ah | 12V | 3,000+ cycles | BMS included | Australian brand',price:'A$549', url:'https://itechworld.com.au', ah:120, tag:'iTech'},
+    {name:'iTechworld 200Ah LiFePO4',       spec:'200Ah | 12V | 3,000+ cycles | BMS included',                   price:'A$899', url:'https://itechworld.com.au', ah:200, tag:'iTech'},
+    // ── Invicta (widely stocked AU) ──
+    {name:'Invicta 100Ah LiFePO4',          spec:'100Ah | 12V | 4,000 cycles | BMS | 10-year warranty',          price:'A$699', url:'https://www.invictalithium.com.au', ah:100, tag:'Invicta'},
+    {name:'Invicta 200Ah LiFePO4',          spec:'200Ah | 12V | 4,000 cycles | BMS | 10-year warranty',          price:'A$1299',url:'https://www.invictalithium.com.au', ah:200, tag:'Invicta'},
+  ],
+  cc: [
+    {name:'Victron SmartSolar MPPT 75/15',  spec:'15A | 75V input | Bluetooth | 12/24V auto',                   price:'A$129', url:'https://www.victronenergy.com', tag:'Victron'},
+    {name:'Victron SmartSolar MPPT 100/30', spec:'30A | 100V input | Bluetooth | 12/24V',                       price:'A$269', url:'https://www.victronenergy.com', tag:'Victron'},
+    {name:'Victron SmartSolar MPPT 100/50', spec:'50A | 100V input | Bluetooth | 12/24V',                       price:'A$389', url:'https://www.victronenergy.com', tag:'Victron'},
+    {name:'Victron SmartSolar MPPT 150/60', spec:'60A | 150V input | Bluetooth | 12/24/48V',                    price:'A$599', url:'https://www.victronenergy.com', tag:'Victron'},
+    {name:'Renogy Rover 40A MPPT',          spec:'40A | 100V input | 12/24V auto | LCD display',                price:'A$149', url:'https://www.renogy.com/au', tag:'Renogy'},
+    {name:'Renogy Rover 60A MPPT',          spec:'60A | 100V input | 12/24V auto | LCD display',                price:'A$179', url:'https://www.renogy.com/au', tag:'Renogy'},
+    {name:'EPever Tracer 40A MPPT',         spec:'40A | 150V input | 12/24V | PC monitoring',                   price:'A$119', url:'https://www.epever.com', tag:'EPever'},
+    {name:'Enerdrive MPPT 40A Controller',  spec:'40A | 150V input | 12/24V | LCD | Australian brand',            price:'A$299', url:'https://enerdrive.com.au', tag:'Enerdrive'},
+    {name:'Enerdrive MPPT 60A Controller',  spec:'60A | 150V input | 12/24/48V | LCD | Bluetooth ready',          price:'A$449', url:'https://enerdrive.com.au', tag:'Enerdrive'},
+  ],
+  inv: [
+    // ── Renogy Pure Sine Wave Inverters (inverter only) ──
+    {name:'Renogy 1000W Pure Sine Inverter', spec:'1000W cont | 2000W surge | 12V | UPS function | 240V AU',    price:'A$219', url:'https://au.renogy.com/products/inverters/', tag:'Renogy'},
+    {name:'Renogy 2000W Pure Sine Inverter', spec:'2000W cont | 4000W surge | 12V | UPS function | 240V AU',    price:'A$269', url:'https://au.renogy.com/products/renogy-2000-12v-to-230v-pure-sine-wave-inverter-with-ups-function', tag:'Renogy'},
+    {name:'Renogy 3000W Pure Sine Inverter', spec:'3000W cont | 6000W surge | 12V | UPS function | 240V AU',    price:'A$394', url:'https://au.renogy.com/products/renogy-3000w-12v-to-230v-pure-sine-wave-inverter-with-ups-function', tag:'Renogy'},
+    // ── Renogy Inverter Chargers (inverter + shore charger + ATS) ──
+    {name:'Renogy 2000W Inverter Charger',   spec:'2000W cont | 6000W surge | 12V | Shore charger | ATS | LCD', price:'A$500', url:'https://au.renogy.com/products/3000w-2000w-12v-pure-sine-wave-inverter-charger-w-lcd', tag:'Renogy'},
+    {name:'Renogy 3000W Inverter Charger',   spec:'3000W cont | 6000W surge | 12V | Shore charger | ATS | LCD', price:'A$700', url:'https://au.renogy.com/products/3000w-2000w-12v-pure-sine-wave-inverter-charger-w-lcd', tag:'Renogy'},
+    {name:'Renogy Pro 2000W HF Inv Charger', spec:'2000W cont | 12V | HF topology | Bluetooth | 91% eff | ATS', price:'A$756', url:'https://au.renogy.com/products/inverters/inverter-charger/', tag:'Renogy'},
+    {name:'Renogy Pro 3000W HF Inv Charger', spec:'3000W cont | 6000W surge | 12V | HF | Bluetooth | 91% eff',  price:'A$933', url:'https://au.renogy.com/pro-12v-3000w-hf-inverter-charger/', tag:'Renogy'},
+    // ── Victron Inverter Chargers ──
+    {name:'Victron MultiPlus-II 12/1200',    spec:'1200W cont | 2400W surge | 12V | Inverter-charger | ATS',    price:'A$1171',url:'https://www.victronenergy.com', tag:'Victron'},
+    {name:'Victron MultiPlus-II 12/2000',    spec:'2000W cont | 4000W surge | 12V | Inverter-charger | ATS',    price:'A$1469',url:'https://www.victronenergy.com', tag:'Victron'},
+    {name:'Victron MultiPlus-II 12/3000',    spec:'3000W cont | 6000W surge | 12V | Inverter-charger | ATS',    price:'A$1899',url:'https://www.victronenergy.com', tag:'Victron'},
+    {name:'Victron MultiPlus-II 24/3000',    spec:'3000W cont | 6000W surge | 24V | Inverter-charger | ATS',    price:'A$1899',url:'https://www.victronenergy.com', tag:'Victron'},
+    // ── Enerdrive ePOWER (Aussie brand, 5yr warranty) ──
+    {name:'Enerdrive ePOWER 1000W Inverter', spec:'1000W cont | 2000W surge | 12V | Pure sine | 5yr warranty',  price:'A$680', url:'https://enerdrive.com.au', tag:'Enerdrive'},
+    {name:'Enerdrive ePOWER 2000W Inverter', spec:'2000W cont | 4000W surge | 12V | Pure sine | 5yr warranty',  price:'A$849', url:'https://enerdrive.com.au', tag:'Enerdrive'},
+    {name:'Enerdrive ePOWER 2600W Inverter', spec:'2600W cont | 5200W surge | 12V | Pure sine | ATS | 5yr wnty',price:'A$1099',url:'https://enerdrive.com.au', tag:'Enerdrive'},
+    // ── Projecta Intelli-Wave (AS/NZS certified, AU std) ──
+    {name:'Projecta IP1000 1000W Inverter',  spec:'1000W cont | 2000W surge | 12V | RCD | AS/NZS 4763 certified',price:'A$599', url:'https://www.projecta.com.au', tag:'Projecta'},
+    {name:'Projecta IP2000 2000W Inverter',  spec:'2000W cont | 4000W surge | 12V | RCD | ATS | LCD display',   price:'A$899', url:'https://www.projecta.com.au', tag:'Projecta'},
+    {name:'Projecta IP3000 3000W Inverter',  spec:'3000W cont | 6000W surge | 12V | RCD | ECO mode | ATS',      price:'A$1199',url:'https://www.projecta.com.au', tag:'Projecta'},
+    {name:'Projecta INCHR2 2000W Inv/Chgr',  spec:'2000W cont | 12V | 120A charger | Low freq | ATS | BT monitor',price:'A$2199',url:'https://www.projecta.com.au', tag:'Projecta'},
+    // ── Other brands ──
+    {name:'Baintech 2000W Pure Sine',        spec:'2000W cont | 4000W surge | 12V | Pure sine wave',            price:'A$599', url:'https://www.baintech.com.au', tag:'Baintech'},
+    {name:'Giandel 3000W Pure Sine',         spec:'3000W cont | 6000W surge | 12V | Pure sine wave',            price:'A$449', url:'https://www.amazon.com.au', tag:'Giandel'},
+  ],
+  dc2dc: [
+    {name:'Victron Orion-Tr Smart 12/12-30A',spec:'30A | 12V-12V isolated | Bluetooth | Smart alternator safe', price:'A$349', url:'https://www.victronenergy.com', tag:'Victron'},
+    {name:'Redarc BCDC1225D 25A',           spec:'25A | 12V-12V | DCC solar input | Dual input | Aussie brand', price:'A$599', url:'https://www.redarc.com.au', tag:'Redarc'},
+    {name:'Redarc BCDC1240D 40A',           spec:'40A | 12V-12V | DCC solar input | Dual input',                price:'A$749', url:'https://www.redarc.com.au', tag:'Redarc'},
+    {name:'Renogy DCC50S 50A',              spec:'50A | 12V-12V | DC-DC + solar MPPT combo | 3-in-1',           price:'A$349', url:'https://www.renogy.com/au', tag:'Renogy'},
+    {name:'Sterling Power BB1260 60A',      spec:'60A | 12V-12V | Battery-to-battery charger',                  price:'A$499', url:'https://www.sterlingpower.com', tag:'Sterling'},
+    {name:'Enerdrive DC2DC+ 40A',           spec:'40A | 12V-12V | MPPT solar input | LiFePO4 | Aussie brand',   price:'A$420', url:'https://enerdrive.com.au', tag:'Enerdrive'},
+    {name:'BMPRO ProBoost 40A',             spec:'40A | 12V-12V | Solar input | Smart alternator safe | AU made', price:'A$399', url:'https://teambmpro.com', tag:'BMPRO'},
+    {name:'BMPRO ProBoost 25A',             spec:'25A | 12V-12V | Solar input | Smart alternator safe | AU made', price:'A$299', url:'https://teambmpro.com', tag:'BMPRO'},
+    {name:'iTechworld DC-DC 40A',           spec:'40A | 12V-12V | MPPT solar input | LCD display',               price:'A$349', url:'https://itechworld.com.au', tag:'iTech'},
+  ],
+  monitor: [
+    {name:'Victron BMV-712 Smart',          spec:'500A shunt | Bluetooth | SOC | Peukert correction | Relay',   price:'A$270', url:'https://www.victronenergy.com', tag:'Victron'},
+    {name:'Victron SmartShunt 500A',        spec:'500A shunt | Bluetooth | No display — phone app only',        price:'A$135', url:'https://www.victronenergy.com', tag:'Victron'},
+    {name:'Victron BMV-700',               spec:'500A shunt | Display | SOC | No Bluetooth',                    price:'A$190', url:'https://www.victronenergy.com', tag:'Victron'},
+    {name:'Renogy 500A Battery Monitor',    spec:'500A shunt | LCD display | SOC | Time remaining',             price:'A$79',  url:'https://www.renogy.com/au', tag:'Renogy'},
+    {name:'Enerdrive eBMS Battery Monitor', spec:'500A shunt | Display | SOC | Victron compatible',             price:'A$199', url:'https://enerdrive.com.au', tag:'Enerdrive'},
+    {name:'BMPRO BatteryCheckPRO',          spec:'Wireless Bluetooth monitor | SOC | Temp | Amps | AU made',     price:'A$149', url:'https://teambmpro.com', tag:'BMPRO'},
+    {name:'Projecta BM100 Battery Monitor', spec:'500A shunt | LCD | SOC | Time remaining | Voltage',            price:'A$99',  url:'https://www.projecta.com.au', tag:'Projecta'},
+    {name:'iTechworld Battery Monitor 200A',spec:'200A shunt | LCD | SOC | Voltage | Current',                   price:'A$69',  url:'https://itechworld.com.au', tag:'iTech'},
+  ],
+};
+
+const _prodLookupTimers = {};
+
+function prodLookupDebounced(cat, val) {
+  clearTimeout(_prodLookupTimers[cat]);
+  _prodLookupTimers[cat] = setTimeout(() => doProdLookup(cat, val), 250);
+}
+
+function doProdLookup(cat, val) {
+  const resultsEl = document.getElementById('prod-lookup-results-' + cat);
+  if (!resultsEl) return;
+  const q = val.trim().toLowerCase();
+  if (q.length < 3) { resultsEl.innerHTML = ''; resultsEl.style.display = 'none'; return; }
+
+  const db = PRODUCT_LOOKUP[cat];
+  if (!db) { resultsEl.style.display = 'none'; return; }
+
+  const matches = db.filter(p => {
+    const n = p.name.toLowerCase();
+    const s = p.spec.toLowerCase();
+    return n.includes(q) || s.includes(q) || (p.tag||'').toLowerCase().includes(q);
+  }).slice(0, 6);
+
+  if (!matches.length) {
+    resultsEl.innerHTML = '<div style="padding:6px 10px;font-size:11px;color:var(--muted);">No matches — fill in the form below to add manually.</div>';
+    resultsEl.style.display = 'block';
+    return;
+  }
+
+  resultsEl.innerHTML = matches.map((p, i) => {
+    const safeIdx = db.indexOf(p);
+    return `<div class="prod-lookup-item" onclick="addFromProdLookup('${cat}',${safeIdx})" tabindex="0"
+      onkeydown="if(event.key==='Enter')addFromProdLookup('${cat}',${safeIdx})"
+      style="padding:7px 10px;cursor:pointer;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:12px;">
+      <div>
+        <div style="font-weight:600;color:var(--text);">${p.name}</div>
+        <div style="color:var(--muted);font-size:11px;margin-top:1px;">${p.spec}</div>
+      </div>
+      <div style="font-weight:700;color:var(--accent3);white-space:nowrap;">${p.price||'—'}</div>
+    </div>`;
+  }).join('');
+  resultsEl.style.display = 'block';
+}
+
+function addFromProdLookup(cat, idx) {
+  const p = PRODUCT_LOOKUP[cat]?.[idx];
+  if (!p) return;
+  // Add to userProducts
+  userProducts[cat].push({
+    name: p.name,
+    spec: p.spec,
+    price: p.price || '—',
+    url: p.url || null,
+    ah: p.ah || undefined,
+    watts: p.watts || undefined
+  });
+  const key = 'u' + (userProducts[cat].length - 1);
+  // Auto-select it
+  if (['battery','solar','inv'].includes(cat)) {
+    if (!selections[cat].includes(key)) {
+      selections[cat].push(key);
+      if (!selQty[cat + '_' + key]) selQty[cat + '_' + key] = 1;
+    }
+  } else {
+    selections[cat] = key;
+  }
+  // Hide the form and lookup results
+  hideAddForm(cat);
+  renderComponents();
+  // Flash confirmation
+  setTimeout(() => {
+    const cards = document.querySelectorAll(`[data-selkey="${key}"][data-selcat="${cat}"]`);
+    cards.forEach(c => { c.style.transition='background 0.3s'; c.style.background='var(--accent3-bg,#ecfdf5)'; setTimeout(()=>c.style.background='',800); });
+  }, 50);
 }
 
 // ===================== SHOPPING LIST =====================
@@ -2100,10 +2306,11 @@ function renderDiagram(){
     <marker id="aTe" markerWidth="8" markerHeight="6" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="${teal}"/></marker>
   </defs>`;
 
-  function box(x,y,w,h,col,label1,label2,valId,valText){
+  function box(x,y,w,h,col,label1,label2,valId,valText,subName){
     return `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="7" fill="${surf}" stroke="${col}" stroke-width="2"/>
     <text x="${x+w/2}" y="${y+18}" text-anchor="middle" font-size="10" fill="${col}" font-weight="700">${label1}</text>
     ${label2?`<text x="${x+w/2}" y="${y+30}" text-anchor="middle" font-size="9" fill="${muted}" font-family="monospace">${label2}</text>`:''}
+    ${valId!==null&&valId!==undefined?`<text x="${x+w/2}" y="${y+42}" text-anchor="middle" font-size="8" fill="${col}" font-style="italic" id="sub-${valId}">${subName||''}</text>`:''}
     ${valId?`<text x="${x+w/2}" y="${y+h-8}" text-anchor="middle" font-size="9" fill="${col}" id="${valId}" font-weight="600">${valText||'—'}</text>`:''}`;
   }
   function wire(x1,y1,x2,y2,col,arrow=''){
@@ -2133,9 +2340,9 @@ function renderDiagram(){
     // ─── 12V layout ───
     // Solar (top-left), MPPT (top-mid), Battery (center), Inverter (right), Shore (bottom-left), AC loads (bottom-right), DC loads (mid-right)
     svgContent+=box(10,28,105,58,green,'☀️ SOLAR','PANELS','d-solar','—W');
-    svgContent+=box(160,28,120,58,amber,'⚙️ MPPT','CHARGE CTRL','d-cc','—A');
-    svgContent+=box(245,165,130,80,amber,'🔋 BATTERY','BANK @ 12V','d-bat','—Ah');
-    svgContent+=box(420,165,130,80,purple,'🔄 INVERTER','PURE SINE','d-inv','—VA');
+    svgContent+=box(160,28,120,68,amber,'⚙️ MPPT','CHARGE CTRL','d-cc','—A','');
+    svgContent+=box(245,165,130,90,amber,'🔋 BATTERY','BANK @ 12V','d-bat','—Ah','');
+    svgContent+=box(420,165,130,90,purple,'🔄 INVERTER','PURE SINE','d-inv','—VA','');
     svgContent+=box(10,360,105,58,purple,'🔌 SHORE','/GEN','d-acv','—V');
     svgContent+=box(420,360,130,58,blue,'🔌 AC LOADS','','d-acload','—W');
     svgContent+=box(420,270,130,58,amber,'⚡ DC LOADS','12V DC','d-dcload','—W');
@@ -2178,9 +2385,9 @@ function renderDiagram(){
     // ─── 24V / 48V layout — includes DC-DC converter ───
     const voltLabel=c.voltage+'V';
     svgContent+=box(10,28,105,58,green,'☀️ SOLAR','PANELS','d-solar','—W');
-    svgContent+=box(155,28,125,58,amber,'⚙️ MPPT','CHARGE CTRL','d-cc','—A');
-    svgContent+=box(235,165,130,80,amber,`🔋 BATTERY`,`BANK @ ${voltLabel}`,'d-bat','—Ah');
-    svgContent+=box(415,165,130,80,purple,'🔄 INVERTER','PURE SINE','d-inv','—VA');
+    svgContent+=box(155,28,125,68,amber,'⚙️ MPPT','CHARGE CTRL','d-cc','—A','');
+    svgContent+=box(235,165,130,90,amber,`🔋 BATTERY`,`BANK @ ${voltLabel}`,'d-bat','—Ah','');
+    svgContent+=box(415,165,130,90,purple,'🔄 INVERTER','PURE SINE','d-inv','—VA','');
     svgContent+=box(10,360,105,58,purple,'🔌 SHORE','/GEN','d-acv','—V');
     svgContent+=box(415,355,130,58,blue,'🔌 AC LOADS','','d-acload','—W');
     // DC-DC converter block (teal)
@@ -2244,13 +2451,100 @@ function updateDiagramValues(c){
   const svg=document.getElementById('system-svg');
   if(!svg||!svg.querySelector('#d-solar'))return;
   const sd=(id,v)=>{const e=svg.getElementById(id);if(e)e.textContent=v;};
-  sd('d-solar',Math.round(c.solarW)+'W');
-  sd('d-cc',c.ccSize+'A MPPT');
-  sd('d-bat',Math.round(c.recAh)+'Ah');
-  sd('d-inv',Math.round(c.invCont)+'VA cont');
-  sd('d-acv',(c.acVoltage||240)+'V AC');
-  sd('d-acload',Math.round(c.peakAc)+'W AC peak');
-  sd('d-dcload',Math.round(c.peakDc)+'W DC peak');
+
+  // Resolve selected components
+  const sel = getSelectedComponents();
+
+  // Solar — always from calc
+  sd('d-solar', Math.round(c.solarW)+'W');
+
+  // Charge controller — use selected product amps if available
+  const ccAmps = sel.ccAmps || c.ccSize;
+  const ccLabel = sel.cc ? sel.cc.name : (c.ccSize+'A MPPT');
+  sd('d-cc', ccAmps+'A MPPT');
+  const ccSub = svg.getElementById('sub-d-cc');
+  if(ccSub) ccSub.textContent = sel.cc ? sel.cc.name : '';
+
+  // Battery — use selected product total Ah if available
+  const batAhDisplay = sel.totalBatAh
+    ? (sel.batQty > 1 ? sel.batQty+'× '+sel.batAh+'Ah = '+sel.totalBatAh+'Ah' : sel.totalBatAh+'Ah')
+    : Math.round(c.recAh)+'Ah';
+  sd('d-bat', batAhDisplay);
+  const batSub = svg.getElementById('sub-d-bat');
+  if(batSub) batSub.textContent = sel.bat ? sel.bat.name : '';
+
+  // Inverter — use selected product watts if available
+  const invDisplay = sel.invWatts ? sel.invWatts+'W cont' : Math.round(c.invCont)+'VA cont';
+  sd('d-inv', invDisplay);
+  const invSub = svg.getElementById('sub-d-inv');
+  if(invSub) invSub.textContent = sel.inv ? sel.inv.name : '';
+
+  // Wire gauge labels — use selected CC amps for sizing if available
+  const pvWireEl = svg.querySelector('text[font-style="italic"]');
+  const effectiveCcAmps = sel.ccAmps || c.ccSize;
+  const pvWireNew = effectiveCcAmps<=30?'10AWG':effectiveCcAmps<=50?'6AWG':'4AWG';
+  // Update the PV wire label text node that shows AWG
+  svg.querySelectorAll('text').forEach(t=>{
+    if(t.textContent.match(/^\d+AWG$/)&&t.getAttribute('font-style')==='italic'){
+      t.textContent=pvWireNew;
+    }
+  });
+
+  sd('d-acv', (c.acVoltage||240)+'V AC');
+  sd('d-acload', Math.round(c.peakAc)+'W AC peak');
+  sd('d-dcload', Math.round(c.peakDc)+'W DC peak');
+}
+
+
+// ===================== DIAGRAM COMPONENT RESOLVER =====================
+function getSelectedComponents() {
+  // Returns {battery, cc, inv} with resolved product objects or null
+  const c = getCalcs();
+  const resolve = (cat, key) => {
+    if (!key) return null;
+    const isUser = key.startsWith('u');
+    const idx = parseInt(key.slice(1));
+    return isUser ? userProducts[cat]?.[idx] : builtIn(cat, c)?.[idx];
+  };
+
+  // Battery: use first selected battery
+  const batKey = Array.isArray(selections.battery) ? selections.battery[0] : null;
+  const bat = batKey ? resolve('battery', batKey) : null;
+
+  // CC: single select
+  const cc = selections.cc ? resolve('cc', selections.cc) : null;
+
+  // Inverter: use first selected inverter
+  const invKey = Array.isArray(selections.inv) ? selections.inv[0] : null;
+  const inv = invKey ? resolve('inv', invKey) : null;
+
+  // Parse ah from selected battery spec if not directly available
+  let batAh = bat?.ah;
+  if (!batAh && bat?.spec) {
+    const m = bat.spec.match(/(\d+)\s*[Aa]h/);
+    if (m) batAh = parseInt(m[1]);
+  }
+
+  // Parse watts from inverter spec
+  let invWatts = null;
+  if (inv?.spec) {
+    const m = inv.spec.match(/(\d+)W\s*cont/);
+    if (m) invWatts = parseInt(m[1]);
+  }
+
+  // Parse amps from CC spec
+  let ccAmps = null;
+  if (cc?.spec) {
+    const m = cc.spec.match(/^(\d+)A/);
+    if (m) ccAmps = parseInt(m[1]);
+  }
+
+  // Qty of selected batteries
+  const batKey0 = Array.isArray(selections.battery) ? selections.battery[0] : null;
+  const batQty = batKey0 ? (selQty['battery_' + batKey0] || 1) : 1;
+  const totalBatAh = batAh ? batAh * batQty : null;
+
+  return { bat, cc, inv, batAh, totalBatAh, batQty, invWatts, ccAmps };
 }
 
 // ===================== SAVE / LOAD =====================
