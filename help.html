@@ -74,7 +74,7 @@
       <a href="#s5">5 &mdash; Location &amp; Seasonal Sun Hours</a>
       <a href="#s6">6 &mdash; Understanding Sizing Results</a>
       <a href="#s7">7 &mdash; 30-Day Weather Simulation</a>
-      <a href="#s9">9 &mdash; Compatibility Validation</a>
+      <a href="#s9">9 &mdash; System Checks &amp; Compatibility</a>
     </div>
     <div>
       <a href="#s8">8 &mdash; ABYC Wire Sizing Calculator</a>
@@ -106,7 +106,7 @@
     <li>Run the <strong>Setup Guide</strong> or set voltage and battery type manually in the Settings Bar.</li>
     <li>Load a <strong>Quick Template</strong> or add your own appliances in the Loads tab.</li>
     <li>Review <strong>Sizing Results</strong> &mdash; battery Ah, solar W, inverter VA, recharge time, SoC.</li>
-    <li>Check <strong>Compatibility Validation</strong> alerts in the Sizing tab for wiring or voltage issues.</li>
+    <li>Check <strong>System Checks &amp; Compatibility</strong> alerts at the top of the Sizing tab for wiring or voltage issues.</li>
     <li>Open the <strong>Wiring tab</strong> and enter cable run lengths to get ABYC-compliant wire sizes.</li>
     <li>Use <strong>&#x1F528; Build System</strong> to auto-select components, then review the Shopping List.</li>
     <li><strong>Save</strong> your design, or <strong>Share</strong> it via URL.</li>
@@ -174,16 +174,28 @@
 
 <div class="section" id="s4b">
   <h2>4b &mdash; Appliance Reference Lookup <span class="badge new">NEW</span></h2>
-  <p>Not sure how many watts your fridge draws, or how long a water pump runs per day? Click <strong>&#x1F4CB; Browse Appliances</strong> in the Loads tab toolbar to open the reference library.</p>
-  <p>The library contains <strong>42 common RV appliances</strong> across seven categories: Lighting, Fridges, Kitchen, Climate, Tech, Medical, and Water. Each entry shows a typical wattage, daily hours, and a brief note on the figure (e.g. running watts vs. startup surge).</p>
-  <h3>Using the lookup</h3>
+  <p>The app has two ways to use the appliance reference library: browse and add from the panel, or let the name field look it up for you as you type.</p>
+
+  <h3>Browse panel</h3>
+  <p>Click <strong>&#x1F4CB; Browse Appliances</strong> in the Loads tab toolbar to open the full reference library. It contains <strong>42 common RV appliances</strong> across seven categories: Lighting, Fridges, Kitchen, Climate, Tech, Medical, and Water. Each entry shows typical wattage, daily hours, and a note on the figure.</p>
   <ol class="step-list">
     <li>Click <strong>&#x1F4CB; Browse Appliances</strong> to open the panel.</li>
-    <li>Type in the search box to filter by appliance name or category.</li>
-    <li>Click <strong>+ Add</strong> on any row to add it directly to your appliance list.</li>
+    <li>Type in the search box to filter by name or category.</li>
+    <li>Click <strong>+ Add</strong> on any row to add it to your appliance list.</li>
     <li>Adjust watts or hours after adding to match your specific gear.</li>
   </ol>
-  <div class="callout tip">The figures in the lookup are typical values — your actual appliance may differ. Always check the nameplate or spec sheet for the real running wattage, especially for fridges, pumps, and motors.</div>
+
+  <h3>&#x1F4A1; Name field live lookup</h3>
+  <p>When you add a new appliance and start typing a name, the app matches your input against the reference library as you type. After three characters it searches for the best match and, if found, automatically fills the watts and hours fields.</p>
+  <table>
+    <tr><th>Scenario</th><th>What happens</th></tr>
+    <tr><td>Match found, fields at default</td><td>Watts and hours auto-fill. A <strong>&#x1F4A1; suggested</strong> label appears below the name field showing the values used.</td></tr>
+    <tr><td>Match found, fields already edited</td><td>No overwrite. A <strong>&#x1F4A1; matched:</strong> label shows what was found, so you can check it manually.</td></tr>
+    <tr><td>No match found</td><td>A subtle <em>no match found</em> label appears in grey.</td></tr>
+    <tr><td>Fewer than 3 characters typed</td><td>No action &mdash; lookup waits for enough input.</td></tr>
+    <tr><td>You manually edit watts or hours</td><td>The suggestion label clears immediately &mdash; your value is kept.</td></tr>
+  </table>
+  <div class="callout tip">The figures in the lookup are typical values — your actual appliance may differ. Always verify against the nameplate or spec sheet, especially for fridges, pumps, and motors.</div>
 </div>
 
 <div class="section" id="s5">
@@ -274,8 +286,8 @@
 </div>
 
 <div class="section" id="s8">
-  <h2>8 &mdash; Compatibility Validation <span class="badge new">NEW</span></h2>
-  <p>Below the sizing alerts, the app automatically checks your system for electrical compatibility issues on every recalculation.</p>
+  <h2>8 &mdash; System Checks &amp; Compatibility <span class="badge new">NEW</span></h2>
+  <p>At the top of the Sizing tab, look for the <strong>&#x26A1; System Checks &amp; Compatibility</strong> label. The app automatically runs these checks on every recalculation and displays any issues directly below the label.</p>
   <table>
     <tr><th>Check</th><th>What it validates</th></tr>
     <tr><td><strong>CC Voltage (Voc)</strong></td><td>Estimates string Voc with 20% cold-temperature correction. Flags if it exceeds CC input rating (100V for &le;30A, 150V for larger). Shows &check; or &#x1F6AB;.</td></tr>
