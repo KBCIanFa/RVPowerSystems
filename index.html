@@ -3268,7 +3268,12 @@ const APPLIANCE_LOOKUP = [
   {cat:'💻 Tech',     name:'Laptop (13–15")',            watts:50,  hours:6,  type:'ac', note:'Varies widely — check charger wattage'},
   {cat:'💻 Tech',     name:'Laptop (16" gaming/pro)',    watts:100, hours:6,  type:'ac', note:'High-performance, check charger label'},
   {cat:'💻 Tech',     name:'External Monitor (24")',     watts:25,  hours:6,  type:'ac', note:'LED IPS panel'},
-  {cat:'💻 Tech',     name:'Starlink (Gen 2)',           watts:75,  hours:10, type:'dc', note:'Average; peaks higher during acquisition'},
+  {cat:'💻 Tech',     name:'Starlink Mini',               watts:25,  hours:10, type:'ac', note:'Native 12-48V DC input — use DC adapter to avoid inverter losses. 20-40W typical; 15W idle'},
+  {cat:'💻 Tech',     name:'Starlink (Gen 2 Standard)',   watts:60,  hours:10, type:'ac', note:'50-75W active. Use 12V DC adapter kit to skip inverter losses'},
+  {cat:'💻 Tech',     name:'Starlink (Gen 3 Standard)',   watts:75,  hours:10, type:'ac', note:'75-100W active; 20W idle. More powerful than Gen 2. AC supply — use DC adapter for efficiency'},
+  {cat:'💻 Tech',     name:'Starlink Flat High Performance', watts:130, hours:10, type:'ac', note:'110-150W active; 45W idle. Designed for vehicles/marine. Needs large inverter or direct AC'},
+  {cat:'💻 Tech',     name:'Starlink 4G/LTE Backup Router',watts:8,   hours:24, type:'dc', note:'Backup router (e.g. GL.iNet, Pepwave) for when Starlink is offline. Low standby draw'},
+
   {cat:'💻 Tech',     name:'WiFi Router',                watts:12,  hours:24, type:'dc', note:'4G/5G router; typically 10–15W'},
   {cat:'💻 Tech',     name:'Phone Charging',             watts:10,  hours:3,  type:'dc', note:'Per phone via USB'},
   {cat:'💻 Tech',     name:'Tablet Charging',            watts:15,  hours:3,  type:'dc', note:'iPad / Android tablet'},
