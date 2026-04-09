@@ -3221,6 +3221,21 @@ const QUICK_TEMPLATES=[
     ]
   },
   {
+    name:'🛻 Ute Canopy Build',
+    desc:'12V · 100Ah LiFePO4 · 200W solar\nFridge, lights, compressor, USB — Redarc DC-DC primary',
+    voltage:12,acVoltage:240,dod:0.8,autonomy:2,peakSun:5.5,solEff:0.8,invEff:0.9,
+    altAmps:25,altHours:2,
+    apps:[
+      {name:'ARB 60L Fridge Freezer',watts:11,hours:24,type:'dc'},
+      {name:'LED Canopy Strip Lights',watts:30,hours:4,type:'dc'},
+      {name:'LED Work Light Bar',watts:40,hours:2,type:'dc'},
+      {name:'Water Pump (12V)',watts:60,hours:0.3,type:'dc'},
+      {name:'USB Charging ×2',watts:20,hours:4,type:'dc'},
+      {name:'UHF CB Radio',watts:8,hours:4,type:'dc'},
+      {name:'ARB Twin Compressor',watts:600,hours:0.1,type:'dc'},
+    ]
+  },
+  {
     name:'🏕️ Hybrid Shore + Solar',
     desc:'12V · 200Ah LiFePO4 · 400W solar + shore\nCampground + occasional off-grid',
     voltage:12,acVoltage:240,dod:0.8,autonomy:1,peakSun:5,solEff:0.8,invEff:0.9,
@@ -3250,6 +3265,18 @@ const APPLIANCE_LOOKUP = [
   {cat:'🧊 Fridges',  name:'12V Compressor Fridge 80L', watts:60, hours:14, type:'dc', note:'Large fridge, higher duty in summer'},
   {cat:'🧊 Fridges',  name:'Fridge + Freezer Combo',    watts:80, hours:16, type:'dc', note:'Dual zone, high summer draw'},
   {cat:'🧊 Fridges',  name:'3-Way Absorption Fridge',   watts:150,hours:24, type:'ac', note:'Runs on gas, 12V or 240V — inefficient on 12V'},
+  // Brand-specific
+  {cat:'🧊 Fridges',  name:'ARB 47L Fridge Freezer',    watts:10, hours:24, type:'dc', note:'0.87A avg @12V × 24h = 10Ah/day. Duty cycle ~50%, so compressor ~20W running'},
+  {cat:'🧊 Fridges',  name:'ARB 60L Fridge Freezer',    watts:11, hours:24, type:'dc', note:'0.89A avg @12V. ARB classic range. Excellent efficiency for the size'},
+  {cat:'🧊 Fridges',  name:'ARB 78L Fridge Freezer',    watts:13, hours:24, type:'dc', note:'1.1A avg @12V. Largest ARB classic — higher duty cycle in hot weather'},
+  {cat:'🧊 Fridges',  name:'Engel MT45 (40L)',          watts:14, hours:24, type:'dc', note:'~1.1A avg @12V. Swing motor compressor, renowned reliability. 0.7–2.5A range'},
+  {cat:'🧊 Fridges',  name:'Engel MT60 (60L)',          watts:17, hours:24, type:'dc', note:'~1.4A avg @12V. Larger Engel swing motor. Proven off-road fridge'},
+  {cat:'🧊 Fridges',  name:'Engel MT80 (80L)',          watts:20, hours:24, type:'dc', note:'~1.6A avg @12V. Largest Engel portable. Great for family touring'},
+  {cat:'🧊 Fridges',  name:'Dometic CFX3 35L',          watts:9,  hours:24, type:'dc', note:'~0.74A avg @12V. VMSO3 compressor, Bluetooth. Very efficient for its size'},
+  {cat:'🧊 Fridges',  name:'Dometic CFX3 45L',          watts:11, hours:24, type:'dc', note:'~0.9A avg @12V. Popular mid-size Dometic. App control via Bluetooth'},
+  {cat:'🧊 Fridges',  name:'Dometic CFX3 65L',          watts:13, hours:24, type:'dc', note:'~1.05A avg @12V. Real-world test: 0.95Ah/hr. Good family tourer size'},
+  {cat:'🧊 Fridges',  name:'Dometic CFX3 95DZ (dual zone)',watts:43,hours:24,type:'dc',note:'3.57A avg @12V dual zone running both compartments. Heavy draw — size battery accordingly'},
+  {cat:'🧊 Fridges',  name:'National Luna Twin 60L',    watts:12, hours:24, type:'dc', note:'~1A avg @12V. South African brand, popular in Australian overland community'},
   // Kitchen
   {cat:'🍳 Kitchen',  name:'Microwave (800W)',           watts:1100,hours:0.2,type:'ac', note:'Running watts higher than rated — use 1.1× nameplate'},
   {cat:'🍳 Kitchen',  name:'Coffee Maker (drip)',        watts:900, hours:0.2,type:'ac', note:'12 min brew cycle'},
@@ -3293,6 +3320,18 @@ const APPLIANCE_LOOKUP = [
   {cat:'🔌 Other',    name:'Washing Machine (portable)', watts:500, hours:1,  type:'ac', note:'Cold wash; needs 1500W+ inverter'},
   {cat:'🔌 Other',    name:'Hair Dryer (low)',           watts:1200,hours:0.1,type:'ac', note:'Low heat setting; very brief use'},
   {cat:'🔌 Other',    name:'Drone / Camera Charger',     watts:60,  hours:1,  type:'ac', note:'DJI and similar — check charger label'},
+  // Ute / 4WD accessories
+  {cat:'🛻 Ute & 4WD', name:'ARB Twin Motor Compressor',  watts:600, hours:0.1,type:'dc', note:'50A @12V under load. Short duty cycle — ~6 min to inflate 4× 35" tyres. Fuse at 80A ANL'},
+  {cat:'🛻 Ute & 4WD', name:'ARB Single Motor Compressor',watts:300, hours:0.1,type:'dc', note:'~25A @12V. Good for tyre inflation — slower than twin. Fuse at 40A'},
+  {cat:'🛻 Ute & 4WD', name:'12V Tyre Inflator (portable)',watts:120,hours:0.2,type:'dc', note:'~10A @12V. Budget/portable inflator. Slower — suit for checking pressure more than rapid inflation'},
+  {cat:'🛻 Ute & 4WD', name:'LED Light Bar (work)',       watts:40,  hours:3,  type:'dc', note:'40W = ~3.3A @12V. Typical 20–40" LED bar for canopy or rear lighting'},
+  {cat:'🛻 Ute & 4WD', name:'LED Light Bar (driving)',    watts:120, hours:2,  type:'dc', note:'High-output 50–72" driving light bar. Only used while driving — short duty cycle'},
+  {cat:'🛻 Ute & 4WD', name:'UHF CB Radio (TX/RX)',       watts:8,   hours:6,  type:'dc', note:'~5W standby, ~8W transmit avg. Most ute builds run CB all day while driving'},
+  {cat:'🛻 Ute & 4WD', name:'Dash Cam (front + rear)',    watts:5,   hours:24, type:'dc', note:'Continuous recording. 2–5W typical. Hardwire kit needed for parked recording'},
+  {cat:'🛻 Ute & 4WD', name:'Power Tool Charger (18V)',   watts:80,  hours:1,  type:'dc', note:'Makita/DeWalt 18V charger via inverter. ~1hr per battery. Add via AC if using inverter'},
+  {cat:'🛻 Ute & 4WD', name:'Inverter (1000W portable)',  watts:1000,hours:0.5,type:'ac', note:'Running tools/angle grinder/drill. Short peak loads. Size inverter for surge rating'},
+  {cat:'🛻 Ute & 4WD', name:'Canopy Lighting (LED strips)',watts:20, hours:4,  type:'dc', note:'LED strips inside canopy. 20W = adequate for work lighting in a ute tub'},
+  {cat:'🛻 Ute & 4WD', name:'Fridge Slide Motor',         watts:80,  hours:0.05,type:'dc',note:'Automatic slide motor (Clearview/ARB). ~5 min/day use. Negligible daily draw'},
   {cat:'🔌 Other',    name:'12V Tyre Inflator',          watts:120, hours:0.1,type:'dc', note:'Short burst use only'},
   {cat:'🔌 Other',    name:'Electric Blanket',           watts:60,  hours:6,  type:'ac', note:'Low setting; significantly reduces heating need'},
 ];
@@ -3377,6 +3416,9 @@ function applyTemplate(i){
   // Sync hidden inputs
   const bth=document.getElementById('battery-type'); if(bth) bth.value=t.dod;
   const auth=document.getElementById('autonomy'); if(auth) auth.value=t.autonomy;
+  // Alternator charging (ute template)
+  const altA=document.getElementById('alt-amps'); if(altA) altA.value=t.altAmps||0;
+  const altH=document.getElementById('alt-hours'); if(altH) altH.value=t.altHours||0;
   // Load appliances
   appliances=[];nextId=1;
   t.apps.forEach(a=>addAppliance(a));
@@ -3828,6 +3870,7 @@ const ONBOARD_STEPS=[
       return `<p>This tool sizes a complete off-grid power system — battery bank, solar array, charge controller, inverter, and wiring. It takes about 60 seconds to get a first estimate.</p>
       <p><strong>What type of rig?</strong></p>
       <div class="onboard-choice-grid">
+        <div class="onboard-choice" onclick="obSelect(this,'rig','ute')" data-key="rig" data-val="ute" style="border-color:var(--accent3);"><strong>🛻 Ute / Canopy Build</strong><span>12V auxiliary battery, Redarc/DC-DC charging</span></div>
         <div class="onboard-choice" onclick="obSelect(this,'rig','van')" data-key="rig" data-val="van"><strong>🚐 Van / Camper</strong><span>Small to medium, typically 12V</span></div>
         <div class="onboard-choice" onclick="obSelect(this,'rig','caravan')" data-key="rig" data-val="caravan"><strong>🏕️ Caravan / Trailer</strong><span>Towed rig, 12V or 24V</span></div>
         <div class="onboard-choice" onclick="obSelect(this,'rig','motorhome')" data-key="rig" data-val="motorhome"><strong>🚌 Motorhome / Coach</strong><span>Larger rig, 24V or 48V</span></div>
@@ -3838,7 +3881,20 @@ const ONBOARD_STEPS=[
   },
   {
     title:'2 — How do you use it?',
-    content(){
+    content(state){
+      if(state.rig==='ute'){
+        return `<div style="background:var(--accent3-bg,#ecfdf5);border:1.5px solid var(--accent3);border-radius:8px;padding:12px 14px;margin-bottom:14px;">
+          <strong>🛻 Ute / Canopy Build selected</strong><br>
+          <span style="font-size:12px;color:var(--muted);">We'll set up your system for a 12V auxiliary battery charged by your alternator via a DC-DC charger (Redarc/Victron), with solar as a supplement. Alternator charging inputs will be shown on the Loads tab.</span>
+        </div>
+        <p><strong>How do you use the ute?</strong></p>
+        <div class="onboard-choice-grid">
+          <div class="onboard-choice" onclick="obSelect(this,'style','weekend')" data-key="style" data-val="weekend"><strong>🏕️ Weekend trips</strong><span>Day drives, 1–2 nights out, fridge + lights</span></div>
+          <div class="onboard-choice" onclick="obSelect(this,'style','touring')" data-key="style" data-val="touring"><strong>🗺️ Extended touring</strong><span>Multi-day trips, remote camping, tools</span></div>
+          <div class="onboard-choice" onclick="obSelect(this,'style','tradie')" data-key="style" data-val="tradie"><strong>🔧 Work / Tradie use</strong><span>On-site power, tools, compressor, lighting</span></div>
+          <div class="onboard-choice" onclick="obSelect(this,'style','offgrid')" data-key="style" data-val="offgrid"><strong>☀️ Remote off-grid</strong><span>Bush camping, minimal driving, solar primary</span></div>
+        </div>`;
+      }
       return `<p><strong>How do you typically camp?</strong></p>
       <div class="onboard-choice-grid">
         <div class="onboard-choice" onclick="obSelect(this,'style','weekend')" data-key="style" data-val="weekend"><strong>🏕️ Weekends only</strong><span>1–2 nights, access to shore power nearby</span></div>
@@ -3851,7 +3907,7 @@ const ONBOARD_STEPS=[
   },
   {
     title:'3 — Key loads',
-    content(){
+    content(state){
       return `<p><strong>What will you run?</strong> (select all that apply)</p>
       <div class="onboard-choice-grid">
         <div class="onboard-choice" onclick="obToggle(this,'loads','fridge')" data-key="loads" data-val="fridge"><strong>🧊 Fridge / Freezer</strong><span>Largest continuous DC load</span></div>
@@ -3860,6 +3916,11 @@ const ONBOARD_STEPS=[
         <div class="onboard-choice" onclick="obToggle(this,'loads','tv')" data-key="loads" data-val="tv"><strong>📺 TV / Entertainment</strong><span>AC appliance</span></div>
         <div class="onboard-choice" onclick="obToggle(this,'loads','starlink')" data-key="loads" data-val="starlink"><strong>🛰️ Starlink</strong><span>~50–75W DC continuous</span></div>
         <div class="onboard-choice" onclick="obToggle(this,'loads','microwave')" data-key="loads" data-val="microwave"><strong>🍳 Microwave / Induction</strong><span>High AC surge loads</span></div>
+        ${state.rig==='ute'?`
+        <div class="onboard-choice" onclick="obToggle(this,'loads','compressor')" data-key="loads" data-val="compressor"><strong>💨 Air Compressor</strong><span>ARB/tyre inflation — high peak draw</span></div>
+        <div class="onboard-choice" onclick="obToggle(this,'loads','tools')" data-key="loads" data-val="tools"><strong>🔧 Power Tools</strong><span>LED work light, chargers, grinder</span></div>
+        <div class="onboard-choice" onclick="obToggle(this,'loads','uhf')" data-key="loads" data-val="uhf"><strong>📻 UHF CB Radio</strong><span>Low continuous draw</span></div>
+        `:''}
       </div>
       <div class="onboard-tip">💡 Don't worry about getting this perfect — you'll fine-tune appliances in the Loads tab.</div>`;
     },
@@ -3884,8 +3945,8 @@ const ONBOARD_STEPS=[
     title:'5 — Ready to go!',
     content(state){
       // Map answers to recommendations
-      const voltMap={van:'12V',caravan:'12V',motorhome:state.style==='fulltime'?'48V':'24V',boat:'12V'};
-      const autoMap={weekend:1,touring:2,offgrid:3,fulltime:3};
+      const voltMap={van:'12V',caravan:'12V',motorhome:state.style==='fulltime'?'48V':'24V',boat:'12V',ute:'12V'};
+      const autoMap={weekend:1,touring:2,offgrid:3,fulltime:3,tradie:1};
       const pshMap={'aus-sunny':6.0,'aus-south':4.8,'nz':4.8,'us-sunny':6.0,'us-north':4.0,'europe':3.5};
       const volt=voltMap[state.rig]||'12V';
       const auto=autoMap[state.style]||2;
@@ -3901,6 +3962,7 @@ const ONBOARD_STEPS=[
         <tr style="border-bottom:1px solid var(--border)"><td style="padding:7px 0;color:var(--muted);font-weight:600;">Autonomy</td><td style="padding:7px 0;font-weight:700;">${auto} day${auto>1?'s':''}</td></tr>
         <tr><td style="padding:7px 0;color:var(--muted);font-weight:600;">Peak Sun Hours</td><td style="padding:7px 0;font-weight:700;">${psh} hrs/day</td></tr>
       </table>
+      ${state.rig==='ute'?`<div class="onboard-tip" style="border-color:var(--accent3);background:var(--accent3-bg,#ecfdf5);">🛻 <strong>Ute canopy build:</strong> Your system will be sized for a 12V auxiliary battery. Open <strong>Advanced Preferences</strong> in the Loads tab to enter your DC-DC charger amps and driving hours — this is your primary charge source. Solar on the canopy roof is a great supplement.</div>`:''}
       ${bigAC?`<div class="onboard-tip">⚠️ You selected AC loads (aircon/microwave). These need a large inverter and substantial battery bank. The app will flag if your system needs to be 24V or 48V.</div>`:''}
       <p style="font-size:13px;color:var(--muted);">Click <strong>Apply & Start</strong> to load these settings, then add your appliances. You can change everything at any time.</p>`;
     },
@@ -3979,10 +4041,19 @@ function applyOnboard(){
   if(battEl) battEl.value=0.8; // LiFePO4
   // Trigger voltage change to sync battery-type
   if(voltEl) voltEl.dispatchEvent(new Event('change'));
+  // Ute canopy: pre-set alternator charging defaults
+  if(obState.rig==='ute'){
+    const altAmpsEl=document.getElementById('alt-amps');
+    const altHrsEl=document.getElementById('alt-hours');
+    if(altAmpsEl) altAmpsEl.value=25;   // Redarc BCDC1225D default
+    if(altHrsEl)  altHrsEl.value=2;     // typical 2hrs driving/day
+  }
   recalc();
   closeOnboard();
   // Load best-match template or suggest it
-  const styleTemplateMap={weekend:0,touring:1,offgrid:8,fulltime:4};
+  const styleTemplateMap={weekend:0,touring:1,offgrid:8,fulltime:4,tradie:10};
+  // For ute rig, override to always suggest ute template
+  if(obState.rig==='ute') Object.assign(styleTemplateMap,{weekend:10,touring:10,tradie:10,offgrid:10});
   const tIdx=styleTemplateMap[obState.style];
   if(tIdx!==undefined){
     setTimeout(()=>{
