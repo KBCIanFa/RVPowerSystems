@@ -71,6 +71,7 @@
       <a href="#s3">3 &mdash; Quick Templates</a>
       <a href="#s4">4 &mdash; Adding Appliances</a>
       <a href="#s4b">4b &mdash; Appliance Reference Lookup</a>
+      <a href="#s4c">4c &mdash; Ute / Canopy Build Guide</a>
       <a href="#s5">5 &mdash; Location &amp; Seasonal Sun Hours</a>
       <a href="#s6">6 &mdash; Understanding Sizing Results</a>
       <a href="#s7">7 &mdash; 30-Day Weather Simulation</a>
@@ -94,9 +95,9 @@
   <p>When you open RV Power Designer for the first time, the <strong>Setup Guide</strong> walks you through five quick questions to configure your system correctly from the start. You can relaunch it any time using the <strong>&#x1F9ED; Setup Guide</strong> button in the settings bar.</p>
   <h3>The 5-Step Setup Guide</h3>
   <ol class="step-list">
-    <li><strong>Rig type</strong> &mdash; van, caravan, motorhome, or boat. Informs the voltage recommendation.</li>
-    <li><strong>Camping style</strong> &mdash; weekends, extended touring, off-grid boondocking, or full-time living. Sets autonomy days.</li>
-    <li><strong>Key loads</strong> &mdash; tick everything you plan to run (fridge, aircon, laptop, TV, Starlink, microwave). Multi-select, optional.</li>
+    <li><strong>Rig type</strong> &mdash; van, caravan, motorhome, boat, or <strong>Ute / Canopy Build</strong>. Selecting the ute option activates a dedicated path that sets 12V, surfaces alternator charging as the primary source, and suggests the Ute Canopy template.</li>
+    <li><strong>Camping style</strong> &mdash; weekends, extended touring, off-grid boondocking, or full-time living. Sets autonomy days. For the ute path, options include Weekend trips, Extended touring, Work / Tradie use, and Remote off-grid.</li>
+    <li><strong>Key loads</strong> &mdash; tick everything you plan to run (fridge, aircon, laptop, TV, Starlink, microwave). For the ute path, Air Compressor, Power Tools, and UHF CB Radio options also appear.</li>
     <li><strong>Travel region</strong> &mdash; sets peak sun hours. Six regions covering Australia, NZ, USA, and Europe.</li>
     <li><strong>Review &amp; apply</strong> &mdash; shows recommended voltage, battery type, autonomy, and sun hours. Click <em>Apply &amp; Start</em>.</li>
   </ol>
@@ -139,7 +140,7 @@
 
 <div class="section" id="s3">
   <h2>3 &mdash; Quick Templates</h2>
-  <p>Click <strong>&#x26A1; Quick Templates</strong> in the Loads tab toolbar to open a grid of 10 pre-built RV setups. Each loads all appliances and configures voltage, battery type, autonomy, and sun hours automatically.</p>
+  <p>Click <strong>&#x26A1; Quick Templates</strong> in the Loads tab toolbar to open a grid of 11 pre-built setups. Each loads all appliances and configures voltage, battery type, autonomy, and sun hours automatically. The Ute Canopy Build template also pre-sets alternator charging inputs.</p>
   <table>
     <tr><th>Template</th><th>Voltage</th><th>Battery</th><th>Typical Solar</th><th>Use Case</th></tr>
     <tr><td>&#x1F3D5;&#xFE0F; Weekend Warrior</td><td>12V</td><td>LiFePO4</td><td>~200W</td><td>Couple, 2-night trips, basic loads</td></tr>
@@ -152,6 +153,7 @@
     <tr><td>&#x1F3E0; Luxury Coach</td><td>48V</td><td>LiFePO4</td><td>~1200W</td><td>High-end build, aircon, full kitchen</td></tr>
     <tr><td>&#x2600;&#xFE0F; Solar Only (Boondocking)</td><td>24V</td><td>LiFePO4</td><td>~600W</td><td>Remote bush camping, no shore power</td></tr>
     <tr><td>&#x1F3D5;&#xFE0F; Hybrid Shore + Solar</td><td>12V</td><td>LiFePO4</td><td>~300W</td><td>Mix of powered sites and free camps</td></tr>
+    <tr><td>&#x1F6FB; Ute Canopy Build</td><td>12V</td><td>LiFePO4</td><td>~200W + Alternator</td><td>ARB fridge, compressor, lights, UHF — Redarc DC-DC primary charge</td></tr>
   </table>
   <div class="callout tip">Templates are starting points &mdash; add, remove, or adjust appliances freely after loading.</div>
 </div>
@@ -200,6 +202,62 @@
   </table>
   <div class="callout tip">The figures in the lookup are typical values — your actual appliance may differ. Always verify against the nameplate or spec sheet, especially for fridges, pumps, and motors.</div>
 </div>
+
+<div class="section" id="s4c">
+  <h2>4c &mdash; Ute / Canopy Build Guide <span class="badge new">NEW</span></h2>
+  <p>A ute canopy power system is almost always a <strong>12V auxiliary battery</strong> charged primarily by a <strong>DC-DC charger</strong> (Redarc BCDC, Victron Orion-Tr) drawing from the alternator while driving, with solar panels on the canopy roof as a supplement. This is different from a caravan or van build where solar is usually the primary source.</p>
+
+  <h3>Step 1 — Select Ute / Canopy Build in the wizard</h3>
+  <p>When you click <strong>&#x1F9ED; Setup Guide</strong> and select <strong>🛻 Ute / Canopy Build</strong>, the wizard:</p>
+  <ul>
+    <li>Locks voltage to 12V</li>
+    <li>Explains the DC-DC charging approach</li>
+    <li>Adds ute-specific load options (compressor, UHF, tools)</li>
+    <li>Pre-sets alternator charging to 25A / 2 hours driving (a Redarc BCDC1225D default)</li>
+    <li>Suggests the <strong>🛻 Ute Canopy Build</strong> template on completion</li>
+  </ul>
+
+  <h3>Step 2 — Set your alternator charging</h3>
+  <p>Alternator charging via DC-DC is your primary charge source. In the <strong>Loads tab</strong>, expand <strong>Advanced Preferences</strong> and set:</p>
+  <table>
+    <tr><th>Field</th><th>What to enter</th><th>Example</th></tr>
+    <tr><td><strong>Alternator / DC-DC Charger (A)</strong></td><td>The output amps of your DC-DC charger</td><td>25A for Redarc BCDC1225D, 30A for Victron Orion-Tr Smart</td></tr>
+    <tr><td><strong>Alternator Hrs / Day</strong></td><td>Average daily driving time</td><td>2 hrs for a weekend camper, 4&ndash;6 hrs for a touring trip</td></tr>
+  </table>
+  <div class="callout tip">At 25A and 2 hrs driving: 25 &times; 12V &times; 2 = 600Wh of charge per day — often enough to run a 60L fridge and lights without any solar at all on a weekend trip.</div>
+
+  <h3>Step 3 — Add your appliances</h3>
+  <p>Use <strong>&#x1F4CB; Browse Appliances</strong> and search the <strong>&#x1F6FB; Ute &amp; 4WD</strong> category for brand-specific loads. Key entries:</p>
+  <table>
+    <tr><th>Appliance</th><th>Watts</th><th>Notes</th></tr>
+    <tr><td>ARB 47L Fridge Freezer</td><td>~10W avg</td><td>0.87A/h avg @12V. Duty cycle ~50%</td></tr>
+    <tr><td>ARB 60L Fridge Freezer</td><td>~11W avg</td><td>0.89A/h avg @12V. Most popular ute fridge size</td></tr>
+    <tr><td>ARB 78L Fridge Freezer</td><td>~13W avg</td><td>1.1A/h avg @12V. Higher draw in summer</td></tr>
+    <tr><td>Engel MT45 (40L)</td><td>~14W avg</td><td>Swing motor. Renowned reliability for remote touring</td></tr>
+    <tr><td>Engel MT60 (60L)</td><td>~17W avg</td><td>Larger swing motor — good family touring size</td></tr>
+    <tr><td>Dometic CFX3 65L</td><td>~13W avg</td><td>Real-world ~1.05A/h. App control via Bluetooth</td></tr>
+    <tr><td>Dometic CFX3 95DZ</td><td>~43W avg</td><td>Dual zone — both compartments. Size battery accordingly</td></tr>
+    <tr><td>ARB Twin Motor Compressor</td><td>600W peak</td><td>50A @12V under load. Short duty cycle &mdash; ~6 min to inflate 4&times; tyres</td></tr>
+    <tr><td>ARB Single Motor Compressor</td><td>300W peak</td><td>~25A @12V. Slower but lighter draw</td></tr>
+    <tr><td>UHF CB Radio</td><td>8W</td><td>~5W standby, 8W transmit avg</td></tr>
+    <tr><td>LED Work Light Bar</td><td>40W</td><td>Typical 20&ndash;40" canopy work bar</td></tr>
+    <tr><td>Dash Cam (front + rear)</td><td>5W</td><td>Continuous recording. Hardwire kit needed</td></tr>
+  </table>
+  <div class="callout warn">The ARB Twin compressor draws 600W for a short burst — about 6 minutes to inflate four tyres. Enter it as 600W &times; 0.1 hours (6 min) to get the correct daily Wh. Don't enter it as 600W &times; 24 hours.</div>
+
+  <h3>Step 4 — Solar as supplement</h3>
+  <p>Most ute canopy builds fit 100&ndash;400W of solar on the canopy roof. Enter your roof space in <strong>Advanced Preferences</strong> to get a roof space feasibility check. Solar is sized by the app after accounting for alternator contribution — so if your DC-DC covers most of your daily load, the solar requirement drops significantly.</p>
+
+  <h3>Typical ute canopy sizing</h3>
+  <table>
+    <tr><th>Use case</th><th>Battery</th><th>Solar</th><th>DC-DC</th></tr>
+    <tr><td>Weekend trips — fridge + lights</td><td>100Ah LiFePO4</td><td>100&ndash;200W</td><td>25A Redarc BCDC1225D</td></tr>
+    <tr><td>Extended touring — fridge + lights + compressor</td><td>200Ah LiFePO4</td><td>200&ndash;400W</td><td>40A Redarc BCDC1240D</td></tr>
+    <tr><td>Work / Tradie — tools + lighting + fridge</td><td>100Ah LiFePO4</td><td>100&ndash;200W</td><td>25&ndash;40A DC-DC</td></tr>
+  </table>
+  <div class="callout info">For a tradie ute where you don't always drive home daily, size the battery for 2 days autonomy. The DC-DC will top it up each time you drive.</div>
+</div>
+
 
 <div class="section" id="s5">
   <h2>5 &mdash; Location &amp; Seasonal Sun Hours <span class="badge new">NEW</span></h2>
